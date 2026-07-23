@@ -1,0 +1,115 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+.login-container{
+    display:flex;
+    height:100vh;
+}
+
+.left-section{
+    width:45%;
+    background:#0B3A6E;
+    color:white;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+.left-section h1{
+    font-size:50px;
+    margin-bottom:20px;
+}
+
+.left-section p{
+    font-size:22px;
+}
+
+.right-section{
+    width:55%;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    background:#f6f8fb;
+}
+
+.right-section h2{
+    color:#0B3A6E;
+    margin-bottom:35px;
+}
+
+/* Cards */
+
+.roles{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:25px;
+    margin-bottom:30px;
+}
+
+.role-box{
+    width:170px;
+    height:140px;
+    background:white;
+    border:2px solid #d9d9d9;
+    border-radius:12px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.role-box:hover{
+    border-color:#0B3A6E;
+    transform:translateY(-5px);
+}
+
+.active{
+    background:#e8f2ff;
+    border:2px solid #0B3A6E;
+}
+
+.emoji{
+    font-size:42px;
+    margin-bottom:12px;
+}
+
+.role-box h3{
+    color:#0B3A6E;
+}
+
+input{
+    width:420px;
+    padding:14px;
+    margin:12px 0;
+    border-radius:8px;
+    border:1px solid #ccc;
+    font-size:16px;
+}
+
+button{
+    width:420px;
+    padding:14px;
+    margin-top:20px;
+    border:none;
+    border-radius:8px;
+    background:#0B3A6E;
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#145a96;
+}
