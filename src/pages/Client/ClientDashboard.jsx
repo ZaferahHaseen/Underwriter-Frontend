@@ -1,86 +1,388 @@
+import { useState, useEffect } from "react";
 import "./ClientDashboard.css";
 
 function ClientDashboard() {
+  const [formData, setFormData] = useState({
+    insuranceType: "",
+    fullName: "",
+    age: "",
+    annualIncome: "",
+    sumAssured: "",
+    height: "",
+    weight: "",
+    bmi: "",
+    smoker: "0",
+    alcohol: "0",
+    preExistingDisease: "0",
+    familyHistory: "0",
+    occupation: "0",
+
+    // Demo values (later fetched from backend)
+    creditScore: "",
+    previousClaims: "",
+    yearsWithInsurer: "",
+  });
+
+  useEffect(() => {
+    if (formData.height && formData.weight) {
+      const h = Number(formData.height) / 100;
+      const bmi = (
+        Number(formData.weight) /
+        (h * h)
+      ).toFixed(1);
+
+      setFormData((prev) => ({
+        ...prev,
+        bmi,
+      }));
+    }
+  }, [formData.height, formData.weight]);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    console.log(formData);
+
+    alert("Proposal Submitted Successfully!");
+  };
+
   return (
     <div className="client-page">
 
-      <div className="welcome">
-        <h1>Welcome, Client</h1>
-        <p>Submit your insurance proposal and track your application status.</p>
+      <div className="welcome-card">
+
+        <h1>Insurance Proposal Form</h1>
+
+        <p>
+          Fill in your insurance proposal details.
+        </p>
+
       </div>
 
+      <div className="proposal-card">
 
-      <div className="proposal-container">
+        <h2>Client Insurance Proposal</h2>
 
-        <h2>Apply for Insurance Proposal</h2>
+        <form onSubmit={handleSubmit}>
 
-        <form>
+          <div className="form-grid">
 
-          <label>Insurance Type</label>
-          <select>
-            <option>Select Insurance</option>
-            <option>Health Insurance</option>
-            <option>Vehicle Insurance</option>
-            <option>Life Insurance</option>
-          </select>
+            <div className="form-group">
 
+              <label>Insurance Type</label>
 
-          <label>Full Name</label>
-          <input 
-            type="text" 
-            placeholder="Enter your name"
-          />
+              <select
+                name="insuranceType"
+                value={formData.insuranceType}
+                onChange={handleChange}
+              >
+                <option value="">Select Insurance</option>
+                <option>Health Insurance</option>
+                <option>Life Insurance</option>
+                <option>Vehicle Insurance</option>
+              </select>
 
+            </div>
 
-          <label>Age</label>
-          <input 
-            type="number" 
-            placeholder="Enter your age"
-          />
+            <div className="form-group">
 
+              <label>Full Name</label>
 
-          <label>Coverage Amount</label>
-          <input 
-            type="text" 
-            placeholder="Enter coverage amount"
-          />
+              <input
+                type="text"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
+                placeholder="Enter Full Name"
+              />
 
+            </div>
 
-          <label>Additional Details</label>
-          <textarea 
-            placeholder="Enter medical history or other details">
-          </textarea>
+            <div className="form-group">
 
+              <label>Age</label>
 
-          <button type="submit">
-            Submit Proposal
+              <input
+                type="number"
+                name="age"
+                value={formData.age}
+                onChange={handleChange}
+                placeholder="Enter Age"
+              />
+
+            </div>
+
+            <div className="form-group">
+
+              <label>Annual Income</label>
+
+              <input
+                type="number"
+                name="annualIncome"
+                value={formData.annualIncome}
+                onChange={handleChange}
+                placeholder="Annual Income"
+              />
+
+            </div>
+
+            <div className="form-group">
+
+              <label>Coverage Amount</label>
+
+              <input
+                type="number"
+                name="sumAssured"
+                value={formData.sumAssured}
+                onChange={handleChange}
+                placeholder="Coverage Amount"
+              />
+
+            </div>
+
+            <div className="form-group">
+
+              <label>Height (cm)</label>
+
+              <input
+                type="number"
+                name="height"
+                value={formData.height}
+                onChange={handleChange}
+                placeholder="Height"
+              />
+
+            </div>
+
+            <div className="form-group">
+
+              <label>Weight (kg)</label>
+
+              <input
+                type="number"
+                name="weight"
+                value={formData.weight}
+                onChange={handleChange}
+                placeholder="Weight"
+              />
+
+            </div>
+
+            <div className="form-group">
+
+              <label>BMI (Auto Calculated)</label>
+
+              <input
+                type="text"
+                value={formData.bmi}
+                readOnly
+              />
+
+            </div>
+
+          </div>
+
+          <div className="question-box">
+
+            <h3>Do you smoke?</h3>
+
+            <div className="radio-group">
+
+              <label>
+                <input
+                  type="radio"
+                  name="smoker"
+                  value="1"
+                  checked={formData.smoker === "1"}
+                  onChange={handleChange}
+                />
+                Yes
+              </label>
+
+              <label>
+                <input
+                  type="radio"
+                  name="smoker"
+                  value="0"
+                  checked={formData.smoker === "0"}
+                  onChange={handleChange}
+                />
+                No
+              </label>
+
+            </div>
+
+          </div>
+
+          <div className="form-group">
+
+            <label>Alcohol Consumption</label>
+
+            <select
+              name="alcohol"
+              value={formData.alcohol}
+              onChange={handleChange}
+            >
+              <option value="0">None</option>
+              <option value="1">Occasionally</option>
+              <option value="2">Regularly</option>
+            </select>
+
+          </div>
+
+                    <div className="question-box">
+
+            <h3>Do you have any pre-existing disease?</h3>
+
+            <div className="radio-group">
+
+              <label>
+                <input
+                  type="radio"
+                  name="preExistingDisease"
+                  value="1"
+                  checked={formData.preExistingDisease === "1"}
+                  onChange={handleChange}
+                />
+                Yes
+              </label>
+
+              <label>
+                <input
+                  type="radio"
+                  name="preExistingDisease"
+                  value="0"
+                  checked={formData.preExistingDisease === "0"}
+                  onChange={handleChange}
+                />
+                No
+              </label>
+
+            </div>
+
+          </div>
+
+          <div className="question-box">
+
+            <h3>Any family history of major illness?</h3>
+
+            <div className="radio-group">
+
+              <label>
+                <input
+                  type="radio"
+                  name="familyHistory"
+                  value="1"
+                  checked={formData.familyHistory === "1"}
+                  onChange={handleChange}
+                />
+                Yes
+              </label>
+
+              <label>
+                <input
+                  type="radio"
+                  name="familyHistory"
+                  value="0"
+                  checked={formData.familyHistory === "0"}
+                  onChange={handleChange}
+                />
+                No
+              </label>
+
+            </div>
+
+          </div>
+
+          <div className="form-group">
+
+            <label>Occupation</label>
+
+            <select
+              name="occupation"
+              value={formData.occupation}
+              onChange={handleChange}
+            >
+              <option value="0">Office Job</option>
+              <option value="1">Field Job</option>
+              <option value="2">Hazardous Job</option>
+            </select>
+
+          </div>
+
+          <h2 className="section-title">
+            Additional Information
+          </h2>
+
+          <div className="additional-grid">
+
+            <div className="form-group">
+
+              <label>Credit Score</label>
+
+              <input
+                type="number"
+                name="creditScore"
+                value={formData.creditScore}
+                onChange={handleChange}
+                placeholder="e.g. 750"
+              />
+
+            </div>
+
+            <div className="form-group">
+
+              <label>Previous Claims</label>
+
+              <input
+                type="number"
+                name="previousClaims"
+                value={formData.previousClaims}
+                onChange={handleChange}
+                placeholder="e.g. 1"
+              />
+
+            </div>
+
+            <div className="form-group">
+
+              <label>Years With Insurer</label>
+
+              <input
+                type="number"
+                name="yearsWithInsurer"
+                value={formData.yearsWithInsurer}
+                onChange={handleChange}
+                placeholder="e.g. 5"
+              />
+
+            </div>
+
+          </div>
+
+          <p className="company-note">
+            Demo Mode: Normally these values are retrieved automatically from
+            the insurer's database. For this project, enter sample values to
+            allow the AI Underwriter to perform risk analysis.
+          </p>
+
+          <button
+            className="submit-btn"
+            type="submit"
+          >
+            Submit Proposal for AI Underwriting
           </button>
-
 
         </form>
 
       </div>
-
-
-
-      <div className="status-box">
-
-        <h2>Proposal Status</h2>
-
-        <p>
-          <b>Proposal ID:</b> #101
-        </p>
-
-        <p>
-          <b>Status:</b> Under Review
-        </p>
-
-        <p>
-          Your proposal is being analyzed by the underwriter.
-        </p>
-
-      </div>
-
 
     </div>
   );

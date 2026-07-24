@@ -1,112 +1,441 @@
-.client-page {
-    min-height: 100vh;
-    background: #f4f7fb;
-    padding: 30px;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-
-.welcome {
-    text-align: center;
-    margin-bottom: 25px;
+body{
+    background:#f4f7fc;
 }
 
+/* ===========================
+   MAIN PAGE
+=========================== */
 
-.welcome h1 {
-    color: #1e3a8a;
-    font-size: 30px;
+.client-page{
+    width:100%;
+    min-height:100vh;
+    background:#f4f7fc;
+    padding:40px 20px;
 }
 
+/* ===========================
+   WELCOME CARD
+=========================== */
 
-.welcome p {
-    color: #555;
-}
+.welcome-card{
 
+    width:85%;
+    max-width:1100px;
 
+    margin:0 auto 30px;
 
-.proposal-container {
-    background: white;
-    width: 500px;
-    margin: auto;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
-}
+    background:linear-gradient(135deg,#2563eb,#1e40af);
 
+    color:white;
 
-.proposal-container h2 {
-    text-align: center;
-    color: #2563eb;
-    margin-bottom: 20px;
-}
+    padding:35px;
 
+    border-radius:15px;
 
-form {
-    display: flex;
-    flex-direction: column;
-}
-
-
-label {
-    margin-top: 12px;
-    margin-bottom: 5px;
-    font-weight: 600;
-}
-
-
-input,
-select,
-textarea {
-
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 15px;
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
 
 }
 
+.welcome-card h1{
 
-textarea {
-    height: 80px;
-    resize: none;
-}
+    font-size:34px;
 
-
-button {
-
-    margin-top: 20px;
-    padding: 12px;
-    background: #2563eb;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
+    margin-bottom:10px;
 
 }
 
+.welcome-card p{
 
-button:hover {
+    font-size:17px;
 
-    background: #1d4ed8;
-
-}
-
-
-
-.status-box {
-
-    width: 500px;
-    margin: 25px auto;
-    background: white;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
+    opacity:.95;
 
 }
 
+/* ===========================
+   PROPOSAL CARD
+=========================== */
 
-.status-box h2 {
+.proposal-card{
+
+    width:80%;
+
+    max-width:1000px;
+
+    margin:30px auto;
+
+    background:white;
+
+    border-radius:15px;
+
+    padding:40px;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+}
+
+.proposal-card h2{
+
+    text-align:center;
+
+    color:#1e3a8a;
+
+    margin-bottom:35px;
+
+}
+
+/* ===========================
+   FORM GRID
+=========================== */
+
+.form-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:25px;
+
+}
+
+/* ===========================
+   FORM GROUP
+=========================== */
+
+.form-group{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.form-group label{
+
+    margin-bottom:8px;
+
+    font-weight:600;
+
+    color:#374151;
+
+}
+
+.form-group input,
+.form-group select{
+
+    width:100%;
+
+    padding:13px 15px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:8px;
+
+    font-size:15px;
+
+    transition:.3s;
+
+}
+
+.form-group input:focus,
+.form-group select:focus{
+
+    outline:none;
+
+    border-color:#2563eb;
+
+    box-shadow:0 0 6px rgba(37,99,235,.25);
+
+}
+
+/* BMI */
+
+input[readonly]{
+
+    background:#eef2f7;
+
+    font-weight:600;
+
+    color:#1e3a8a;
+
+}
+
+/* ===========================
+   QUESTION BOX
+=========================== */
+
+.question-box{
+
+    margin-top:25px;
+
+    background:#f8fafc;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:10px;
+
+    padding:20px;
+
+}
+
+.question-box h3{
+
+    color:#1e3a8a;
+
+    margin-bottom:15px;
+
+    font-size:20px;
+
+}
+
+/* ===========================
+   RADIO BUTTONS
+=========================== */
+
+.radio-group{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:40px;
+
+}
+
+.radio-group label{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    font-size:16px;
+
+    cursor:pointer;
+
+}
+
+.radio-group input{
+
+    width:18px;
+
+    height:18px;
+
+}
+
+/* ===========================
+   COMPANY RECORDS
+=========================== */
+
+.company-records{
+
+    margin-top:40px;
+
+    background:#f9fafb;
+
+    padding:30px;
+
+    border-radius:12px;
+
+}
+
+.company-records h2{
+
+    margin-bottom:25px;
+
+    color:#1e3a8a;
+
+}
+
+/* ===========================
+   RECORD GRID
+=========================== */
+
+.records-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:20px;
+
+}
+
+.record-card{
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:12px;
+
+    text-align:center;
+
+    border-left:5px solid #2563eb;
+
+    box-shadow:0 4px 12px rgba(0,0,0,.06);
+
+    transition:.3s;
+
+}
+
+.record-card:hover{
+
+    transform:translateY(-5px);
+
+}
+
+.record-card h4{
+
+    color:#374151;
+
+    margin-bottom:10px;
+
+}
+
+.record-card p{
+
+    font-size:28px;
+
+    font-weight:bold;
 
     color:#2563eb;
 
+}
+
+.company-note{
+
+    margin-top:20px;
+
+    text-align:center;
+
+    color:#6b7280;
+
+    font-size:14px;
+
+    font-style:italic;
+
+}
+
+/* ===========================
+   BUTTON
+=========================== */
+
+.submit-btn{
+
+    width:100%;
+
+    margin-top:35px;
+
+    padding:16px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#2563eb;
+
+    color:white;
+
+    font-size:18px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.submit-btn:hover{
+
+    background:#1d4ed8;
+
+    transform:translateY(-2px);
+
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media(max-width:900px){
+
+.proposal-card,
+.welcome-card{
+
+width:95%;
+
+padding:25px;
+
+}
+
+.form-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.records-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.radio-group{
+
+flex-direction:row;
+
+gap:25px;
+
+}
+
+.welcome-card h1{
+
+font-size:28px;
+
+}
+
+}
+
+.section-title{
+
+    text-align:center;
+
+    color:#1e3a8a;
+
+    margin-top:40px;
+
+    margin-bottom:25px;
+
+    font-size:28px;
+
+    font-weight:bold;
+
+}
+
+.additional-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:25px;
+
+    margin-top:20px;
+
+}
+
+@media(max-width:900px){
+    .additional-grid{
+        grid-template-columns:1fr;
+    }
 }
