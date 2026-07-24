@@ -1,4 +1,4 @@
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "http://192.168.1.44:8000";
 
 export async function getUnderwritingDecision(applicant) {
   const res = await fetch(`${API_BASE}/api/v1/underwrite`, {
