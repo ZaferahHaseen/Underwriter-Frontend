@@ -11,3 +11,16 @@ export async function getUnderwritingDecision(applicant) {
   }
   return res.json();
 }
+
+export async function getUnderwritingFromProposal(rawProposal) {
+  const res = await fetch(`${API_BASE}/api/v1/underwrite/from-proposal`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(rawProposal),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `API error: ${res.status}`);
+  }
+  return res.json();
+}
