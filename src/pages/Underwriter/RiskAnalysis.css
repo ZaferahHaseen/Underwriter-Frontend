@@ -1,0 +1,45 @@
+.risk-container{
+    background:#f5f7fb;
+    min-height:100vh;
+    padding:30px;
+}
+
+.risk-card{
+    background:white;
+    padding:30px;
+    border-radius:12px;
+    width:70%;
+    box-shadow:0 0 10px rgba(0,0,0,.1);
+}
+
+.score{
+    color:#2563eb;
+    font-size:60px;
+}
+
+.high{
+    color:red;
+}
+
+.buttons{
+    margin-top:30px;
+}
+
+.approve{
+    background:green;
+    color:white;
+    padding:12px 25px;
+    border:none;
+    border-radius:8px;
+    margin-right:15px;
+    cursor:pointer;
+}
+
+.reject{
+    background:red;
+    color:white;
+    padding:12px 25px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
