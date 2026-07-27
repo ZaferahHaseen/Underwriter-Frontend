@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./ProposalDetails.css";
 import { getProposal, decideProposal } from "../../api/underwritingApi";
+import RiskChart from "./RiskChart";
 
 function getRiskLevel(score) {
   if (score >= 60) return "High";
@@ -18,6 +19,7 @@ function ProposalDetails(){
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [acting, setActing] = useState(false);
+  const [showChart, setShowChart] = useState(false);
 
   useEffect(() => {
     getProposal(id)
@@ -85,6 +87,17 @@ function ProposalDetails(){
           </div>
 
           <p className="summary-text">{proposal.reasoning_summary}</p>
+
+          <button className="graph-toggle-btn" onClick={() => setShowChart((s) => !s)}>
+            {showChart ? "Hide Graph" : "View Graph"}
+          </button>
+
+          {showChart && (
+            <RiskChart
+              riskFactors={proposal.risk_factors}
+              positiveFactors={riskLevel === "High" ? [] : proposal.positive_factors}
+            />
+          )}
         </section>
 
         {/* ---- Risk Factors ---- */}
@@ -101,19 +114,19 @@ function ProposalDetails(){
         </section>
 
         {/* ---- Positive Factors ---- */}
-      {riskLevel !== "High" && (
-        <section className="section">
-          <h3>Positive Factors</h3>
-          <ul className="factor-list">
-            {proposal.positive_factors.map((f, i) => (
-              <li key={i} className="factor-item positive">
-                <span className="factor-icon"></span>
-                <span>{f.detail}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+        {riskLevel !== "High" && (
+          <section className="section">
+            <h3>Positive Factors</h3>
+            <ul className="factor-list">
+              {proposal.positive_factors.map((f, i) => (
+                <li key={i} className="factor-item positive">
+                  <span className="factor-icon"></span>
+                  <span>{f.detail}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {/* ---- Decision ---- */}
         {proposal.status === "PENDING" ? (

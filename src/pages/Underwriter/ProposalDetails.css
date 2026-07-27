@@ -134,3 +134,42 @@
   font-size: 16px;
   margin-top: 10px;
 }
+/* ---- Graph toggle + chart ---- */
+.graph-toggle-btn {
+  margin-top: 14px;
+  padding: 8px 16px;
+  background: #eef2ff;
+  color: #2563eb;
+  border: 1px solid #c7d2fe;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.graph-toggle-btn:hover {
+  background: #e0e7ff;
+}
+
+.risk-chart-wrap {
+  margin-top: 18px;
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 8px;
+}
+
+.chart-legend {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+}
+.legend-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+.risk-dot { background: #dc2626; }
+.positive-dot { background: #16a34a; }
