@@ -51,9 +51,8 @@ function ProposalDetails(){
         <p><b>Submitted:</b> {proposal.created_at}</p>
         <p><b>Status:</b> {proposal.status}</p>
 
-        <h2>AI Underwriting Verdict</h2>
+        <h2>AI Risk Analysis</h2>
 
-        <p><b>Suggestion:</b> {proposal.suggestion}</p>
         <p><b>Confidence:</b> {proposal.confidence}%</p>
         <p><b>Risk Score:</b> {proposal.risk_score}</p>
         <p>{proposal.reasoning_summary}</p>
