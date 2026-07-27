@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
+
 import "./ClientDashboard.css";
 import { submitProposal } from "../../api/underwritingApi";
 
 function ClientDashboard() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     insuranceType: "",
     fullName: "",
@@ -74,13 +78,38 @@ function ClientDashboard() {
 
   return (
     <div className="client-page">
-      <div className="welcome-card">
+      {/* <div className="welcome-card">
         <h1>Insurance Proposal Form</h1>
         <p>Fill in your insurance proposal details.</p>
+      </div> */}
+
+      <div className="welcome-card">
+
+        <div className="header-row">
+
+          <button
+            className="header-back-btn"
+            onClick={() => navigate("/")}
+          >
+            <FaArrowLeft />
+          </button>
+
+          <div className="header-text">
+            <h1>Insurance Proposal Form</h1>
+            <p>Fill in your insurance proposal details.</p>
+          </div>
+
+        </div>
+
       </div>
+      
+
 
       <div className="proposal-card">
-        <h2>Client Insurance Proposal</h2>
+
+          <h2 className="proposal-title">
+              Client Insurance Proposal
+          </h2>
 
         <form onSubmit={handleSubmit}>
           <div className="form-grid">
@@ -209,11 +238,7 @@ function ClientDashboard() {
             </div>
           </div>
 
-          <p className="company-note">
-            Demo Mode: Normally these values are retrieved automatically from
-            the insurer's database. For this project, enter sample values to
-            allow the AI Underwriter to perform risk analysis.
-          </p>
+       
 
           <button className="submit-btn" type="submit" disabled={loading}>
             {loading ? "Submitting..." : "Submit Proposal for AI Underwriting"}

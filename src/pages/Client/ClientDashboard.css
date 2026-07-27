@@ -2,519 +2,391 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;
 }
 
 body{
-    background:#f4f7fc;
+    background:#eef3f9;
 }
 
-/* ===========================
+/* =========================
    MAIN PAGE
-=========================== */
+========================= */
 
 .client-page{
-    width:100%;
-    min-height:100vh;
-    background:#f4f7fc;
-    padding:40px 20px;
+    height:100vh;
+    background:#eef3f9;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    padding:25px;
 }
 
-/* ===========================
-   WELCOME CARD
-=========================== */
+/* =========================
+   HEADER
+========================= */
 
 .welcome-card{
-
-    width:85%;
-    max-width:1100px;
-
-    margin:0 auto 30px;
-
-    background:linear-gradient(135deg,#2563eb,#1e40af);
-
+    width:90%;
+    max-width:1200px;
+    margin:0 auto 20px;
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
     color:white;
-
-    padding:35px;
-
     border-radius:15px;
-
+    padding:30px;
     box-shadow:0 8px 20px rgba(0,0,0,.15);
-
+    flex-shrink:0;
 }
 
 .welcome-card h1{
-
     font-size:34px;
-
     margin-bottom:10px;
-
 }
 
 .welcome-card p{
-
     font-size:17px;
-
-    opacity:.95;
-
 }
 
-/* ===========================
+/* =========================
    PROPOSAL CARD
-=========================== */
+========================= */
 
 .proposal-card{
-
-    width:80%;
-
-    max-width:1000px;
-
-    margin:30px auto;
-
+    width:90%;
+    max-width:1100px;
+    margin:auto;
     background:white;
-
     border-radius:15px;
-
-    padding:40px;
-
+    padding:35px;
     box-shadow:0 8px 20px rgba(0,0,0,.08);
-
+    overflow-y:auto;
+    height:70vh;
 }
 
-.proposal-card h2{
+/* =========================
+   HEADER INSIDE CARD
+========================= */
 
-    text-align:center;
+.proposal-header{
+    display:block;
+    margin-bottom:30px;
+}
 
+.proposal-header h2{
+    margin:0;
     color:#1e3a8a;
-
-    margin-bottom:35px;
-
+    font-size:30px;
+    text-align:left;
 }
 
-/* ===========================
-   FORM GRID
-=========================== */
+.proposal-header h2{
+    color:#1d4ed8;
+    margin:0;
+}
+
+.exit-btn{
+    background:#ef4444;
+    color:white;
+    border:none;
+    padding:10px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:600;
+}
+
+.exit-btn:hover{
+    background:#dc2626;
+}
+
+/* =========================
+   GRID
+========================= */
 
 .form-grid{
-
     display:grid;
-
     grid-template-columns:repeat(2,1fr);
-
     gap:25px;
-
 }
 
-/* ===========================
-   FORM GROUP
-=========================== */
+/* =========================
+   INPUTS
+========================= */
 
 .form-group{
-
     display:flex;
-
     flex-direction:column;
-
 }
 
 .form-group label{
-
     margin-bottom:8px;
-
     font-weight:600;
-
     color:#374151;
-
 }
 
 .form-group input,
 .form-group select{
-
     width:100%;
-
-    padding:13px 15px;
-
+    padding:14px;
     border:1px solid #d1d5db;
-
     border-radius:8px;
-
     font-size:15px;
-
-    transition:.3s;
-
 }
 
 .form-group input:focus,
 .form-group select:focus{
-
     outline:none;
-
     border-color:#2563eb;
-
-    box-shadow:0 0 6px rgba(37,99,235,.25);
-
+    box-shadow:0 0 5px rgba(37,99,235,.3);
 }
-
-/* BMI */
 
 input[readonly]{
-
-    background:#eef2f7;
-
-    font-weight:600;
-
-    color:#1e3a8a;
-
+    background:#eef2ff;
+    color:#1e40af;
+    font-weight:bold;
 }
 
-/* ===========================
+/* =========================
    QUESTION BOX
-=========================== */
+========================= */
 
 .question-box{
-
     margin-top:25px;
-
-    background:#f8fafc;
-
     border:1px solid #e5e7eb;
-
     border-radius:10px;
-
     padding:20px;
-
+    background:#f9fafb;
 }
 
 .question-box h3{
-
     color:#1e3a8a;
-
     margin-bottom:15px;
-
-    font-size:20px;
-
 }
 
-/* ===========================
-   RADIO BUTTONS
-=========================== */
+/* =========================
+   RADIO
+========================= */
 
 .radio-group{
-
     display:flex;
-
-    align-items:center;
-
     gap:40px;
-
 }
 
 .radio-group label{
-
     display:flex;
-
     align-items:center;
-
     gap:8px;
-
-    font-size:16px;
-
     cursor:pointer;
-
+    font-size:16px;
 }
 
 .radio-group input{
-
     width:18px;
-
     height:18px;
-
 }
 
-/* ===========================
-   COMPANY RECORDS
-=========================== */
+/* =========================
+   SECTION TITLE
+========================= */
 
-.company-records{
-
-    margin-top:40px;
-
-    background:#f9fafb;
-
-    padding:30px;
-
-    border-radius:12px;
-
-}
-
-.company-records h2{
-
-    margin-bottom:25px;
-
-    color:#1e3a8a;
-
-}
-
-/* ===========================
-   RECORD GRID
-=========================== */
-
-.records-grid{
-
-    display:grid;
-
-    grid-template-columns:repeat(3,1fr);
-
-    gap:20px;
-
-}
-
-.record-card{
-
-    background:white;
-
-    padding:25px;
-
-    border-radius:12px;
-
+.section-title{
     text-align:center;
-
-    border-left:5px solid #2563eb;
-
-    box-shadow:0 4px 12px rgba(0,0,0,.06);
-
-    transition:.3s;
-
-}
-
-.record-card:hover{
-
-    transform:translateY(-5px);
-
-}
-
-.record-card h4{
-
-    color:#374151;
-
-    margin-bottom:10px;
-
-}
-
-.record-card p{
-
-    font-size:28px;
-
-    font-weight:bold;
-
     color:#2563eb;
-
+    margin:40px 0 25px;
+    font-size:30px;
 }
 
-.company-note{
+/* =========================
+   ADDITIONAL GRID
+========================= */
 
-    margin-top:20px;
-
-    text-align:center;
-
-    color:#6b7280;
-
-    font-size:14px;
-
-    font-style:italic;
-
+.additional-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:25px;
 }
 
-/* ===========================
+/* =========================
    BUTTON
-=========================== */
+========================= */
 
 .submit-btn{
-
     width:100%;
-
     margin-top:35px;
-
-    padding:16px;
-
+    padding:15px;
     border:none;
-
     border-radius:10px;
-
     background:#2563eb;
-
     color:white;
-
     font-size:18px;
-
-    font-weight:600;
-
     cursor:pointer;
-
-    transition:.3s;
-
+    font-weight:600;
 }
 
 .submit-btn:hover{
-
     background:#1d4ed8;
-
-    transform:translateY(-2px);
-
 }
 
-/* ===========================
+/* =========================
+   RESULT BOX
+========================= */
+
+.result-box{
+    margin-top:30px;
+    padding:25px;
+    border-radius:10px;
+    background:#f9fafb;
+    border-left:5px solid #2563eb;
+}
+
+.success-box{
+    border-left-color:#16a34a;
+    background:#ecfdf5;
+}
+
+.success-box h2{
+    color:#15803d;
+}
+
+.error-box{
+    border-left-color:#dc2626;
+    background:#fef2f2;
+}
+
+.error-box p{
+    color:#991b1b;
+}
+
+/* =========================
+   SCROLLBAR
+========================= */
+
+.proposal-card::-webkit-scrollbar{
+    width:8px;
+}
+
+.proposal-card::-webkit-scrollbar-thumb{
+    background:#2563eb;
+    border-radius:20px;
+}
+
+/* =========================
    RESPONSIVE
-=========================== */
+========================= */
 
 @media(max-width:900px){
 
-.proposal-card,
-.welcome-card{
-
-width:95%;
-
-padding:25px;
-
+.client-page{
+    padding:15px;
 }
 
-.form-grid{
-
-grid-template-columns:1fr;
-
+.welcome-card,
+.proposal-card{
+    width:100%;
 }
 
-.records-grid{
+.form-grid,
+.additional-grid{
+    grid-template-columns:1fr;
+}
 
-grid-template-columns:1fr;
+.proposal-card{
+    height:75vh;
+}
 
+.proposal-header{
+    flex-direction:column;
+    gap:15px;
 }
 
 .radio-group{
-
-flex-direction:row;
-
-gap:25px;
-
+    flex-direction:column;
+    gap:15px;
 }
 
 .welcome-card h1{
-
-font-size:28px;
-
-}
-
-}
-
-.section-title{
-
-    text-align:center;
-
-    color:#1e3a8a;
-
-    margin-top:40px;
-
-    margin-bottom:25px;
-
     font-size:28px;
-
-    font-weight:bold;
+}
 
 }
 
-.additional-grid{
+/* =========================
+   HEADER WITH BACK BUTTON
+========================= */
 
-    display:grid;
 
-    grid-template-columns:repeat(2,1fr);
-
-    gap:25px;
-
-    margin-top:20px;
-
+.header-back-btn{
+    width:45px;
+    height:45px;
+    border:none;
+    border-radius:50%;
+    background:rgba(255,255,255,.15);
+    color:#fff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+    font-size:20px;
+    transition:.3s;
 }
 
-@media(max-width:900px){
-    .additional-grid{
-        grid-template-columns:1fr;
-    }
+.header-back-btn:hover{
+    background:rgba(255,255,255,.28);
 }
 
-.result-box{
+/* =========================
+   HEADER ROW
+========================= */
 
-    margin-top:35px;
-
-    background:#f9fafb;
-
-    border-left:5px solid #2563eb;
-
-    border-radius:12px;
-
-    padding:30px;
-
-    box-shadow:0 4px 12px rgba(0,0,0,.06);
-
+.header-row{
+    display:flex;
+    align-items:center;
+    gap:20px;
 }
 
-.result-box h2{
+/* =========================
+   BACK BUTTON
+========================= */
 
-    color:#1e3a8a;
+.header-back-btn{
+    width:48px;
+    height:48px;
+    border:none;
+    border-radius:50%;
+    background:rgba(255,255,255,0.15);
+    color:white;
+    cursor:pointer;
 
-    margin-bottom:15px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 
+    font-size:20px;
+    transition:0.3s;
+    flex-shrink:0;
 }
 
-.result-box h3{
+.header-back-btn:hover{
+    background:rgba(255,255,255,0.28);
+    transform:translateX(-3px);
+}
 
-    color:#1e3a8a;
+/* =========================
+   HEADER TEXT
+========================= */
 
-    margin-top:20px;
+.header-text{
+    display:flex;
+    flex-direction:column;
+}
 
-    margin-bottom:10px;
+.header-text h1{
+    margin:0;
+    font-size:34px;
+    font-weight:700;
+}
 
+.header-text p{
+    margin-top:8px;
     font-size:18px;
-
-}
-
-.result-box ul{
-
-    margin-left:20px;
-
-}
-
-.result-box li{
-
-    margin-bottom:6px;
-
-    color:#374151;
-
-}
-
-.result-box.error-box{
-
-    border-left-color:#dc2626;
-
-    background:#fef2f2;
-
-}
-
-.result-box.error-box p{
-
-    color:#991b1b;
-
-    font-weight:600;
-
-}
-.result-box.success-box{
-
-    border-left-color:#16a34a;
-
-    background:#f0fdf4;
-
-}
-
-.result-box.success-box h2{
-
-    color:#15803d;
-
 }
