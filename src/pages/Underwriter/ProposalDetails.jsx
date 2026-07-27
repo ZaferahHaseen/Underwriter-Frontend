@@ -1,77 +1,96 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./ProposalDetails.css";
-
+import { getProposal, decideProposal } from "../../api/underwritingApi";
 
 function ProposalDetails(){
 
-const {id}=useParams();
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-const navigate=useNavigate();
+  const [proposal, setProposal] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [acting, setActing] = useState(false);
 
+  useEffect(() => {
+    getProposal(id)
+      .then(setProposal)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [id]);
 
-return(
+  const handleDecision = async (status) => {
+    setActing(true);
+    try {
+      await decideProposal(id, status);
+      setProposal((prev) => ({ ...prev, status }));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setActing(false);
+    }
+  };
 
-<div className="proposal-container">
+  if (loading) return <div className="proposal-container"><p>Loading...</p></div>;
+  if (error) return <div className="proposal-container"><p style={{ color: "red" }}>Error: {error}</p></div>;
+  if (!proposal) return null;
 
-<h1>Proposal Details</h1>
+  return(
 
+    <div className="proposal-container">
 
-<div className="proposal-card">
+      <h1>Proposal Details</h1>
 
+      <div className="proposal-card">
 
-<h2>Client Information</h2>
+        <h2>Client Information</h2>
 
-<p><b>Name:</b> Rahul Kumar</p>
+        <p><b>Name:</b> {proposal.full_name}</p>
+        <p><b>Policy Type:</b> {proposal.insurance_type}</p>
+        <p><b>Submitted:</b> {proposal.created_at}</p>
+        <p><b>Status:</b> {proposal.status}</p>
 
-<p><b>Age:</b> 42</p>
+        <h2>AI Underwriting Verdict</h2>
 
-<p><b>Occupation:</b> Software Engineer</p>
+        <p><b>Suggestion:</b> {proposal.suggestion}</p>
+        <p><b>Confidence:</b> {proposal.confidence}%</p>
+        <p><b>Risk Score:</b> {proposal.risk_score}</p>
+        <p>{proposal.reasoning_summary}</p>
 
-<p><b>Location:</b> Chennai</p>
+        <h3>Risk Factors</h3>
+        <ul>
+          {proposal.risk_factors.map((f, i) => <li key={i}>{f.detail}</li>)}
+        </ul>
 
+        <h3>Positive Factors</h3>
+        <ul>
+          {proposal.positive_factors.map((f, i) => <li key={i}>{f.detail}</li>)}
+        </ul>
 
+        {proposal.status === "PENDING" ? (
+          <div className="decision-buttons">
+            <button disabled={acting} onClick={() => handleDecision("APPROVED")}>
+              Approve
+            </button>
+            <button disabled={acting} onClick={() => handleDecision("REJECTED")}>
+              Reject
+            </button>
+          </div>
+        ) : (
+          <p><b>Final Decision:</b> {proposal.status}</p>
+        )}
 
-<h2>Insurance Details</h2>
+        <button onClick={() => navigate("/underwriter/dashboard")}>
+          Back to Dashboard
+        </button>
 
-<p><b>Policy Type:</b> Health Insurance</p>
+      </div>
 
-<p><b>Coverage Amount:</b> ₹10,00,000</p>
+    </div>
 
-<p><b>Duration:</b> 10 Years</p>
-
-
-
-<h2>Documents</h2>
-
-<ul>
-
-<li>Medical Report</li>
-
-<li>Income Proof</li>
-
-<li>Identity Proof</li>
-
-</ul>
-
-
-
-<button
-onClick={()=>navigate("/risk-analysis/"+id)}
->
-Analyze Risk
-</button>
-
-
-</div>
-
-
-</div>
-
-
-)
+  )
 
 }
-
 
 export default ProposalDetails;

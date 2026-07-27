@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "./ClientDashboard.css";
-import { getUnderwritingFromProposal } from "../../api/underwritingApi";
+import { submitProposal } from "../../api/underwritingApi";
 
 function ClientDashboard() {
   const [formData, setFormData] = useState({
@@ -22,7 +22,7 @@ function ClientDashboard() {
     yearsWithInsurer: "",
   });
 
-  const [result, setResult] = useState(null);
+  const [submitted, setSubmitted] = useState(null); // { id, status }
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -41,9 +41,11 @@ function ClientDashboard() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-    setResult(null);
+    setSubmitted(null);
 
     const payload = {
+      full_name: formData.fullName,
+      insurance_type: formData.insuranceType,
       age: Number(formData.age),
       annual_income: Number(formData.annualIncome),
       sum_assured: Number(formData.sumAssured),
@@ -61,8 +63,8 @@ function ClientDashboard() {
 
     try {
       setLoading(true);
-      const data = await getUnderwritingFromProposal(payload);
-      setResult(data);
+      const data = await submitProposal(payload);
+      setSubmitted(data); // { id, status: "PENDING" }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -214,7 +216,7 @@ function ClientDashboard() {
           </p>
 
           <button className="submit-btn" type="submit" disabled={loading}>
-            {loading ? "Analyzing..." : "Submit Proposal for AI Underwriting"}
+            {loading ? "Submitting..." : "Submit Proposal for AI Underwriting"}
           </button>
         </form>
 
@@ -224,22 +226,12 @@ function ClientDashboard() {
           </div>
         )}
 
-        {result && (
-          <div className="result-box">
-            <h2>{result.suggestion}</h2>
-            <p><b>Confidence:</b> {result.confidence}%</p>
-            <p><b>Risk Score:</b> {result.risk_score}</p>
-            <p>{result.reasoning_summary}</p>
-
-            <h3>Risk Factors</h3>
-            <ul>
-              {result.risk_factors.map((f, i) => <li key={i}>{f.detail}</li>)}
-            </ul>
-
-            <h3>Positive Factors</h3>
-            <ul>
-              {result.positive_factors.map((f, i) => <li key={i}>{f.detail}</li>)}
-            </ul>
+        {submitted && (
+          <div className="result-box success-box">
+            <h2>Proposal Submitted Successfully!</h2>
+            <p><b>Reference ID:</b> #{submitted.id}</p>
+            <p><b>Status:</b> {submitted.status}</p>
+            <p>Your proposal is now with the underwriter for review. You'll be notified once a decision is made.</p>
           </div>
         )}
       </div>

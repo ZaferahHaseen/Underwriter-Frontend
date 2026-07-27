@@ -505,3 +505,16 @@ font-size:28px;
     font-weight:600;
 
 }
+.result-box.success-box{
+
+    border-left-color:#16a34a;
+
+    background:#f0fdf4;
+
+}
+
+.result-box.success-box h2{
+
+    color:#15803d;
+
+}

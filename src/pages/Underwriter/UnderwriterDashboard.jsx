@@ -1,117 +1,96 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./UnderwriterDashboard.css";
+import { listProposals } from "../../api/underwritingApi";
 
 function UnderwriterDashboard(){
 
-const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [proposals, setProposals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-const proposals=[
-{
-id:1,
-name:"Rahul Kumar",
-policy:"Health Insurance",
-status:"Pending"
-},
-{
-id:2,
-name:"Ananya",
-policy:"Life Insurance",
-status:"Pending"
-}
-];
+  useEffect(() => {
+    listProposals()
+      .then(setProposals)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
 
+  const total = proposals.length;
+  const pending = proposals.filter((p) => p.status === "PENDING").length;
+  const approved = proposals.filter((p) => p.status === "APPROVED").length;
+  const rejected = proposals.filter((p) => p.status === "REJECTED").length;
 
-return(
+  return(
 
-<div className="dashboard">
+    <div className="dashboard">
 
-<h1>Underwriter Dashboard</h1>
+      <h1>Underwriter Dashboard</h1>
 
-<div className="cards">
+      <div className="cards">
 
-<div>
-<h2>25</h2>
-<p>Total Proposals</p>
-</div>
+        <div>
+          <h2>{total}</h2>
+          <p>Total Proposals</p>
+        </div>
 
-<div>
-<h2>8</h2>
-<p>Pending Review</p>
-</div>
+        <div>
+          <h2>{pending}</h2>
+          <p>Pending Review</p>
+        </div>
 
-<div>
-<h2>12</h2>
-<p>Approved</p>
-</div>
+        <div>
+          <h2>{approved}</h2>
+          <p>Approved</p>
+        </div>
 
-<div>
-<h2>5</h2>
-<p>Rejected</p>
-</div>
+        <div>
+          <h2>{rejected}</h2>
+          <p>Rejected</p>
+        </div>
 
+      </div>
 
-</div>
+      <h2>All Proposals</h2>
 
+      {loading && <p>Loading proposals...</p>}
+      {error && <p style={{ color: "red" }}>Error: {error}</p>}
 
-<h2>Pending Proposals</h2>
+      {!loading && !error && (
+        <table>
 
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Policy</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
 
-<table>
+          <tbody>
+            {proposals.map((p) => (
+              <tr key={p.id}>
+                <td>{p.full_name}</td>
+                <td>{p.insurance_type}</td>
+                <td>{p.status}</td>
+                <td>
+                  <button onClick={() => navigate("/proposal/" + p.id)}>
+                    View
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
 
-<thead>
+        </table>
+      )}
 
-<tr>
-<th>Client</th>
-<th>Policy</th>
-<th>Status</th>
-<th>Action</th>
-</tr>
+    </div>
 
-</thead>
-
-
-<tbody>
-
-{
-proposals.map((p)=>(
-
-<tr key={p.id}>
-
-<td>{p.name}</td>
-
-<td>{p.policy}</td>
-
-<td>{p.status}</td>
-
-<td>
-
-<button
-onClick={()=>navigate("/proposal/"+p.id)}
->
-View
-</button>
-
-</td>
-
-</tr>
-
-
-))
-}
-
-
-</tbody>
-
-</table>
-
-
-</div>
-
-
-)
+  )
 
 }
 
-
-export default UnderwriterDashboard;
+export default UnderwriterDashboard;    
