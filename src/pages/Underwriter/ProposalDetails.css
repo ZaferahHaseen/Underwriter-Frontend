@@ -1,46 +1,136 @@
-.proposal-container{
-
-padding:30px;
-background:#f5f7fb;
-min-height:100vh;
-
+.proposal-container {
+  padding: 30px;
+  background: #f5f7fb;
+  min-height: 100vh;
 }
 
-
-.proposal-card{
-
-background:white;
-padding:30px;
-border-radius:12px;
-width:70%;
-box-shadow:0 4px 10px #ddd;
-
+.proposal-card {
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  width: 70%;
+  box-shadow: 0 4px 10px #ddd;
 }
 
-
-.proposal-card h2{
-
-margin-top:25px;
-color:#2563eb;
-
+/* ---- Section blocks: clear separation ---- */
+.section {
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #eef0f5;
+}
+.section:last-of-type {
+  border-bottom: none;
 }
 
-
-.proposal-card p{
-
-font-size:16px;
-
+.section h2 {
+  margin: 0 0 14px 0;
+  color: #2563eb;
+  font-size: 19px;
+}
+.section h3 {
+  margin: 0 0 10px 0;
+  color: #1f2937;
+  font-size: 16px;
 }
 
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.section-header h2 { margin: 0; }
 
-.proposal-card button{
+/* ---- Label-value aligned grid ---- */
+.info-grid {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  row-gap: 10px;
+  column-gap: 12px;
+}
+.info-grid .label {
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 600;
+}
+.info-grid .value {
+  color: #111827;
+  font-size: 15px;
+  font-weight: 500;
+}
 
-margin-top:25px;
-background:#2563eb;
-color:white;
-padding:12px 25px;
-border:none;
-border-radius:8px;
-cursor:pointer;
+.summary-text {
+  margin-top: 14px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #374151;
+  background: #f9fafb;
+  padding: 12px 14px;
+  border-radius: 8px;
+}
 
+/* ---- Risk level badge ---- */
+.risk-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  white-space: nowrap;
+}
+.risk-low { background: #16a34a; }
+.risk-moderate { background: #d97706; }
+.risk-high { background: #dc2626; }
+
+/* ---- Factor lists ---- */
+.factor-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.factor-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 15px;
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+.factor-item.risk {
+  background: #fef2f2;
+  color: #7f1d1d;
+}
+.factor-item.positive {
+  background: #f0fdf4;
+  color: #14532d;
+}
+.factor-icon {
+  flex-shrink: 0;
+}
+
+/* ---- Buttons ---- */
+.decision-buttons {
+  display: flex;
+  gap: 14px;
+  margin-top: 10px;
+}
+.approve-btn, .reject-btn, .back-btn {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+}
+.approve-btn { background: #16a34a; }
+.reject-btn { background: #dc2626; }
+.back-btn { background: #2563eb; margin-top: 20px; }
+
+.final-decision {
+  font-size: 16px;
+  margin-top: 10px;
 }
