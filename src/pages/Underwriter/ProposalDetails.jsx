@@ -3,6 +3,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import "./ProposalDetails.css";
 import { getProposal, decideProposal } from "../../api/underwritingApi";
 
+function getRiskLevel(score) {
+  if (score >= 60) return "High";
+  if (score >= 35) return "Moderate";
+  return "Low";
+}
+
 function ProposalDetails(){
 
   const { id } = useParams();
@@ -36,6 +42,8 @@ function ProposalDetails(){
   if (error) return <div className="proposal-container"><p style={{ color: "red" }}>Error: {error}</p></div>;
   if (!proposal) return null;
 
+  const riskLevel = getRiskLevel(proposal.risk_score);
+
   return(
 
     <div className="proposal-container">
@@ -44,43 +52,84 @@ function ProposalDetails(){
 
       <div className="proposal-card">
 
-        <h2>Client Information</h2>
+        {/* ---- Client Information ---- */}
+        <section className="section">
+          <h2>Client Information</h2>
+          <div className="info-grid">
+            <span className="label">Name</span>
+            <span className="value">{proposal.full_name}</span>
 
-        <p><b>Name:</b> {proposal.full_name}</p>
-        <p><b>Policy Type:</b> {proposal.insurance_type}</p>
-        <p><b>Submitted:</b> {proposal.created_at}</p>
-        <p><b>Status:</b> {proposal.status}</p>
+            <span className="label">Policy Type</span>
+            <span className="value">{proposal.insurance_type}</span>
 
-        <h2>AI Risk Analysis</h2>
+            <span className="label">Submitted</span>
+            <span className="value">{proposal.created_at}</span>
 
-        <p><b>Confidence:</b> {proposal.confidence}%</p>
-        <p><b>Risk Score:</b> {proposal.risk_score}</p>
-        <p>{proposal.reasoning_summary}</p>
+            <span className="label">Status</span>
+            <span className="value">{proposal.status}</span>
+          </div>
+        </section>
 
-        <h3>Risk Factors</h3>
-        <ul>
-          {proposal.risk_factors.map((f, i) => <li key={i}>{f.detail}</li>)}
-        </ul>
+        {/* ---- AI Risk Analysis ---- */}
+        <section className="section">
+          <div className="section-header">
+            <h2>AI Risk Analysis</h2>
+            <span className={`risk-badge risk-${riskLevel.toLowerCase()}`}>
+              {riskLevel} Risk
+            </span>
+          </div>
 
-        <h3>Positive Factors</h3>
-        <ul>
-          {proposal.positive_factors.map((f, i) => <li key={i}>{f.detail}</li>)}
-        </ul>
+          <div className="info-grid">
+            <span className="label">Risk Score</span>
+            <span className="value">{(proposal.risk_score / 10).toFixed(1)}/10</span>
+          </div>
 
+          <p className="summary-text">{proposal.reasoning_summary}</p>
+        </section>
+
+        {/* ---- Risk Factors ---- */}
+        <section className="section">
+          <h3>Risk Factors</h3>
+          <ul className="factor-list">
+            {proposal.risk_factors.map((f, i) => (
+              <li key={i} className="factor-item risk">
+                <span className="factor-icon"></span>
+                <span>{f.detail}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* ---- Positive Factors ---- */}
+      {riskLevel !== "High" && (
+        <section className="section">
+          <h3>Positive Factors</h3>
+          <ul className="factor-list">
+            {proposal.positive_factors.map((f, i) => (
+              <li key={i} className="factor-item positive">
+                <span className="factor-icon"></span>
+                <span>{f.detail}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+        {/* ---- Decision ---- */}
         {proposal.status === "PENDING" ? (
           <div className="decision-buttons">
-            <button disabled={acting} onClick={() => handleDecision("APPROVED")}>
+            <button className="approve-btn" disabled={acting} onClick={() => handleDecision("APPROVED")}>
               Approve
             </button>
-            <button disabled={acting} onClick={() => handleDecision("REJECTED")}>
+            <button className="reject-btn" disabled={acting} onClick={() => handleDecision("REJECTED")}>
               Reject
             </button>
           </div>
         ) : (
-          <p><b>Final Decision:</b> {proposal.status}</p>
+          <p className="final-decision"><b>Final Decision:</b> {proposal.status}</p>
         )}
 
-        <button onClick={() => navigate("/underwriter/dashboard")}>
+        <button className="back-btn" onClick={() => navigate("/underwriter/dashboard")}>
           Back to Dashboard
         </button>
 
