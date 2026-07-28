@@ -245,3 +245,54 @@ input[readonly] {
     font-size: 21px;
   }
 }
+/* ---------- Document Upload ---------- */
+
+.doc-upload-box {
+  background: var(--mist);
+  border: 1px dashed var(--ink-soft);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+}
+
+.doc-upload-hint {
+  color: var(--ink-soft);
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.doc-upload-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.doc-upload-controls button {
+  background: var(--ink);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.doc-upload-controls button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.doc-result-box {
+  margin-top: 16px;
+  background: white;
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+.check-pass {
+  color: #1a7f37;
+}
+
+.check-fail {
+  color: #b91c1c;
+}
