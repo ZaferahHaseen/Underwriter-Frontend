@@ -1,415 +1,228 @@
-/* ===========================
-   AI UNDERWRITER RISK ANALYSIS
-=========================== */
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
+.risk-page {
+  min-height: 100vh;
+  background: var(--mist);
+  padding: 36px 24px 60px;
 }
 
-.risk-page{
-    min-height:100vh;
-    background:#f4f7fc;
-    padding:40px 20px;
+.risk-page-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  max-width: 1000px;
+  margin: 0 auto 28px;
 }
 
-/* ===========================
-   PAGE TITLE
-=========================== */
-
-.page-title{
-    text-align:center;
-    color:#1e3a8a;
-    font-size:34px;
-    margin-bottom:30px;
-    font-weight:bold;
+.page-title {
+  font-size: 24px;
+  text-align: left;
+  margin: 0;
 }
 
-/* ===========================
-   FORM CARD
-=========================== */
-
-.risk-form{
-
-    max-width:1000px;
-    margin:auto;
-
-    background:white;
-
-    padding:35px;
-
-    border-radius:15px;
-
-    box-shadow:0 8px 20px rgba(0,0,0,.1);
-
+.page-subhead {
+  color: var(--slate);
+  font-size: 14px;
+  margin-top: 4px;
 }
 
-/* ===========================
-   GRID
-=========================== */
+/* ---------- Form card ---------- */
 
-.form-grid{
-
-    display:grid;
-
-    grid-template-columns:repeat(2,1fr);
-
-    gap:20px;
-
+.risk-form {
+  max-width: 1000px;
+  margin: auto;
+  background: var(--paper);
+  padding: 32px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
 }
 
-/* ===========================
-   INPUTS
-=========================== */
-
-.form-group{
-
-    display:flex;
-
-    flex-direction:column;
-
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
 }
 
-.form-group label{
-
-    margin-bottom:8px;
-
-    font-weight:600;
-
-    color:#374151;
-
-    font-size:15px;
-
+.form-group {
+  display: flex;
+  flex-direction: column;
 }
 
-.form-group input{
-
-    padding:12px;
-
-    border:1px solid #d1d5db;
-
-    border-radius:8px;
-
-    font-size:15px;
-
-    transition:.3s;
-
+.form-group label {
+  margin-bottom: 7px;
+  font-weight: 600;
+  color: var(--slate);
+  font-size: 13px;
 }
 
-.form-group input:focus{
-
-    outline:none;
-
-    border-color:#2563eb;
-
-    box-shadow:0 0 8px rgba(37,99,235,.3);
-
+.form-group input {
+  padding: 11px 13px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: var(--font-mono);
+  transition: border-color 0.15s ease;
 }
 
-/* ===========================
-   BUTTON
-=========================== */
-
-.analyze-btn{
-
-    width:100%;
-
-    margin-top:30px;
-
-    background:#2563eb;
-
-    color:white;
-
-    border:none;
-
-    padding:15px;
-
-    font-size:17px;
-
-    border-radius:10px;
-
-    cursor:pointer;
-
-    transition:.3s;
-
+.form-group input:focus {
+  outline: none;
+  border-color: var(--signal);
 }
 
-.analyze-btn:hover{
-
-    background:#1d4ed8;
-
+.analyze-btn {
+  width: 100%;
+  margin-top: 26px;
+  background: var(--signal);
+  color: white;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s ease;
 }
 
-.analyze-btn:disabled{
-
-    background:#94a3b8;
-
-    cursor:not-allowed;
-
+.analyze-btn:hover {
+  background: var(--signal-dark);
 }
 
-/* ===========================
-   ERROR
-=========================== */
-
-.error-box{
-
-    max-width:1000px;
-
-    margin:20px auto;
-
-    background:#fee2e2;
-
-    color:#b91c1c;
-
-    padding:15px;
-
-    border-left:5px solid red;
-
-    border-radius:10px;
-
-    font-weight:600;
-
+.analyze-btn:disabled {
+  background: var(--slate-light);
+  cursor: not-allowed;
 }
 
-/* ===========================
-   RESULT CARD
-=========================== */
+/* ---------- Error ---------- */
 
-.result-card{
-
-    max-width:1000px;
-
-    margin:35px auto;
-
-    background:white;
-
-    border-radius:15px;
-
-    padding:35px;
-
-    box-shadow:0 8px 20px rgba(0,0,0,.1);
-
+.error-box {
+  max-width: 1000px;
+  margin: 20px auto;
+  background: var(--risk-high-tint);
+  color: #7a2323;
+  padding: 15px 18px;
+  border-left: 4px solid var(--risk-high);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 14px;
 }
 
-/* ===========================
-   RESULT TITLE
-=========================== */
+/* ---------- Result card ---------- */
 
-.result-title{
-
-    text-align:center;
-
-    color:#2563eb;
-
-    margin-bottom:30px;
-
-    font-size:30px;
-
+.result-card {
+  max-width: 1000px;
+  margin: 32px auto 0;
+  background: var(--paper);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  padding: 32px;
+  box-shadow: var(--shadow-sm);
 }
 
-/* ===========================
-   SCORE SECTION
-=========================== */
-
-.score-section{
-
-    display:flex;
-
-    justify-content:center;
-
-    gap:25px;
-
-    margin-bottom:30px;
-
-    flex-wrap:wrap;
-
+.result-title {
+  text-align: center;
+  color: var(--ink);
+  margin-bottom: 24px;
+  font-size: 22px;
 }
 
-.score-box{
-
-    width:220px;
-
-    background:#eef4ff;
-
-    border-radius:12px;
-
-    padding:25px;
-
-    text-align:center;
-
-    transition:.3s;
-
+.score-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
 }
 
-.score-box:hover{
-
-    transform:translateY(-5px);
-
+.confidence-box {
+  text-align: center;
 }
 
-.score-box h4{
-
-    color:#374151;
-
-    margin-bottom:15px;
-
+.confidence-box h4 {
+  color: var(--slate);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 10px;
 }
 
-.score-box p{
-
-    color:#2563eb;
-
-    font-size:32px;
-
-    font-weight:bold;
-
+.confidence-box p {
+  color: var(--signal);
+  font-size: 30px;
+  font-weight: 600;
 }
 
-/* ===========================
-   SUMMARY
-=========================== */
-
-.summary-box{
-
-    background:#f9fafb;
-
-    border-left:5px solid #2563eb;
-
-    padding:20px;
-
-    border-radius:10px;
-
-    margin-bottom:30px;
-
+.summary-box {
+  background: var(--mist);
+  border-left: 4px solid var(--signal);
+  padding: 18px 20px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 28px;
 }
 
-.summary-box h3{
-
-    color:#1e3a8a;
-
-    margin-bottom:10px;
-
+.summary-box h3 {
+  font-size: 15px;
+  margin-bottom: 8px;
 }
 
-.summary-box p{
-
-    color:#374151;
-
-    line-height:1.6;
-
+.summary-box p {
+  color: var(--slate);
+  line-height: 1.6;
+  font-size: 14px;
 }
 
-/* ===========================
-   RISK & POSITIVE FACTORS
-=========================== */
+/* ---------- Factor lists ---------- */
 
-.list-section{
-
-    display:grid;
-
-    grid-template-columns:1fr 1fr;
-
-    gap:30px;
-
+.list-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
 }
 
-.list-box{
-
-    background:#f8fafc;
-
-    padding:20px;
-
-    border-radius:12px;
-
+.list-box {
+  background: var(--mist);
+  padding: 18px;
+  border-radius: var(--radius-md);
 }
 
-.list-box h3{
-
-    color:#1e3a8a;
-
-    margin-bottom:15px;
-
+.list-box h3 {
+  font-size: 14px;
+  margin-bottom: 12px;
 }
 
-.list-box ul{
-
-    list-style:none;
-
+.list-box ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.list-box li{
-
-    background:white;
-
-    margin-bottom:12px;
-
-    padding:12px;
-
-    border-radius:8px;
-
-    border-left:5px solid #2563eb;
-
-    transition:.3s;
-
+.list-box li {
+  background: var(--paper);
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  border-left: 4px solid var(--signal);
 }
 
-.list-box li:hover{
-
-    transform:translateX(5px);
-
+.risk-item {
+  border-left-color: var(--risk-high) !important;
 }
 
-/* ===========================
-   RESPONSIVE
-=========================== */
-
-@media(max-width:900px){
-
-.form-grid{
-
-grid-template-columns:1fr;
-
+.positive-item {
+  border-left-color: var(--risk-low) !important;
 }
 
-.list-section{
+/* ---------- Responsive ---------- */
 
-grid-template-columns:1fr;
-
-}
-
-.score-section{
-
-flex-direction:column;
-
-align-items:center;
-
-}
-
-.score-box{
-
-width:100%;
-
-}
-
-.result-card{
-
-padding:20px;
-
-}
-
-.risk-form{
-
-padding:20px;
-
-}
-
-.page-title{
-
-font-size:28px;
-
-}
-
+@media (max-width: 900px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .list-section {
+    grid-template-columns: 1fr;
+  }
+  .risk-form,
+  .result-card {
+    padding: 20px;
+  }
+  .page-title {
+    font-size: 20px;
+  }
 }

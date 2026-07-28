@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaCheckCircle } from "react-icons/fa";
 
 import "./ClientDashboard.css";
 import { submitProposal } from "../../api/underwritingApi";
+import BackButton from "../../components/BackButton";
 
 function ClientDashboard() {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     insuranceType: "",
     fullName: "",
@@ -78,38 +77,18 @@ function ClientDashboard() {
 
   return (
     <div className="client-page">
-      {/* <div className="welcome-card">
-        <h1>Insurance Proposal Form</h1>
-        <p>Fill in your insurance proposal details.</p>
-      </div> */}
-
       <div className="welcome-card">
-
         <div className="header-row">
-
-          <button
-            className="header-back-btn"
-            onClick={() => navigate("/")}
-          >
-            <FaArrowLeft />
-          </button>
-
+          <BackButton to="/" />
           <div className="header-text">
             <h1>Insurance Proposal Form</h1>
             <p>Fill in your insurance proposal details.</p>
           </div>
-
         </div>
-
       </div>
-      
-
 
       <div className="proposal-card">
-
-          <h2 className="proposal-title">
-              Client Insurance Proposal
-          </h2>
+        <h2 className="proposal-title">Client Insurance Proposal</h2>
 
         <form onSubmit={handleSubmit}>
           <div className="form-grid">
@@ -173,7 +152,7 @@ function ClientDashboard() {
             </div>
           </div>
 
-          <div className="form-group">
+          <div className="form-group standalone">
             <label>Alcohol Consumption</label>
             <select name="alcohol" value={formData.alcohol} onChange={handleChange}>
               <option value="0">None</option>
@@ -210,7 +189,7 @@ function ClientDashboard() {
             </div>
           </div>
 
-          <div className="form-group">
+          <div className="form-group standalone">
             <label>Occupation</label>
             <select name="occupation" value={formData.occupation} onChange={handleChange}>
               <option value="0">Office Job</option>
@@ -238,10 +217,8 @@ function ClientDashboard() {
             </div>
           </div>
 
-       
-
           <button className="submit-btn" type="submit" disabled={loading}>
-            {loading ? "Submitting..." : "Submit Proposal for AI Underwriting"}
+            {loading ? "Submitting…" : "Submit Proposal for AI Underwriting"}
           </button>
         </form>
 
@@ -253,6 +230,7 @@ function ClientDashboard() {
 
         {submitted && (
           <div className="result-box success-box">
+            <FaCheckCircle className="success-icon" />
             <h2>Proposal Submitted Successfully!</h2>
             <p><b>Reference ID:</b> #{submitted.id}</p>
             <p><b>Status:</b> {submitted.status}</p>

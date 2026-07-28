@@ -1,0 +1,52 @@
+.risk-gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.risk-gauge-readout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: -8px;
+  gap: 2px;
+}
+
+.risk-gauge-score {
+  font-size: 34px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.risk-gauge-level {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-top: 4px;
+}
+
+.risk-level-low {
+  color: var(--risk-low);
+  background: var(--risk-low-tint);
+}
+
+.risk-level-moderate {
+  color: var(--risk-mod);
+  background: var(--risk-mod-tint);
+}
+
+.risk-level-high {
+  color: var(--risk-high);
+  background: var(--risk-high-tint);
+}
+
+.risk-gauge-label {
+  font-size: 12px;
+  color: var(--slate-light);
+  margin-top: 2px;
+}

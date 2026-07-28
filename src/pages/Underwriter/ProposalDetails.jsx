@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { FaCheck, FaTimes } from "react-icons/fa";
 import "./ProposalDetails.css";
 import { getProposal, decideProposal } from "../../api/underwritingApi";
 import RiskChart from "./RiskChart";
+import BackButton from "../../components/BackButton";
+import RiskGauge from "../../components/RiskGauge";
+import StatusStamp from "../../components/StatusStamp";
 
 function getRiskLevel(score) {
   if (score >= 60) return "High";
@@ -10,8 +14,7 @@ function getRiskLevel(score) {
   return "Low";
 }
 
-function ProposalDetails(){
-
+function ProposalDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -40,23 +43,40 @@ function ProposalDetails(){
     }
   };
 
-  if (loading) return <div className="proposal-container"><p>Loading...</p></div>;
-  if (error) return <div className="proposal-container"><p style={{ color: "red" }}>Error: {error}</p></div>;
+  if (loading)
+    return (
+      <div className="proposal-container">
+        <BackButton to="/underwriter/dashboard" />
+        <p className="state-text">Loading proposal…</p>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="proposal-container">
+        <BackButton to="/underwriter/dashboard" />
+        <p className="state-text error-text">Error: {error}</p>
+      </div>
+    );
+
   if (!proposal) return null;
 
   const riskLevel = getRiskLevel(proposal.risk_score);
 
-  return(
-
+  return (
     <div className="proposal-container">
-
-      <h1>Proposal Details</h1>
+      <div className="proposal-topbar">
+        <BackButton to="/underwriter/dashboard" />
+        <h1>Proposal Details</h1>
+      </div>
 
       <div className="proposal-card">
-
         {/* ---- Client Information ---- */}
         <section className="section">
-          <h2>Client Information</h2>
+          <div className="section-header">
+            <h2>Client Information</h2>
+            <StatusStamp status={proposal.status} />
+          </div>
           <div className="info-grid">
             <span className="label">Name</span>
             <span className="value">{proposal.full_name}</span>
@@ -65,10 +85,10 @@ function ProposalDetails(){
             <span className="value">{proposal.insurance_type}</span>
 
             <span className="label">Submitted</span>
-            <span className="value">{proposal.created_at}</span>
+            <span className="value mono">{proposal.created_at}</span>
 
-            <span className="label">Status</span>
-            <span className="value">{proposal.status}</span>
+            <span className="label">Reference ID</span>
+            <span className="value mono">#{proposal.id}</span>
           </div>
         </section>
 
@@ -76,20 +96,15 @@ function ProposalDetails(){
         <section className="section">
           <div className="section-header">
             <h2>AI Risk Analysis</h2>
-            <span className={`risk-badge risk-${riskLevel.toLowerCase()}`}>
-              {riskLevel} Risk
-            </span>
           </div>
 
-          <div className="info-grid">
-            <span className="label">Risk Score</span>
-            <span className="value">{(proposal.risk_score / 10).toFixed(1)}/10</span>
+          <div className="gauge-row">
+            <RiskGauge score={proposal.risk_score} label="Overall Risk Score" size={220} />
+            <p className="summary-text">{proposal.reasoning_summary}</p>
           </div>
-
-          <p className="summary-text">{proposal.reasoning_summary}</p>
 
           <button className="graph-toggle-btn" onClick={() => setShowChart((s) => !s)}>
-            {showChart ? "Hide Graph" : "View Graph"}
+            {showChart ? "Hide Factor Breakdown" : "View Factor Breakdown"}
           </button>
 
           {showChart && (
@@ -106,7 +121,7 @@ function ProposalDetails(){
           <ul className="factor-list">
             {proposal.risk_factors.map((f, i) => (
               <li key={i} className="factor-item risk">
-                <span className="factor-icon"></span>
+                <span className="factor-icon" />
                 <span>{f.detail}</span>
               </li>
             ))}
@@ -120,7 +135,7 @@ function ProposalDetails(){
             <ul className="factor-list">
               {proposal.positive_factors.map((f, i) => (
                 <li key={i} className="factor-item positive">
-                  <span className="factor-icon"></span>
+                  <span className="factor-icon" />
                   <span>{f.detail}</span>
                 </li>
               ))}
@@ -132,26 +147,20 @@ function ProposalDetails(){
         {proposal.status === "PENDING" ? (
           <div className="decision-buttons">
             <button className="approve-btn" disabled={acting} onClick={() => handleDecision("APPROVED")}>
-              Approve
+              <FaCheck /> Approve
             </button>
             <button className="reject-btn" disabled={acting} onClick={() => handleDecision("REJECTED")}>
-              Reject
+              <FaTimes /> Reject
             </button>
           </div>
         ) : (
-          <p className="final-decision"><b>Final Decision:</b> {proposal.status}</p>
+          <p className="final-decision">
+            <b>Final Decision:</b> {proposal.status}
+          </p>
         )}
-
-        <button className="back-btn" onClick={() => navigate("/underwriter/dashboard")}>
-          Back to Dashboard
-        </button>
-
       </div>
-
     </div>
-
-  )
-
+  );
 }
 
 export default ProposalDetails;

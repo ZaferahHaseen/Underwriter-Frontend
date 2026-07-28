@@ -1,175 +1,225 @@
 .proposal-container {
-  padding: 30px;
-  background: #f5f7fb;
   min-height: 100vh;
+  background: var(--mist);
+  padding: 36px 48px 60px;
+}
+
+.proposal-topbar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.proposal-topbar h1 {
+  font-size: 24px;
 }
 
 .proposal-card {
-  background: white;
-  padding: 32px;
-  border-radius: 12px;
-  width: 70%;
-  box-shadow: 0 4px 10px #ddd;
+  max-width: 860px;
+  margin: 0 auto;
+  background: var(--paper);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
 }
 
-/* ---- Section blocks: clear separation ---- */
 .section {
-  margin-bottom: 28px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid #eef0f5;
+  padding: 28px 36px;
+  border-bottom: 1px solid var(--line);
 }
+
 .section:last-of-type {
   border-bottom: none;
 }
 
 .section h2 {
-  margin: 0 0 14px 0;
-  color: #2563eb;
-  font-size: 19px;
+  font-size: 17px;
 }
+
 .section h3 {
-  margin: 0 0 10px 0;
-  color: #1f2937;
-  font-size: 16px;
+  font-size: 15px;
+  margin-bottom: 14px;
 }
 
 .section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 18px;
 }
-.section-header h2 { margin: 0; }
 
-/* ---- Label-value aligned grid ---- */
 .info-grid {
   display: grid;
   grid-template-columns: 160px 1fr;
-  row-gap: 10px;
-  column-gap: 12px;
+  row-gap: 12px;
 }
+
 .info-grid .label {
-  color: #6b7280;
-  font-size: 14px;
-  font-weight: 600;
+  color: var(--slate);
+  font-size: 13px;
 }
+
 .info-grid .value {
-  color: #111827;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
 }
 
-.summary-text {
-  margin-top: 14px;
-  font-size: 15px;
-  line-height: 1.5;
-  color: #374151;
-  background: #f9fafb;
-  padding: 12px 14px;
-  border-radius: 8px;
+/* ---- Gauge + summary ---- */
+
+.gauge-row {
+  display: flex;
+  align-items: center;
+  gap: 32px;
 }
 
-/* ---- Risk level badge ---- */
-.risk-badge {
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 700;
-  color: white;
-  white-space: nowrap;
+.summary-text {
+  flex: 1;
+  color: var(--slate);
+  font-size: 14px;
+  line-height: 1.65;
+  background: var(--mist);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
 }
-.risk-low { background: #16a34a; }
-.risk-moderate { background: #d97706; }
-.risk-high { background: #dc2626; }
+
+.graph-toggle-btn {
+  margin-top: 20px;
+  background: var(--signal-tint);
+  color: var(--signal-dark);
+  padding: 9px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.15s ease;
+}
+
+.graph-toggle-btn:hover {
+  background: #dde7fd;
+}
+
+.risk-chart-wrap {
+  margin-top: 20px;
+}
 
 /* ---- Factor lists ---- */
+
 .factor-list {
   list-style: none;
-  padding: 0;
-  margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
+
 .factor-item {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  font-size: 15px;
-  padding: 10px 12px;
-  border-radius: 8px;
+  font-size: 14px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
 }
-.factor-item.risk {
-  background: #fef2f2;
-  color: #7f1d1d;
-}
-.factor-item.positive {
-  background: #f0fdf4;
-  color: #14532d;
-}
+
 .factor-icon {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 6px;
   flex-shrink: 0;
 }
 
-/* ---- Buttons ---- */
+.factor-item.risk {
+  background: var(--risk-high-tint);
+  color: #7a2323;
+}
+
+.factor-item.risk .factor-icon {
+  background: var(--risk-high);
+}
+
+.factor-item.positive {
+  background: var(--risk-low-tint);
+  color: #14532d;
+}
+
+.factor-item.positive .factor-icon {
+  background: var(--risk-low);
+}
+
+/* ---- Decision ---- */
+
 .decision-buttons {
   display: flex;
   gap: 14px;
-  margin-top: 10px;
-}
-.approve-btn, .reject-btn, .back-btn {
-  padding: 12px 25px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: 600;
-  color: white;
-}
-.approve-btn { background: #16a34a; }
-.reject-btn { background: #dc2626; }
-.back-btn { background: #2563eb; margin-top: 20px; }
-
-.final-decision {
-  font-size: 16px;
-  margin-top: 10px;
-}
-/* ---- Graph toggle + chart ---- */
-.graph-toggle-btn {
-  margin-top: 14px;
-  padding: 8px 16px;
-  background: #eef2ff;
-  color: #2563eb;
-  border: 1px solid #c7d2fe;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.graph-toggle-btn:hover {
-  background: #e0e7ff;
 }
 
-.risk-chart-wrap {
-  margin-top: 18px;
-  padding: 16px;
-  background: #fafafa;
-  border-radius: 8px;
-}
-
-.chart-legend {
-  margin-top: 8px;
-  font-size: 13px;
-  color: #4b5563;
+.approve-btn,
+.reject-btn {
+  flex: 1;
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  transition: opacity 0.15s ease, transform 0.1s ease;
 }
-.legend-dot {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-right: 6px;
+
+.approve-btn {
+  background: var(--risk-low);
+  color: white;
 }
-.risk-dot { background: #dc2626; }
-.positive-dot { background: #16a34a; }
+
+.reject-btn {
+  background: var(--risk-high);
+  color: white;
+}
+
+.approve-btn:hover,
+.reject-btn:hover {
+  opacity: 0.9;
+}
+
+.approve-btn:active,
+.reject-btn:active {
+  transform: scale(0.98);
+}
+
+.approve-btn:disabled,
+.reject-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.final-decision {
+  font-size: 14px;
+  color: var(--slate);
+}
+
+.state-text {
+  margin-top: 24px;
+  color: var(--slate);
+}
+
+.error-text {
+  color: var(--risk-high);
+}
+
+@media (max-width: 720px) {
+  .proposal-container {
+    padding: 24px;
+  }
+  .section {
+    padding: 22px;
+  }
+  .gauge-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .info-grid {
+    grid-template-columns: 130px 1fr;
+  }
+}

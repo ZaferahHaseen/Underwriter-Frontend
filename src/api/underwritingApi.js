@@ -1,4 +1,7 @@
-const API_BASE = "http://192.168.1.44:8000"; //http://192.168.1.44:8000
+// Reads from .env / .env.local (VITE_API_BASE=http://your-ip:8000).
+// Falls back to the previous hardcoded LAN IP so nothing breaks if no .env is set yet.
+const API_BASE =
+  import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000";
 
 export async function getUnderwritingDecision(applicant) {
   const res = await fetch(`${API_BASE}/api/v1/underwrite`, {
