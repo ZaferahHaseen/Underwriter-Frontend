@@ -223,3 +223,6 @@
     grid-template-columns: 130px 1fr;
   }
 }
+.doc-view-link { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 12px; color: #1e3a5f; font-weight: 600; text-decoration: none; }
+.check-pass { color: #1a7f37; }
+.check-fail { color: #c0392b; }

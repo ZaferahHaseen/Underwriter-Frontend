@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { FaCheck, FaTimes } from "react-icons/fa";
+import { FaCheck, FaTimes, FaFileAlt } from "react-icons/fa";
 import "./ProposalDetails.css";
-import { getProposal, decideProposal } from "../../api/underwritingApi";
+import { getProposal, decideProposal, getProposalDocumentUrl } from "../../api/underwritingApi";
 import RiskChart from "./RiskChart";
 import BackButton from "../../components/BackButton";
 import RiskGauge from "../../components/RiskGauge";
@@ -62,6 +62,9 @@ function ProposalDetails() {
   if (!proposal) return null;
 
   const riskLevel = getRiskLevel(proposal.risk_score);
+  const hasDoc = !!proposal.document_filename;
+  const fields = proposal.extracted_fields || {};
+  const checks = proposal.validation_results || [];
 
   return (
     <div className="proposal-container">
@@ -80,16 +83,56 @@ function ProposalDetails() {
           <div className="info-grid">
             <span className="label">Name</span>
             <span className="value">{proposal.full_name}</span>
-
             <span className="label">Policy Type</span>
             <span className="value">{proposal.insurance_type}</span>
-
             <span className="label">Submitted</span>
             <span className="value mono">{proposal.created_at}</span>
-
             <span className="label">Reference ID</span>
             <span className="value mono">#{proposal.id}</span>
           </div>
+        </section>
+
+        {/* ---- Document Verification (underwriter only) ---- */}
+        <section className="section">
+          <div className="section-header">
+            <h2>Document Verification</h2>
+          </div>
+
+          {!hasDoc && <p>No document attached.</p>}
+
+          {hasDoc && (
+            <>
+              <a
+                className="doc-view-link"
+                href={getProposalDocumentUrl(proposal.id)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaFileAlt /> View attached document ({proposal.document_filename})
+              </a>
+
+              <h4>Extracted Details</h4>
+              <ul>
+                <li><b>Document Type:</b> {fields.document_type || "Unknown"}</li>
+                <li><b>Name:</b> {fields.name || "—"}</li>
+                <li><b>DOB:</b> {fields.dob || "—"}</li>
+                <li><b>ID Number:</b> {fields.id_number || "—"}</li>
+                <li><b>Expiry:</b> {fields.expiry_date || "—"}</li>
+              </ul>
+
+              <h4>Validation vs Form</h4>
+              {checks.length === 0 && (
+                <p>No checks run (name/age not comparable — check document quality).</p>
+              )}
+              <ul>
+                {checks.map((v, i) => (
+                  <li key={i} className={v.valid ? "check-pass" : "check-fail"}>
+                    {v.field}: {v.valid ? "✓ Match" : `✗ Mismatch — ${v.reason}`}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </section>
 
         {/* ---- AI Risk Analysis ---- */}
@@ -97,16 +140,13 @@ function ProposalDetails() {
           <div className="section-header">
             <h2>AI Risk Analysis</h2>
           </div>
-
           <div className="gauge-row">
             <RiskGauge score={proposal.risk_score} label="Overall Risk Score" size={220} />
             <p className="summary-text">{proposal.reasoning_summary}</p>
           </div>
-
           <button className="graph-toggle-btn" onClick={() => setShowChart((s) => !s)}>
             {showChart ? "Hide Factor Breakdown" : "View Factor Breakdown"}
           </button>
-
           {showChart && (
             <RiskChart
               riskFactors={proposal.risk_factors}
@@ -115,7 +155,6 @@ function ProposalDetails() {
           )}
         </section>
 
-        {/* ---- Risk Factors ---- */}
         <section className="section">
           <h3>Risk Factors</h3>
           <ul className="factor-list">
@@ -128,7 +167,6 @@ function ProposalDetails() {
           </ul>
         </section>
 
-        {/* ---- Positive Factors ---- */}
         {riskLevel !== "High" && (
           <section className="section">
             <h3>Positive Factors</h3>
@@ -143,7 +181,6 @@ function ProposalDetails() {
           </section>
         )}
 
-        {/* ---- Decision ---- */}
         {proposal.status === "PENDING" ? (
           <div className="decision-buttons">
             <button className="approve-btn" disabled={acting} onClick={() => handleDecision("APPROVED")}>

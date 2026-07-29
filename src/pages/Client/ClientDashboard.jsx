@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 
 import "./ClientDashboard.css";
-import { submitProposal, validateCertificate } from "../../api/underwritingApi";
+import { submitProposal } from "../../api/underwritingApi";
 import BackButton from "../../components/BackButton";
 
 function ClientDashboard() {
@@ -25,34 +25,13 @@ function ClientDashboard() {
     yearsWithInsurer: "",
   });
 
-  const [submitted, setSubmitted] = useState(null); // { id, status }
+  const [submitted, setSubmitted] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Document verification state
+  // document is just an attachment now - client never sees OCR/validation output
   const [docFile, setDocFile] = useState(null);
-  const [docCategory, setDocCategory] = useState("adult");
-  const [docResult, setDocResult] = useState(null);
-  const [docLoading, setDocLoading] = useState(false);
   const [docError, setDocError] = useState(null);
-
-  const handleDocUpload = async () => {
-    if (!docFile) {
-      setDocError("Choose a file first.");
-      return;
-    }
-    setDocError(null);
-    setDocResult(null);
-    setDocLoading(true);
-    try {
-      const result = await validateCertificate(docFile, docCategory);
-      setDocResult(result);
-    } catch (err) {
-      setDocError(err.message);
-    } finally {
-      setDocLoading(false);
-    }
-  };
 
   useEffect(() => {
     if (formData.height && formData.weight) {
@@ -69,7 +48,13 @@ function ClientDashboard() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    setDocError(null);
     setSubmitted(null);
+
+    if (!docFile) {
+      setDocError("Attach your ID / certificate before submitting.");
+      return;
+    }
 
     const payload = {
       full_name: formData.fullName,
@@ -91,8 +76,8 @@ function ClientDashboard() {
 
     try {
       setLoading(true);
-      const data = await submitProposal(payload);
-      setSubmitted(data); // { id, status: "PENDING" }
+      const data = await submitProposal(payload, docFile);
+      setSubmitted(data);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -116,49 +101,25 @@ function ClientDashboard() {
         <h2 className="proposal-title">Client Insurance Proposal</h2>
 
         <div className="doc-upload-box">
-          <h3>Step 1: Upload ID / Certificate for Verification</h3>
-          <p className="doc-upload-hint">Upload driving license, Aadhaar, or insurance certificate for automatic verification.</p>
+          <h3>Attach ID / Certificate</h3>
+          <p className="doc-upload-hint">
+            Attach driving license, Aadhaar, or insurance certificate. This is submitted
+            together with your form and reviewed by the underwriter.
+          </p>
 
           <div className="doc-upload-controls">
             <input
               type="file"
               accept="image/*,.pdf"
-              onChange={(e) => setDocFile(e.target.files[0])}
+              onChange={(e) => {
+                setDocFile(e.target.files[0]);
+                setDocError(null);
+              }}
             />
-            <select value={docCategory} onChange={(e) => setDocCategory(e.target.value)}>
-              <option value="adult">Adult (18-59)</option>
-              <option value="senior">Senior (60+)</option>
-              <option value="child">Child (0-17)</option>
-            </select>
-            <button type="button" onClick={handleDocUpload} disabled={docLoading}>
-              {docLoading ? "Verifying…" : "Verify Document"}
-            </button>
           </div>
 
+          {docFile && <p className="doc-attached-note">Attached: {docFile.name}</p>}
           {docError && <div className="result-box error-box"><p><b>Error:</b> {docError}</p></div>}
-
-          {docResult && (
-            <div className="doc-result-box">
-              <h4>Extracted Details</h4>
-              <ul>
-                <li><b>Document Type:</b> {docResult.extracted_fields.document_type || "Unknown"}</li>
-                <li><b>Name:</b> {docResult.extracted_fields.name || "—"}</li>
-                <li><b>DOB:</b> {docResult.extracted_fields.dob || "—"}</li>
-                <li><b>ID Number:</b> {docResult.extracted_fields.id_number || "—"}</li>
-                <li><b>Expiry:</b> {docResult.extracted_fields.expiry_date || "—"}</li>
-              </ul>
-
-              <h4>Validation Results</h4>
-              {docResult.validation_results.length === 0 && <p>No checks run (missing DOB/expiry in document).</p>}
-              <ul>
-                {docResult.validation_results.map((v, i) => (
-                  <li key={i} className={v.valid ? "check-pass" : "check-fail"}>
-                    {v.field}: {v.valid ? "✓ Passed" : `✗ Failed — ${v.reason}`}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
 
         <h2 className="section-title">Step 2: Fill Proposal Details</h2>
@@ -214,14 +175,8 @@ function ClientDashboard() {
           <div className="question-box">
             <h3>Do you smoke?</h3>
             <div className="radio-group">
-              <label>
-                <input type="radio" name="smoker" value="1" checked={formData.smoker === "1"} onChange={handleChange} />
-                Yes
-              </label>
-              <label>
-                <input type="radio" name="smoker" value="0" checked={formData.smoker === "0"} onChange={handleChange} />
-                No
-              </label>
+              <label><input type="radio" name="smoker" value="1" checked={formData.smoker === "1"} onChange={handleChange} /> Yes</label>
+              <label><input type="radio" name="smoker" value="0" checked={formData.smoker === "0"} onChange={handleChange} /> No</label>
             </div>
           </div>
 
@@ -237,28 +192,16 @@ function ClientDashboard() {
           <div className="question-box">
             <h3>Do you have any pre-existing disease?</h3>
             <div className="radio-group">
-              <label>
-                <input type="radio" name="preExistingDisease" value="1" checked={formData.preExistingDisease === "1"} onChange={handleChange} />
-                Yes
-              </label>
-              <label>
-                <input type="radio" name="preExistingDisease" value="0" checked={formData.preExistingDisease === "0"} onChange={handleChange} />
-                No
-              </label>
+              <label><input type="radio" name="preExistingDisease" value="1" checked={formData.preExistingDisease === "1"} onChange={handleChange} /> Yes</label>
+              <label><input type="radio" name="preExistingDisease" value="0" checked={formData.preExistingDisease === "0"} onChange={handleChange} /> No</label>
             </div>
           </div>
 
           <div className="question-box">
             <h3>Any family history of major illness?</h3>
             <div className="radio-group">
-              <label>
-                <input type="radio" name="familyHistory" value="1" checked={formData.familyHistory === "1"} onChange={handleChange} />
-                Yes
-              </label>
-              <label>
-                <input type="radio" name="familyHistory" value="0" checked={formData.familyHistory === "0"} onChange={handleChange} />
-                No
-              </label>
+              <label><input type="radio" name="familyHistory" value="1" checked={formData.familyHistory === "1"} onChange={handleChange} /> Yes</label>
+              <label><input type="radio" name="familyHistory" value="0" checked={formData.familyHistory === "0"} onChange={handleChange} /> No</label>
             </div>
           </div>
 
@@ -278,12 +221,10 @@ function ClientDashboard() {
               <label>Credit Score</label>
               <input type="number" name="creditScore" value={formData.creditScore} onChange={handleChange} placeholder="e.g. 750" />
             </div>
-
             <div className="form-group">
               <label>Previous Claims</label>
               <input type="number" name="previousClaims" value={formData.previousClaims} onChange={handleChange} placeholder="e.g. 1" />
             </div>
-
             <div className="form-group">
               <label>Years With Insurer</label>
               <input type="number" name="yearsWithInsurer" value={formData.yearsWithInsurer} onChange={handleChange} placeholder="e.g. 5" />
