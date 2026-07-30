@@ -1,0 +1,123 @@
+.dv-page {
+  padding: 36px 48px 60px;
+  background: var(--mist);
+  min-height: 100vh;
+}
+
+.dv-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 24px;
+  max-width: 700px;
+}
+
+.dv-header-text {
+  flex: 1;
+}
+
+.dv-header h1 {
+  font-size: 24px;
+}
+
+.dv-subhead {
+  color: var(--slate);
+  font-size: 14px;
+  margin-top: 2px;
+}
+
+.dv-panel {
+  max-width: 700px;
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  padding: 8px 24px;
+}
+
+.dv-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.dv-row:last-of-type {
+  border-bottom: none;
+}
+
+.dv-row-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.dv-file-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  background: var(--signal-tint);
+  color: var(--signal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.dv-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.dv-status-pending {
+  color: var(--gold);
+  background: var(--gold-tint);
+}
+
+.dv-status-verified {
+  color: var(--risk-low);
+  background: var(--risk-low-tint);
+}
+
+.dv-status-rejected {
+  color: var(--risk-high);
+  background: var(--risk-high-tint);
+}
+
+.dv-note {
+  margin: 18px 0;
+  font-size: 12.5px;
+  color: var(--slate);
+  background: var(--mist);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  line-height: 1.6;
+}
+
+.dv-note code {
+  font-family: var(--font-mono);
+  background: var(--line);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+@media (max-width: 600px) {
+  .dv-page {
+    padding: 24px;
+  }
+  .dv-panel {
+    padding: 4px 18px;
+  }
+}

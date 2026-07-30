@@ -164,3 +164,9 @@ function ProposalDetails() {
 }
 
 export default ProposalDetails;
+
+
+
+
+
+

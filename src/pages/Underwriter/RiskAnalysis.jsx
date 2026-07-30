@@ -1,8 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { getUnderwritingDecision } from "../../api/underwritingApi";
+import { getDummyProposal } from "../../api/dummyProposals";
 import "./RiskAnalysis.css";
 import BackButton from "../../components/BackButton";
 import RiskGauge from "../../components/RiskGauge";
+
+// Flip to false once the backend teammate's proposal-lookup endpoint is live.
+const USE_DUMMY_DATA = true;
 
 const initialForm = {
   age: 30,
@@ -34,11 +39,73 @@ const fields = [
   { name: "years_with_insurer", label: "Years With Insurer" },
 ];
 
+function ResultView({ result }) {
+  return (
+    <div className="result-card">
+      <h2 className="result-title">{result.suggestion}</h2>
+
+      <div className="score-section">
+        <RiskGauge score={result.risk_score} label="Risk Score" size={200} />
+        <div className="confidence-box">
+          <h4>Model Confidence</h4>
+          <p className="mono">{result.confidence}%</p>
+        </div>
+      </div>
+
+      <div className="summary-box">
+        <h3>AI Summary</h3>
+        <p>{result.reasoning_summary}</p>
+      </div>
+
+      <div className="list-section">
+        <div className="list-box">
+          <h3>Risk Factors</h3>
+          <ul>
+            {result.risk_factors.map((factor, index) => (
+              <li key={index} className="risk-item">{factor.detail}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="list-box">
+          <h3>Positive Factors</h3>
+          <ul>
+            {result.positive_factors.map((factor, index) => (
+              <li key={index} className="positive-item">{factor.detail}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function RiskAnalysis() {
+  const { id } = useParams();
+  const isQuickCheck = id === "new";
+
+  // ---- Quick Check mode (manual form) ----
   const [form, setForm] = useState(initialForm);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // ---- Proposal mode (real client, show results directly) ----
+  const [proposal, setProposal] = useState(null);
+  const [proposalLoading, setProposalLoading] = useState(!isQuickCheck);
+
+  useEffect(() => {
+    if (isQuickCheck) return;
+
+    setProposalLoading(true);
+    if (USE_DUMMY_DATA) {
+      setProposal(getDummyProposal(id));
+      setProposalLoading(false);
+      return;
+    }
+    // TODO: once live, fetch the stored AI verdict for this proposal here
+    // via getProposal(id) from underwritingApi.js.
+  }, [id, isQuickCheck]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -60,6 +127,27 @@ function RiskAnalysis() {
     }
   };
 
+  // ---------------- Proposal mode: results only, no form ----------------
+  if (!isQuickCheck) {
+    return (
+      <div className="risk-page">
+        <div className="risk-page-header">
+          <BackButton to={`/proposal/${id}`} />
+          <div>
+            <h1 className="page-title">AI Risk Analysis</h1>
+            <p className="page-subhead">
+              {proposal ? `${proposal.full_name} · Reference #${proposal.id}` : "Loading…"}
+            </p>
+          </div>
+        </div>
+
+        {proposalLoading && <p className="state-text">Loading risk analysis…</p>}
+        {!proposalLoading && proposal && <ResultView result={proposal} />}
+      </div>
+    );
+  }
+
+  // ---------------- Quick Check mode: manual entry form ----------------
   return (
     <div className="risk-page">
       <div className="risk-page-header">
@@ -93,44 +181,7 @@ function RiskAnalysis() {
 
       {error && <div className="error-box">{error}</div>}
 
-      {result && (
-        <div className="result-card">
-          <h2 className="result-title">{result.suggestion}</h2>
-
-          <div className="score-section">
-            <RiskGauge score={result.risk_score} label="Risk Score" size={200} />
-            <div className="confidence-box">
-              <h4>Model Confidence</h4>
-              <p className="mono">{result.confidence}%</p>
-            </div>
-          </div>
-
-          <div className="summary-box">
-            <h3>AI Summary</h3>
-            <p>{result.reasoning_summary}</p>
-          </div>
-
-          <div className="list-section">
-            <div className="list-box">
-              <h3>Risk Factors</h3>
-              <ul>
-                {result.risk_factors.map((factor, index) => (
-                  <li key={index} className="risk-item">{factor.detail}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="list-box">
-              <h3>Positive Factors</h3>
-              <ul>
-                {result.positive_factors.map((factor, index) => (
-                  <li key={index} className="positive-item">{factor.detail}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      )}
+      {result && <ResultView result={result} />}
     </div>
   );
 }

@@ -5,7 +5,8 @@ import ClientDashboard from "./pages/Client/ClientDashboard";
 import UnderwriterDashboard from "./pages/Underwriter/UnderwriterDashboard";
 import ProposalDetails from "./pages/Underwriter/ProposalDetails";
 import RiskAnalysis from "./pages/Underwriter/RiskAnalysis";
-
+import ProposalDashboard from "./pages/Underwriter/ProposalDashboard";
+import DocumentVerification from "./pages/Underwriter/DocumentVerification";
 
 function App() {
   return (
@@ -24,14 +25,21 @@ function App() {
           element={<UnderwriterDashboard />}
         />
 
+
+
         <Route
           path="/proposal/:id"
-          element={<ProposalDetails />}
+          element={<ProposalDashboard />}
         />
 
         <Route
           path="/risk-analysis/:id"
           element={<RiskAnalysis />}
+        />
+
+        <Route
+          path="/document-verification/:id"
+          element={<DocumentVerification />}
         />
 
       </Routes>
