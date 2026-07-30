@@ -7,7 +7,7 @@ import BackButton from "../../components/BackButton";
 import RiskGauge from "../../components/RiskGauge";
 
 // Flip to false once the backend teammate's proposal-lookup endpoint is live.
-const USE_DUMMY_DATA = true;
+const USE_DUMMY_DATA = false;
 
 const initialForm = {
   age: 30,

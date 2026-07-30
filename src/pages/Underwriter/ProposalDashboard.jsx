@@ -20,7 +20,7 @@ import StatusStamp from "../../components/StatusStamp";
 // live — every other line here already calls the real getProposal() API,
 // this flag just decides whether we trust it or fall back to local dummy data.
 // ---------------------------------------------------------------------------
-const USE_DUMMY_DATA = true;
+const USE_DUMMY_DATA = false;
 
 function ProposalDashboard() {
   const { id } = useParams();

@@ -7,7 +7,7 @@ import { getDummyProposalList } from "../../api/dummyProposals";
 import BackButton from "../../components/BackButton";
 
 // Flip to false once the backend teammate's GET /proposals list endpoint is live.
-const USE_DUMMY_DATA = true;
+const USE_DUMMY_DATA = false;
 
 function UnderwriterDashboard() {
   const navigate = useNavigate();

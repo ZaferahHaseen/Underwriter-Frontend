@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FaFileAlt, FaCheckCircle, FaClock, FaTimesCircle } from "react-icons/fa";
 import "./DocumentVerification.css";
-import { getDummyProposal } from "../../api/dummyProposals";
+import { getProposal } from "../../api/underwritingApi";
 import BackButton from "../../components/BackButton";
 
 // Same dummy-data pattern as ProposalDashboard.jsx — swap this out once the
 // backend exposes a real document-verification endpoint.
-const USE_DUMMY_DATA = true;
+const USE_DUMMY_DATA = false;
 
 const STATUS_ICON = {
   PENDING: <FaClock />,
@@ -22,8 +22,9 @@ function DocumentVerification() {
   useEffect(() => {
     if (USE_DUMMY_DATA) {
       setProposal(getDummyProposal(id));
+      return;
     }
-    // TODO: wire to the real document list once the endpoint exists
+    getProposal(id).then(setProposal).catch((err) => console.error(err));
   }, [id]);
 
   return (
