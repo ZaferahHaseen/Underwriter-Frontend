@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getUnderwritingDecision } from "../../api/underwritingApi";
+import { getUnderwritingDecision, getProposal } from "../../api/underwritingApi";  
 import { getDummyProposal } from "../../api/dummyProposals";
 import "./RiskAnalysis.css";
 import BackButton from "../../components/BackButton";
@@ -42,7 +42,7 @@ const fields = [
 function ResultView({ result }) {
   return (
     <div className="result-card">
-      <h2 className="result-title">{result.suggestion}</h2>
+      <h2 className="result-title">Risk Analysis</h2>
 
       <div className="score-section">
         <RiskGauge score={result.risk_score} label="Risk Score" size={200} />
@@ -103,8 +103,10 @@ function RiskAnalysis() {
       setProposalLoading(false);
       return;
     }
-    // TODO: once live, fetch the stored AI verdict for this proposal here
-    // via getProposal(id) from underwritingApi.js.
+    getProposal(id)
+      .then(setProposal)
+      .catch((err) => console.error(err))
+      .finally(() => setProposalLoading(false));
   }, [id, isQuickCheck]);
 
   const handleChange = (e) => {

@@ -40,23 +40,35 @@ function DocumentVerification() {
       </div>
 
       <div className="dv-panel">
-        {proposal?.documents?.map((doc) => (
-          <div className="dv-row" key={doc.name}>
-            <div className="dv-row-left">
-              <span className="dv-file-icon"><FaFileAlt /></span>
-              <span>{doc.name}</span>
-            </div>
-            <span className={`dv-status dv-status-${doc.status.toLowerCase()}`}>
-              {STATUS_ICON[doc.status]}
-              {doc.status}
-            </span>
-          </div>
-        ))}
+        {!proposal?.document_filename && <p>No document attached.</p>}
 
-        <p className="dv-note">
-          This is placeholder data. Connect this page to <code>validateCertificate()</code> in{" "}
-          <code>underwritingApi.js</code> to upload and verify real client documents.
-        </p>
+        {proposal?.document_filename && (
+          <>
+            <div className="dv-row">
+              <div className="dv-row-left">
+                <span className="dv-file-icon"><FaFileAlt /></span>
+                <span>{proposal.document_filename}</span>
+              </div>
+            </div>
+
+            <h4>Extracted Details</h4>
+            <ul>
+              <li><b>Document Type:</b> {proposal.extracted_fields?.document_type || "Unknown"}</li>
+              <li><b>Name:</b> {proposal.extracted_fields?.name || "—"}</li>
+              <li><b>DOB:</b> {proposal.extracted_fields?.dob || "—"}</li>
+              <li><b>ID Number:</b> {proposal.extracted_fields?.id_number || "—"}</li>
+            </ul>
+
+            <h4>Validation vs Form</h4>
+            <ul>
+              {(proposal.validation_results || []).map((v, i) => (
+                <li key={i} className={v.valid ? "dv-status-verified" : "dv-status-rejected"}>
+                  {v.field}: {v.valid ? "✓ Match" : `✗ Mismatch — ${v.reason}`}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
       </div>
     </div>
   );
