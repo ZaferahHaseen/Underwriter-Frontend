@@ -5,6 +5,7 @@ import { getDummyProposal } from "../../api/dummyProposals";
 import "./RiskAnalysis.css";
 import BackButton from "../../components/BackButton";
 import RiskGauge from "../../components/RiskGauge";
+import RiskChart from "./RiskChart";
 
 // Flip to false once the backend teammate's proposal-lookup endpoint is live.
 const USE_DUMMY_DATA = false;
@@ -40,6 +41,8 @@ const fields = [
 ];
 
 function ResultView({ result }) {
+  const [showChart, setShowChart] = useState(false);
+
   return (
     <div className="result-card">
       <h2 className="result-title">Risk Analysis</h2>
@@ -56,6 +59,13 @@ function ResultView({ result }) {
         <h3>AI Summary</h3>
         <p>{result.reasoning_summary}</p>
       </div>
+
+      <button className="graph-toggle-btn" onClick={() => setShowChart((s) => !s)}>
+        {showChart ? "Hide Factor Breakdown" : "View Factor Breakdown"}
+      </button>
+      {showChart && (
+        <RiskChart riskFactors={result.risk_factors} positiveFactors={result.positive_factors} />
+      )}
 
       <div className="list-section">
         <div className="list-box">
