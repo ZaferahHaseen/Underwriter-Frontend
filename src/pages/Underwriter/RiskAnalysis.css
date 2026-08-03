@@ -233,3 +233,60 @@
     font-size: 20px;
   }
 }
+.decision-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 32px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+
+.decision-buttons button {
+  padding: 16px 48px;
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  color: white;
+  transition: opacity 0.15s ease;
+}
+
+.decision-buttons button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.decision-buttons button:first-child {
+  background: var(--risk-low, #1a7f37);
+}
+
+.decision-buttons button:first-child:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.decision-buttons button:last-child {
+  background: var(--risk-high, #b91c1c);
+}
+
+.decision-buttons button:last-child:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.final-decision-banner {
+  text-align: center;
+  margin-top: 32px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.final-approved {
+  color: var(--risk-low, #1a7f37);
+}
+
+.final-rejected {
+  color: var(--risk-high, #b91c1c);
+}

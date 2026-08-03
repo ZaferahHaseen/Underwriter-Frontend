@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getUnderwritingDecision, getProposal } from "../../api/underwritingApi";  
+import { getUnderwritingDecision, getProposal, decideProposal } from "../../api/underwritingApi";  
 import { getDummyProposal } from "../../api/dummyProposals";
 import "./RiskAnalysis.css";
 import BackButton from "../../components/BackButton";
@@ -40,7 +40,7 @@ const fields = [
   { name: "years_with_insurer", label: "Years With Insurer" },
 ];
 
-function ResultView({ result }) {
+function ResultView({ result, status, deciding, onDecide }) {
   const [showChart, setShowChart] = useState(false);
 
   return (
@@ -86,6 +86,23 @@ function ResultView({ result }) {
           </ul>
         </div>
       </div>
+
+      {status === "PENDING" && (
+        <div className="decision-buttons">
+          <button disabled={deciding} onClick={() => onDecide("APPROVED")}>
+            Approve
+          </button>
+          <button disabled={deciding} onClick={() => onDecide("REJECTED")}>
+            Reject
+          </button>
+        </div>
+      )}
+
+      {status && status !== "PENDING" && (
+        <p className={`final-decision-banner ${status === "APPROVED" ? "final-approved" : "final-rejected"}`}>
+          Final Decision: {status}
+        </p>
+      )}
     </div>
   );
 }
@@ -103,6 +120,7 @@ function RiskAnalysis() {
   // ---- Proposal mode (real client, show results directly) ----
   const [proposal, setProposal] = useState(null);
   const [proposalLoading, setProposalLoading] = useState(!isQuickCheck);
+  const [deciding, setDeciding] = useState(false);
 
   useEffect(() => {
     if (isQuickCheck) return;
@@ -141,6 +159,18 @@ function RiskAnalysis() {
 
   // ---------------- Proposal mode: results only, no form ----------------
   if (!isQuickCheck) {
+    const handleDecision = async (status) => {
+      setDeciding(true);
+      try {
+        await decideProposal(id, status);
+        setProposal((prev) => ({ ...prev, status }));
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setDeciding(false);
+      }
+    };
+
     return (
       <div className="risk-page">
         <div className="risk-page-header">
@@ -154,7 +184,14 @@ function RiskAnalysis() {
         </div>
 
         {proposalLoading && <p className="state-text">Loading risk analysis…</p>}
-        {!proposalLoading && proposal && <ResultView result={proposal} />}
+        {!proposalLoading && proposal && (
+          <ResultView
+            result={proposal}
+            status={proposal.status}
+            deciding={deciding}
+            onDecide={handleDecision}
+          />
+        )}
       </div>
     );
   }
