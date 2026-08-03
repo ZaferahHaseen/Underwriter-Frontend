@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 
 import "./ClientDashboard.css";
-import { submitProposal } from "../../api/underwritingApi";
+import { submitProposal, getSupportedDocuments } from "../../api/underwritingApi";
 import BackButton from "../../components/BackButton";
 
 function ClientDashboard() {
@@ -33,6 +33,41 @@ function ClientDashboard() {
   const [docFile, setDocFile] = useState(null);
   const [docError, setDocError] = useState(null);
 
+  // Multi-country ID support: dropdown state
+  const [docOptions, setDocOptions] = useState([]);
+  const [selectedDoc, setSelectedDoc] = useState(""); // "COUNTRY_CODE|doc_type"
+  const [docListError, setDocListError] = useState(null);
+
+  useEffect(() => {
+    getSupportedDocuments()
+      .then((data) => {
+        // backend response shape isn't confirmed yet - handle common variants
+        // defensively so a mismatch never crashes the page.
+        const list = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.supported_documents)
+          ? data.supported_documents
+          : Array.isArray(data?.documents)
+          ? data.documents
+          : Array.isArray(data?.data)
+          ? data.data
+          : [];
+
+        setDocOptions(list);
+
+        if (list.length === 0) {
+          console.warn(
+            "[supported-documents] unexpected response shape, got:",
+            data
+          );
+          setDocListError(
+            "Document list came back in an unexpected format. Check console."
+          );
+        }
+      })
+      .catch((err) => setDocListError(err.message));
+  }, []);
+
   useEffect(() => {
     if (formData.height && formData.weight) {
       const h = Number(formData.height) / 100;
@@ -56,6 +91,13 @@ function ClientDashboard() {
       return;
     }
 
+    if (!selectedDoc) {
+      setDocError("Select the document's country and type before submitting.");
+      return;
+    }
+
+    const [country_code, doc_type] = selectedDoc.split("|");
+
     const payload = {
       full_name: formData.fullName,
       insurance_type: formData.insuranceType,
@@ -72,6 +114,8 @@ function ClientDashboard() {
       credit_score: Number(formData.creditScore),
       num_previous_claims: Number(formData.previousClaims),
       years_with_insurer: Number(formData.yearsWithInsurer),
+      country_code,
+      doc_type,
     };
 
     try {
@@ -103,9 +147,33 @@ function ClientDashboard() {
         <div className="doc-upload-box">
           <h3>Attach ID / Certificate</h3>
           <p className="doc-upload-hint">
-            Attach driving license, Aadhaar, or insurance certificate. This is submitted
+            Attach driving license, national ID, or insurance certificate. This is submitted
             together with your form and reviewed by the underwriter.
           </p>
+
+          <div className="form-group standalone">
+            <label>Document Country / Type</label>
+            <select
+              value={selectedDoc}
+              onChange={(e) => {
+                setSelectedDoc(e.target.value);
+                setDocError(null);
+              }}
+            >
+              <option value="">Select Country / Document</option>
+              {docOptions.map((d) => (
+                <option
+                  key={`${d.country_code}-${d.doc_type}`}
+                  value={`${d.country_code}|${d.doc_type}`}
+                >
+                  {(d.country_name || d.country_code)} — {(d.doc_label || d.doc_type)}
+                </option>
+              ))}
+            </select>
+            {docListError && (
+              <p className="doc-attached-note">Couldn't load document list: {docListError}</p>
+            )}
+          </div>
 
           <div className="doc-upload-controls">
             <input

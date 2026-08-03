@@ -42,6 +42,13 @@ export async function submitProposal(payload, file) {
   return res.json();
 }
 
+// Multi-country ID support: fetch supported country+doc combos for dropdown
+export async function getSupportedDocuments() {
+  const res = await fetch(`${API_BASE}/api/v1/supported-documents`);
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
+
 export async function listProposals() {
   const res = await fetch(`${API_BASE}/api/v1/proposals`);
   if (!res.ok) throw new Error(`API error: ${res.status}`);

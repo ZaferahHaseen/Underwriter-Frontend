@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   FaFileAlt, FaCheckCircle, FaTimesCircle, FaMinusCircle,
   FaExclamationTriangle,
 } from "react-icons/fa";
 import "./DocumentVerification.css";
-import { getProposal, decideProposal, getProposalDocumentUrl } from "../../api/underwritingApi";
+import { getProposal, getProposalDocumentUrl } from "../../api/underwritingApi";
 import BackButton from "../../components/BackButton";
 
 function DocumentVerification() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [proposal, setProposal] = useState(null);
   const [loading, setLoading] = useState(true);
-  
+
 
   useEffect(() => {
     getProposal(id)
@@ -34,6 +33,7 @@ function DocumentVerification() {
   const checks = proposal.validation_results || [];
   const fields = proposal.extracted_fields || {};
   const hasDoc = !!proposal.document_filename;
+  const schemaUsed = proposal.schema_used; // e.g. "IN / aadhaar"
   const failedCount = checks.filter((c) => !c.valid).length;
   const allPassed = hasDoc && checks.length > 0 && failedCount === 0;
   const hasFailure = failedCount > 0;
@@ -98,15 +98,20 @@ function DocumentVerification() {
                   <div className="vp-doc-info">
                     <p className="mono">{proposal.document_filename}</p>
                     <p className="vp-muted">Successfully parsed</p>
+                    {schemaUsed && (
+                      <p className="vp-muted">Matched schema: <b>{schemaUsed}</b></p>
+                    )}
                   </div>
-                  <a
-                    className="vp-link"
-                    href={getProposalDocumentUrl(proposal.id)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    View Source
-                  </a>
+                  {React.createElement(
+                    "a",
+                    {
+                      className: "vp-link",
+                      href: getProposalDocumentUrl(proposal.id),
+                      target: "_blank",
+                      rel: "noopener noreferrer",
+                    },
+                    "View Source"
+                  )}
                 </div>
               ) : (
                 <p className="vp-muted">No document attached to this case.</p>
