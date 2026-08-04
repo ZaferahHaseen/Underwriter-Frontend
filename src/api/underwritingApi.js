@@ -48,6 +48,20 @@ export async function getSupportedDocuments() {
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
+// Two-step country/doc-type dropdowns
+export async function getCountries() {
+  const res = await fetch(`${API_BASE}/api/v1/countries`);
+  if (!res.ok) throw new Error("Failed to load countries");
+  const data = await res.json();
+  return data.countries || [];
+}
+
+export async function getDocTypesForCountry(countryCode) {
+  const res = await fetch(`${API_BASE}/api/v1/countries/${countryCode}/doc-types`);
+  if (!res.ok) throw new Error("Failed to load document types");
+  const data = await res.json();
+  return data.doc_types || [];
+} 
 
 export async function listProposals() {
   const res = await fetch(`${API_BASE}/api/v1/proposals`);

@@ -2,8 +2,16 @@ import { useState, useEffect } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 
 import "./ClientDashboard.css";
-import { submitProposal, getSupportedDocuments } from "../../api/underwritingApi";
+import { submitProposal, getCountries, getDocTypesForCountry } from "../../api/underwritingApi";
 import BackButton from "../../components/BackButton";
+
+const COUNTRY_NAMES = {
+  AE: "United Arab Emirates",
+  IN: "India",
+  KE: "Kenya",
+  NG: "Nigeria",
+  ZA: "South Africa",
+};
 
 function ClientDashboard() {
   const [formData, setFormData] = useState({
@@ -33,40 +41,29 @@ function ClientDashboard() {
   const [docFile, setDocFile] = useState(null);
   const [docError, setDocError] = useState(null);
 
-  // Multi-country ID support: dropdown state
-  const [docOptions, setDocOptions] = useState([]);
-  const [selectedDoc, setSelectedDoc] = useState(""); // "COUNTRY_CODE|doc_type"
+  // Two-step country/doc-type dropdown state
+  const [countries, setCountries] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [docTypes, setDocTypes] = useState([]);
+  const [selectedDocType, setSelectedDocType] = useState("");
   const [docListError, setDocListError] = useState(null);
 
   useEffect(() => {
-    getSupportedDocuments()
-      .then((data) => {
-        // backend response shape isn't confirmed yet - handle common variants
-        // defensively so a mismatch never crashes the page.
-        const list = Array.isArray(data)
-          ? data
-          : Array.isArray(data?.supported_documents)
-          ? data.supported_documents
-          : Array.isArray(data?.documents)
-          ? data.documents
-          : Array.isArray(data?.data)
-          ? data.data
-          : [];
-
-        setDocOptions(list);
-
-        if (list.length === 0) {
-          console.warn(
-            "[supported-documents] unexpected response shape, got:",
-            data
-          );
-          setDocListError(
-            "Document list came back in an unexpected format. Check console."
-          );
-        }
-      })
+    getCountries()
+      .then(setCountries)
       .catch((err) => setDocListError(err.message));
   }, []);
+
+  useEffect(() => {
+    if (!selectedCountry) {
+      setDocTypes([]);
+      setSelectedDocType("");
+      return;
+    }
+    getDocTypesForCountry(selectedCountry)
+      .then(setDocTypes)
+      .catch((err) => setDocListError(err.message));
+  }, [selectedCountry]);
 
   useEffect(() => {
     if (formData.height && formData.weight) {
@@ -91,12 +88,13 @@ function ClientDashboard() {
       return;
     }
 
-    if (!selectedDoc) {
+    if (!selectedCountry || !selectedDocType) {
       setDocError("Select the document's country and type before submitting.");
       return;
     }
 
-    const [country_code, doc_type] = selectedDoc.split("|");
+    const country_code = selectedCountry;
+    const doc_type = selectedDocType;
 
     const payload = {
       full_name: formData.fullName,
@@ -152,21 +150,37 @@ function ClientDashboard() {
           </p>
 
           <div className="form-group standalone">
-            <label>Document Country / Type</label>
+            <label>Document Country</label>
             <select
-              value={selectedDoc}
+              value={selectedCountry}
               onChange={(e) => {
-                setSelectedDoc(e.target.value);
+                setSelectedCountry(e.target.value);
                 setDocError(null);
               }}
             >
-              <option value="">Select Country / Document</option>
-              {docOptions.map((d) => (
-                <option
-                  key={`${d.country_code}-${d.doc_type}`}
-                  value={`${d.country_code}|${d.doc_type}`}
-                >
-                  {(d.country_name || d.country_code)} — {(d.doc_label || d.doc_type)}
+              <option value="">Select Country</option>
+              {countries.map((c) => (
+                <option key={c} value={c}>{COUNTRY_NAMES[c] || c}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group standalone">
+            <label>Document Type</label>
+            <select
+              value={selectedDocType}
+              onChange={(e) => {
+                setSelectedDocType(e.target.value);
+                setDocError(null);
+              }}
+              disabled={!selectedCountry}
+            >
+              <option value="">
+                {selectedCountry ? "Select Document Type" : "Select country first"}
+              </option>
+              {docTypes.map((d) => (
+                <option key={d.doc_type} value={d.doc_type}>
+                  {d.doc_name}
                 </option>
               ))}
             </select>
