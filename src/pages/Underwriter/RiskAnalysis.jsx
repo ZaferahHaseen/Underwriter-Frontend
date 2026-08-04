@@ -41,68 +41,79 @@ const fields = [
 ];
 
 function ResultView({ result, status, deciding, onDecide }) {
-  const [showChart, setShowChart] = useState(false);
+  const [showChart, setShowChart] = useState(true);
 
   return (
-    <div className="result-card">
-      <h2 className="result-title">Risk Analysis</h2>
-
-      <div className="score-section">
-        <RiskGauge score={result.risk_score} label="Risk Score" size={200} />
-        <div className="confidence-box">
-          <h4>Model Confidence</h4>
-          <p className="mono">{result.confidence}%</p>
+    <div className="result-shell">
+      {/* ---- Left: score summary (sticky) ---- */}
+      <aside className="result-aside">
+        <div className="result-gauge-block">
+          <RiskGauge score={result.risk_score} label="Risk Score" size={220} />
         </div>
+
+        {result.confidence != null && (
+          <div className="confidence-box">
+            <h4>Model Confidence</h4>
+            <p className="mono">{result.confidence}%</p>
+          </div>
+        )}
+
+        {status === "PENDING" && (
+          <div className="decision-buttons">
+            <button className="decision-approve" disabled={deciding} onClick={() => onDecide("APPROVED")}>
+              Approve
+            </button>
+            <button className="decision-reject" disabled={deciding} onClick={() => onDecide("REJECTED")}>
+              Reject
+            </button>
+          </div>
+        )}
+
+        {status && status !== "PENDING" && (
+          <p className={`final-decision-banner ${status === "APPROVED" ? "final-approved" : "final-rejected"}`}>
+            Final Decision: {status}
+          </p>
+        )}
+      </aside>
+
+      {/* ---- Right: reasoning + factors ---- */}
+      <div className="result-main">
+        <div className="summary-box">
+          <h3>AI Summary</h3>
+          <p>{result.reasoning_summary}</p>
+        </div>
+
+        <div className="list-section">
+          <div className="list-box list-box-risk">
+            <h3>Risk Factors</h3>
+            {result.risk_factors.length === 0 && <p className="list-empty">No risk factors flagged.</p>}
+            <ul>
+              {result.risk_factors.map((factor, index) => (
+                <li key={index} className="risk-item">{factor.detail}</li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="list-box list-box-positive">
+            <h3>Positive Factors</h3>
+            {result.positive_factors.length === 0 && <p className="list-empty">No positive factors identified.</p>}
+            <ul>
+              {result.positive_factors.map((factor, index) => (
+                <li key={index} className="positive-item">{factor.detail}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <button className="graph-toggle-btn" onClick={() => setShowChart((s) => !s)}>
+          {showChart ? "Hide Factor Breakdown" : "View Factor Breakdown"}
+        </button>
+        {showChart && (
+          <div className="chart-card">
+            <RiskChart riskFactors={result.risk_factors} positiveFactors={result.positive_factors} />
+          </div>
+        )}
       </div>
-
-      <div className="summary-box">
-        <h3>AI Summary</h3>
-        <p>{result.reasoning_summary}</p>
-      </div>
-
-      <button className="graph-toggle-btn" onClick={() => setShowChart((s) => !s)}>
-        {showChart ? "Hide Factor Breakdown" : "View Factor Breakdown"}
-      </button>
-      {showChart && (
-        <RiskChart riskFactors={result.risk_factors} positiveFactors={result.positive_factors} />
-      )}
-
-      <div className="list-section">
-        <div className="list-box">
-          <h3>Risk Factors</h3>
-          <ul>
-            {result.risk_factors.map((factor, index) => (
-              <li key={index} className="risk-item">{factor.detail}</li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="list-box">
-          <h3>Positive Factors</h3>
-          <ul>
-            {result.positive_factors.map((factor, index) => (
-              <li key={index} className="positive-item">{factor.detail}</li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      {status === "PENDING" && (
-        <div className="decision-buttons">
-          <button disabled={deciding} onClick={() => onDecide("APPROVED")}>
-            Approve
-          </button>
-          <button disabled={deciding} onClick={() => onDecide("REJECTED")}>
-            Reject
-          </button>
-        </div>
-      )}
-
-      {status && status !== "PENDING" && (
-        <p className={`final-decision-banner ${status === "APPROVED" ? "final-approved" : "final-rejected"}`}>
-          Final Decision: {status}
-        </p>
-      )}
     </div>
   );
 }
@@ -173,13 +184,15 @@ function RiskAnalysis() {
 
     return (
       <div className="risk-page">
-        <div className="risk-page-header">
-          <BackButton to={`/proposal/${id}`} />
-          <div>
-            <h1 className="page-title">AI Risk Analysis</h1>
-            <p className="page-subhead">
-              {proposal ? `${proposal.full_name} · Reference #${proposal.id}` : "Loading…"}
-            </p>
+        <div className="risk-hero">
+          <div className="risk-page-header">
+            <BackButton to={`/proposal/${id}`} />
+            <div>
+              <h1 className="page-title">AI Risk Analysis</h1>
+              <p className="page-subhead">
+                {proposal ? `${proposal.full_name} · Reference #${proposal.id}` : "Loading…"}
+              </p>
+            </div>
           </div>
         </div>
 

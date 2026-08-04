@@ -1,18 +1,17 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
-  FaFileAlt, FaCheckCircle, FaTimesCircle, FaMinusCircle,
-  FaExclamationTriangle,
+  FaFileAlt, FaCheckCircle, FaTimesCircle, FaExclamationTriangle, FaInfoCircle,
 } from "react-icons/fa";
 import "./DocumentVerification.css";
 import { getProposal, getProposalDocumentUrl } from "../../api/underwritingApi";
 import BackButton from "../../components/BackButton";
+import StatusStamp from "../../components/StatusStamp";
 
 function DocumentVerification() {
   const { id } = useParams();
   const [proposal, setProposal] = useState(null);
   const [loading, setLoading] = useState(true);
-
 
   useEffect(() => {
     getProposal(id)
@@ -20,7 +19,6 @@ function DocumentVerification() {
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
   }, [id]);
-
 
   if (loading || !proposal) {
     return (
@@ -33,107 +31,105 @@ function DocumentVerification() {
   const checks = proposal.validation_results || [];
   const fields = proposal.extracted_fields || {};
   const hasDoc = !!proposal.document_filename;
-  const schemaUsed = proposal.schema_used; // e.g. "IN / aadhaar"
+  const schemaUsed = proposal.schema_used;
   const failedCount = checks.filter((c) => !c.valid).length;
   const allPassed = hasDoc && checks.length > 0 && failedCount === 0;
   const hasFailure = failedCount > 0;
-  const isPending = proposal.status === "PENDING";
 
   let decisionTone = "info";
   let decisionTitle = "Awaiting Verification";
   let decisionBody = "Upload a document and run checks to see a recommendation here.";
+  let DecisionIcon = FaInfoCircle;
 
   if (hasDoc && checks.length === 0) {
     decisionTone = "info";
     decisionTitle = "Unverified";
     decisionBody = "Document was uploaded, but no comparable fields were extracted — check scan quality or resubmit.";
+    DecisionIcon = FaInfoCircle;
   } else if (allPassed) {
     decisionTone = "success";
     decisionTitle = "Verified";
     decisionBody = "All submitted details match the uploaded document. No discrepancies found.";
+    DecisionIcon = FaCheckCircle;
   } else if (hasFailure) {
     decisionTone = "warning";
     decisionTitle = "Needs Review";
     decisionBody = `AI detected a discrepancy on ${failedCount} field${failedCount > 1 ? "s" : ""} between the uploaded ID and the application form. Manual review is required before approval.`;
+    DecisionIcon = FaExclamationTriangle;
   }
 
-  // Extra informational fields (not covered by pass/fail checks) shown as neutral cards
-  const infoFields = [
-    { key: "id_number", label: "ID Number", value: fields.id_number },
-    { key: "expiry_date", label: "Document Expiry", value: fields.expiry_date },
-    { key: "document_type", label: "Document Type", value: fields.document_type },
+  // Only the identity fields worth an underwriter's attention — no raw JSON dump.
+  const identityFields = [
+    { label: "Document Type", value: fields.document_type },
+    { label: "Name on Document", value: fields.name },
+    { label: "Date of Birth", value: fields.dob },
+    { label: "ID Number", value: fields.id_number },
+    { label: "Expiry Date", value: fields.expiry_date },
   ].filter((f) => f.value);
 
   return (
     <div className="vp-page">
-      {/* ---- Top bar ---- */}
-      <div className="vp-topbar">
-        <BackButton to={`/proposal/${id}`} />
-        <h1>Document Verification</h1>
+      {/* ---- Hero header ---- */}
+      <div className="vp-hero">
+        <div className="vp-topbar">
+          <BackButton to={`/proposal/${id}`} />
+          <div className="vp-topbar-text">
+            <h1>Document Verification</h1>
+            <p>{proposal.full_name} · Case #{proposal.id}</p>
+          </div>
+          <StatusStamp status={proposal.status} />
+        </div>
       </div>
 
       <div className="vp-layout">
-        {/* ---- Main pipeline ---- */}
+        {/* ---- Main column ---- */}
         <main className="vp-main">
-          <div className="vp-breadcrumb">
-            Verification Pipeline <span>›</span> <b>Case #{proposal.id}</b>
+          {/* Decision — the one thing an underwriter needs first */}
+          <div className={`vp-decision-banner vp-decision-${decisionTone}`}>
+            <DecisionIcon className="vp-decision-icon" />
+            <div>
+              <p className="vp-decision-title">{decisionTitle}</p>
+              <p className="vp-decision-body">{decisionBody}</p>
+            </div>
           </div>
 
-          {/* Stage 1 */}
-          <div className="vp-stage">
-            <div className="vp-stage-rail">
-              <div className={`vp-stage-dot ${hasDoc ? "vp-dot-done" : ""}`}>
-                {hasDoc && <FaCheckCircle />}
-              </div>
-              <div className="vp-stage-line" />
+          {/* Document */}
+          <section className="vp-card">
+            <div className="vp-card-head">
+              <h2>Attached Document</h2>
+              {hasDoc && <span className="vp-pill vp-pill-success">Parsed</span>}
             </div>
-            <div className="vp-stage-card">
-              <div className="vp-stage-head">
-                <h2>Stage 1: Document Intake</h2>
-                {hasDoc && <span className="vp-pill vp-pill-success">SUCCESS</span>}
-              </div>
-              {hasDoc ? (
-                <div className="vp-doc-row">
-                  <span className="vp-file-icon"><FaFileAlt /></span>
-                  <div className="vp-doc-info">
-                    <p className="mono">{proposal.document_filename}</p>
-                    <p className="vp-muted">Successfully parsed</p>
-                    {schemaUsed && (
-                      <p className="vp-muted">Matched schema: <b>{schemaUsed}</b></p>
-                    )}
-                  </div>
-                  {React.createElement(
-                    "a",
-                    {
-                      className: "vp-link",
-                      href: getProposalDocumentUrl(proposal.id),
-                      target: "_blank",
-                      rel: "noopener noreferrer",
-                    },
-                    "View Source"
-                  )}
+
+            {hasDoc ? (
+              <div className="vp-doc-row">
+                <span className="vp-file-icon"><FaFileAlt /></span>
+                <div className="vp-doc-info">
+                  <p className="mono">{proposal.document_filename}</p>
+                  {schemaUsed && <p className="vp-muted-inline">Matched schema: <b>{schemaUsed}</b></p>}
                 </div>
-              ) : (
-                <p className="vp-muted">No document attached to this case.</p>
-              )}
-            </div>
-          </div>
-
-          {/* Stage 2 */}
-          <div className="vp-stage">
-            <div className="vp-stage-rail">
-              <div className="vp-stage-dot vp-dot-current">2</div>
-              <div className="vp-stage-line" />
-            </div>
-            <div className="vp-stage-card vp-stage-card-active">
-              <div className="vp-stage-head">
-                <h2>Stage 2: Validation Checklist</h2>
+                <a
+                  className="vp-link"
+                  href={getProposalDocumentUrl(proposal.id)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View Source
+                </a>
               </div>
+            ) : (
+              <p className="vp-muted">No document attached to this case.</p>
+            )}
+          </section>
 
-              {checks.length === 0 && infoFields.length === 0 && (
-                <p className="vp-muted">No comparable fields were extracted from the document.</p>
-              )}
+          {/* Validation checklist */}
+          <section className="vp-card">
+            <div className="vp-card-head">
+              <h2>Validation Checklist</h2>
+            </div>
 
+            {checks.length === 0 ? (
+              <p className="vp-muted">No comparable fields were extracted from the document.</p>
+            ) : (
               <div className="vp-check-grid">
                 {checks.map((c, i) => (
                   <div key={i} className={`vp-check-card ${c.valid ? "vp-check-pass" : "vp-check-fail"}`}>
@@ -150,63 +146,39 @@ function DocumentVerification() {
                     </div>
                   </div>
                 ))}
-
-                {infoFields.map((f) => (
-                  <div key={f.key} className="vp-check-card vp-check-info">
-                    <span className="vp-check-icon"><FaMinusCircle /></span>
-                    <div>
-                      <p className="vp-check-title">{f.label}</p>
-                      <p className="vp-check-sub">{f.value}</p>
-                    </div>
-                  </div>
-                ))}
               </div>
-            </div>
-          </div>
-
-          {/* Stage 3 */}
-          <div className="vp-stage vp-stage-last">
-            <div className="vp-stage-rail">
-              <div className="vp-stage-dot">3</div>
-            </div>
-            <div className="vp-stage-card">
-              <div className="vp-stage-head">
-                <h2>Stage 3: Decision Engine</h2>
-              </div>
-
-              <div className={`vp-decision-banner vp-decision-${decisionTone}`}>
-                <FaExclamationTriangle className="vp-decision-icon" />
-                <div>
-                  <p className="vp-decision-title">{decisionTitle}</p>
-                  <p className="vp-decision-body">{decisionBody}</p>
-                </div>
-              </div>
-
-              {Object.keys(fields).length > 0 && (
-                <>
-                  <span className="vp-extracted-label">Extracted Data</span>
-                  <div className="vp-extracted-grid">
-                    {Object.entries(fields)
-                      .filter(([, v]) => v && typeof v !== "object")
-                      .map(([k, v]) => (
-                        <div key={k} className="vp-extracted-cell">
-                          <span className="vp-json-path mono">$.{k}</span>
-                          <span className="mono">{String(v)}</span>
-                        </div>
-                      ))}
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
+            )}
+          </section>
         </main>
-      </div>
 
-      {/* ---- Sticky action bar ---- */}
-      <div className="vp-actionbar">
-        <p>
-          Case <b>#{proposal.id}</b> is currently {isPending ? "in manual review queue" : `marked as ${proposal.status}`}.
-        </p>
+        {/* ---- Right summary rail ---- */}
+        <aside className="vp-side">
+          <div className="vp-side-card">
+            <span className="vp-side-title">Extracted Identity</span>
+            {identityFields.length === 0 ? (
+              <p className="vp-muted-inline">Nothing extracted yet.</p>
+            ) : (
+              identityFields.map((f) => (
+                <div key={f.label} className="vp-detail-row">
+                  <span>{f.label}</span>
+                  <b>{f.value}</b>
+                </div>
+              ))
+            )}
+          </div>
+
+          <div className="vp-side-card">
+            <span className="vp-side-title">Case</span>
+            <div className="vp-detail-row">
+              <span>Reference</span>
+              <b>#{proposal.id}</b>
+            </div>
+            <div className="vp-detail-row">
+              <span>Status</span>
+              <b>{proposal.status}</b>
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   );

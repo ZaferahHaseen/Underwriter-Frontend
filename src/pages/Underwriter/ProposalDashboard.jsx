@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   FaFileMedical,
@@ -89,17 +89,27 @@ function ProposalDashboard() {
     { label: "Years With Insurer", value: proposal.years_with_insurer },
   ];
 
+  const initials = (proposal.full_name || "?")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0].toUpperCase())
+    .join("");
+
   return (
     <div className="pd-page">
-      <div className="pd-header">
-        <BackButton to="/underwriter/dashboard" />
-        <div className="pd-header-text">
-          <h1>{proposal.full_name}</h1>
-          <p className="pd-subhead">
-            {proposal.insurance_type} Policy · Reference #{proposal.id} · Submitted {proposal.created_at}
-          </p>
+      <div className="pd-hero">
+        <div className="pd-header">
+          <BackButton to="/underwriter/dashboard" />
+          <div className="pd-avatar">{initials}</div>
+          <div className="pd-header-text">
+            <h1>{proposal.full_name}</h1>
+            <p className="pd-subhead">
+              {proposal.insurance_type} Policy · Reference #{proposal.id} · Submitted {proposal.created_at}
+            </p>
+          </div>
+          <StatusStamp status={proposal.status} />
         </div>
-        <StatusStamp status={proposal.status} />
       </div>
 
       <div className="pd-cards">

@@ -1,5 +1,5 @@
 const API_BASE =
-  import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000";
+  import.meta.env.VITE_API_BASE || "http://192.168.1.3:8000";
 export { API_BASE };
 export async function getUnderwritingDecision(applicant) {
   const res = await fetch(`${API_BASE}/api/v1/underwrite`, {
