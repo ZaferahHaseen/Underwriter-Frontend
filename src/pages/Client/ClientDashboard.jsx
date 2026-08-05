@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import { FaCheckCircle, FaShieldAlt, FaFileUpload, FaUserAlt, FaHeartbeat, FaWallet } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { FaCheckCircle, FaShieldAlt, FaFileUpload, FaUserAlt, FaHeartbeat, FaWallet, FaSignOutAlt, FaClipboardList } from "react-icons/fa";
 
 import "./ClientDashboard.css";
-import { submitProposal, getCountries, getDocTypesForCountry } from "../../api/underwritingApi";
+import { submitProposal, getCountries, getDocTypesForCountry, listProposals } from "../../api/underwritingApi";
 import BackButton from "../../components/BackButton";
+import { useAuth } from "../../auth/AuthContext";
 
 const COUNTRY_NAMES = {
   AE: "United Arab Emirates",
@@ -21,6 +23,16 @@ const STEPS = [
 ];
 
 function ClientDashboard() {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  // "form" = submit-proposal wizard, "mine" = client's own proposals + status
+  const [view, setView] = useState("form");
+
+  const [myProposals, setMyProposals] = useState([]);
+  const [myProposalsLoading, setMyProposalsLoading] = useState(true);
+  const [myProposalsError, setMyProposalsError] = useState(null);
+
   const [formData, setFormData] = useState({
     insuranceType: "",
     fullName: "",
@@ -62,6 +74,34 @@ function ClientDashboard() {
       .then(setCountries)
       .catch((err) => setDocListError(err.message));
   }, []);
+
+  // Client's own proposals — backend already scopes GET /proposals to the
+  // logged-in user for the client role, so this list is "my proposals" as-is.
+  // Also drives the pending-type submit guard below.
+  const fetchMyProposals = () => {
+    setMyProposalsLoading(true);
+    listProposals()
+      .then((data) => {
+        setMyProposals(data);
+        setMyProposalsError(null);
+      })
+      .catch((err) => setMyProposalsError(err.message))
+      .finally(() => setMyProposalsLoading(false));
+  };
+
+  useEffect(() => {
+    fetchMyProposals();
+  }, []);
+
+  const pendingInsuranceTypes = new Set(
+    myProposals.filter((p) => p.status === "PENDING").map((p) => p.insurance_type)
+  );
+  const isSelectedTypePending = pendingInsuranceTypes.has(formData.insuranceType);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   useEffect(() => {
     if (!selectedCountry) {
@@ -125,11 +165,18 @@ function ClientDashboard() {
       return;
     }
 
+    if (isSelectedTypePending) {
+      setError(`You already have a pending ${formData.insuranceType} proposal. Wait for a decision before submitting another.`);
+      scrollToStep("applicant");
+      return;
+    }
+
     const country_code = selectedCountry;
     const doc_type = selectedDocType;
 
+    // full_name is not sent — the backend derives it from the logged-in
+    // user's JWT token, so this field is display-only on the client now.
     const payload = {
-      full_name: formData.fullName,
       insurance_type: formData.insuranceType,
       age: Number(formData.age),
       annual_income: Number(formData.annualIncome),
@@ -152,8 +199,13 @@ function ClientDashboard() {
       setLoading(true);
       const data = await submitProposal(payload, docFile);
       setSubmitted(data);
+      fetchMyProposals(); // refresh so "My Proposals" + pending guard reflect the new one
     } catch (err) {
-      setError(err.message);
+      if (err.status === 409) {
+        setError(`You already have a pending ${formData.insuranceType} proposal on file. It must be decided before you can submit another for this insurance type.`);
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -197,29 +249,55 @@ function ClientDashboard() {
             <FaShieldAlt />
             <span>AI Underwriter</span>
           </div>
+          <button type="button" className="client-logout-btn" onClick={handleLogout}>
+            <FaSignOutAlt /> Logout
+          </button>
         </div>
 
         <div className="client-rail-heading">
-          <h1>Insurance Proposal</h1>
-          <p>Complete every section below. Your information is reviewed by an AI risk model and a human underwriter.</p>
+          <h1>{view === "form" ? "Insurance Proposal" : "My Proposals"}</h1>
+          <p>
+            {view === "form"
+              ? "Complete every section below. Your information is reviewed by an AI risk model and a human underwriter."
+              : "Track the status of every proposal you've submitted."}
+          </p>
         </div>
 
-        <nav className="client-steps">
-          {STEPS.map((s, i) => (
-            <button
-              key={s.id}
-              type="button"
-              className={`client-step ${activeStep === s.id ? "client-step-active" : ""}`}
-              onClick={() => scrollToStep(s.id)}
-            >
-              <span className="client-step-num">{s.icon}</span>
-              <span className="client-step-label">
-                <em>Step {i + 1}</em>
-                {s.label}
-              </span>
-            </button>
-          ))}
-        </nav>
+        <div className="client-view-tabs">
+          <button
+            type="button"
+            className={`client-view-tab ${view === "form" ? "client-view-tab-active" : ""}`}
+            onClick={() => setView("form")}
+          >
+            <FaFileUpload /> New Proposal
+          </button>
+          <button
+            type="button"
+            className={`client-view-tab ${view === "mine" ? "client-view-tab-active" : ""}`}
+            onClick={() => setView("mine")}
+          >
+            <FaClipboardList /> My Proposals
+          </button>
+        </div>
+
+        {view === "form" && (
+          <nav className="client-steps">
+            {STEPS.map((s, i) => (
+              <button
+                key={s.id}
+                type="button"
+                className={`client-step ${activeStep === s.id ? "client-step-active" : ""}`}
+                onClick={() => scrollToStep(s.id)}
+              >
+                <span className="client-step-num">{s.icon}</span>
+                <span className="client-step-label">
+                  <em>Step {i + 1}</em>
+                  {s.label}
+                </span>
+              </button>
+            ))}
+          </nav>
+        )}
 
         <div className="client-rail-footer">
           <p>Need help? Every field maps directly to your policy assessment — accuracy speeds up approval.</p>
@@ -228,6 +306,47 @@ function ClientDashboard() {
 
       {/* ---- Scrollable content ---- */}
       <main className="client-content">
+        {view === "mine" ? (
+          <section className="client-section client-section-last my-proposals-panel">
+            <header className="client-section-head">
+              <span className="client-section-tag">Status</span>
+              <h2>My Proposals</h2>
+              <p>Every proposal you've submitted, and where it stands.</p>
+            </header>
+
+            {myProposalsLoading && <p className="state-text">Loading your proposals…</p>}
+            {myProposalsError && <p className="state-text error-text">Error: {myProposalsError}</p>}
+
+            {!myProposalsLoading && !myProposalsError && (
+              myProposals.length === 0 ? (
+                <p className="state-text">You haven't submitted any proposals yet.</p>
+              ) : (
+                <table className="my-proposals-table">
+                  <thead>
+                    <tr>
+                      <th>Reference</th>
+                      <th>Insurance Type</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {myProposals.map((p) => (
+                      <tr key={p.id}>
+                        <td className="mono">#{p.id}</td>
+                        <td>{p.insurance_type}</td>
+                        <td>
+                          <span className={`status-pill status-${p.status?.toLowerCase()}`}>
+                            {p.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )
+            )}
+          </section>
+        ) : (
         <form onSubmit={handleSubmit}>
           {/* ---- Document ---- */}
           <section id="document" className="client-section">
@@ -314,10 +433,17 @@ function ClientDashboard() {
                 <label>Insurance Type</label>
                 <select name="insuranceType" value={formData.insuranceType} onChange={handleChange}>
                   <option value="">Select Insurance</option>
-                  <option>Health Insurance</option>
-                  <option>Life Insurance</option>
-                  <option>Vehicle Insurance</option>
+                  {["Health Insurance", "Life Insurance", "Vehicle Insurance"].map((t) => (
+                    <option key={t} value={t} disabled={pendingInsuranceTypes.has(t)}>
+                      {t}{pendingInsuranceTypes.has(t) ? " (pending review)" : ""}
+                    </option>
+                  ))}
                 </select>
+                {isSelectedTypePending && (
+                  <p className="doc-attached-note">
+                    You already have a pending {formData.insuranceType} proposal — submit is disabled until it's decided.
+                  </p>
+                )}
               </div>
 
               <div className="form-group">
@@ -441,11 +567,12 @@ function ClientDashboard() {
           {/* ---- Sticky submit bar ---- */}
           <div className="client-submit-bar">
             <p>Review your details, then submit for AI underwriting.</p>
-            <button className="submit-btn" type="submit" disabled={loading}>
-              {loading ? "Submitting…" : "Submit Proposal for AI Underwriting"}
+            <button className="submit-btn" type="submit" disabled={loading || isSelectedTypePending}>
+              {loading ? "Submitting…" : isSelectedTypePending ? "Pending Proposal Already Exists" : "Submit Proposal for AI Underwriting"}
             </button>
           </div>
         </form>
+        )}
       </main>
     </div>
   );

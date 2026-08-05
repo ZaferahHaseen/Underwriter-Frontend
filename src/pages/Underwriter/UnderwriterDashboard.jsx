@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaClipboardList, FaHourglassHalf, FaCheckCircle, FaTimesCircle, FaSearch } from "react-icons/fa";
+import { FaClipboardList, FaHourglassHalf, FaCheckCircle, FaTimesCircle, FaSearch, FaSignOutAlt } from "react-icons/fa";
 import "./UnderwriterDashboard.css";
 import { listProposals } from "../../api/underwritingApi";
 import { getDummyProposalList } from "../../api/dummyProposals";
 import BackButton from "../../components/BackButton";
+import { useAuth } from "../../auth/AuthContext";
 
 // Flip to false once the backend teammate's GET /proposals list endpoint is live.
 const USE_DUMMY_DATA = false;
 
 function UnderwriterDashboard() {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const [proposals, setProposals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -34,6 +36,11 @@ function UnderwriterDashboard() {
   const approved = proposals.filter((p) => p.status === "APPROVED").length;
   const rejected = proposals.filter((p) => p.status === "REJECTED").length;
 
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   const filtered = proposals.filter((p) =>
     p.full_name?.toLowerCase().includes(query.toLowerCase()) ||
     p.insurance_type?.toLowerCase().includes(query.toLowerCase())
@@ -56,6 +63,9 @@ function UnderwriterDashboard() {
         </div>
         <button className="quick-check-btn" onClick={() => navigate("/risk-analysis/new")}>
           Quick Risk Check
+        </button>
+        <button className="logout-btn" onClick={handleLogout}>
+          <FaSignOutAlt /> Logout
         </button>
       </div>
 

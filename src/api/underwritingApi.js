@@ -48,7 +48,12 @@ export async function submitProposal(payload, file) {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail ? JSON.stringify(err.detail) : `API error: ${res.status}`);
+    const message = err.detail
+      ? (typeof err.detail === "string" ? err.detail : JSON.stringify(err.detail))
+      : `API error: ${res.status}`;
+    const e = new Error(message);
+    e.status = res.status; // lets callers branch on 409 (duplicate pending proposal) etc.
+    throw e;
   }
   return res.json();
 }

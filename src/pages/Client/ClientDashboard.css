@@ -570,3 +570,82 @@ input[readonly] {
     text-align: center;
   }
 }
+.client-logout-btn {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+  font-weight: 600;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.client-logout-btn:hover {
+  color: white;
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ---------- View tabs (New Proposal / My Proposals) ---------- */
+
+.client-view-tabs {
+  margin-top: 28px;
+  display: flex;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 4px;
+  border-radius: var(--radius-md);
+}
+
+.client-view-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 12.5px;
+  font-weight: 600;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.client-view-tab-active {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+/* ---------- My Proposals table ---------- */
+
+.my-proposals-panel table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+
+.my-proposals-table th {
+  text-align: left;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--slate);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.my-proposals-table td {
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+
+.my-proposals-table tr:hover td {
+  background: var(--mist);
+}
