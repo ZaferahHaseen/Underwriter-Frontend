@@ -188,3 +188,4 @@
     display: none;
   }
 }
+.login-error { color: #D64545; font-size: 0.85rem; margin: 0.5rem 0; }

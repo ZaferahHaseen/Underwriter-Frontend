@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaCheck, FaTimes, FaFileAlt } from "react-icons/fa";
 import "./ProposalDetails.css";
-import { getProposal, decideProposal, getProposalDocumentUrl } from "../../api/underwritingApi";
+import { getProposal, decideProposal, fetchProposalDocumentBlob } from "../../api/underwritingApi";
 import RiskChart from "./RiskChart";
 import BackButton from "../../components/BackButton";
 import RiskGauge from "../../components/RiskGauge";
@@ -102,14 +102,20 @@ function ProposalDetails() {
 
           {hasDoc && (
             <>
-              <a
+              <button
                 className="doc-view-link"
-                href={getProposalDocumentUrl(proposal.id)}
-                target="_blank"
-                rel="noopener noreferrer"
+                onClick={async () => {
+                  try {
+                    const blob = await fetchProposalDocumentBlob(proposal.id);
+                    const url = URL.createObjectURL(blob);
+                    window.open(url, "_blank", "noopener,noreferrer");
+                  } catch (err) {
+                    alert("Could not load document: " + err.message);
+                  }
+                }}
               >
                 <FaFileAlt /> View attached document ({proposal.document_filename})
-              </a>
+              </button>
 
               <h4>Extracted Details</h4>
               <ul>
@@ -200,4 +206,3 @@ function ProposalDetails() {
   );
 }
 export default ProposalDetails;
-

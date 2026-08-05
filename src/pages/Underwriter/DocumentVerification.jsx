@@ -4,7 +4,7 @@ import {
   FaFileAlt, FaCheckCircle, FaTimesCircle, FaExclamationTriangle, FaInfoCircle,
 } from "react-icons/fa";
 import "./DocumentVerification.css";
-import { getProposal, getProposalDocumentUrl } from "../../api/underwritingApi";
+import { getProposal, fetchProposalDocumentBlob } from "../../api/underwritingApi";
 import BackButton from "../../components/BackButton";
 import StatusStamp from "../../components/StatusStamp";
 
@@ -67,6 +67,16 @@ function DocumentVerification() {
     { label: "Expiry Date", value: fields.expiry_date },
   ].filter((f) => f.value);
 
+  const handleViewSource = async () => {
+    try {
+      const blob = await fetchProposalDocumentBlob(proposal.id);
+      const url = URL.createObjectURL(blob);
+      window.open(url, "_blank", "noopener,noreferrer");
+    } catch (err) {
+      alert("Could not load document: " + err.message);
+    }
+  };
+
   return (
     <div className="vp-page">
       {/* ---- Hero header ---- */}
@@ -107,14 +117,9 @@ function DocumentVerification() {
                   <p className="mono">{proposal.document_filename}</p>
                   {schemaUsed && <p className="vp-muted-inline">Matched schema: <b>{schemaUsed}</b></p>}
                 </div>
-                <a
-                  className="vp-link"
-                  href={getProposalDocumentUrl(proposal.id)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <button className="vp-link" onClick={handleViewSource}>
                   View Source
-                </a>
+                </button>
               </div>
             ) : (
               <p className="vp-muted">No document attached to this case.</p>

@@ -1,25 +1,36 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
+import { FaUser, FaUserTie } from "react-icons/fa";
 import "./Login.css";
 import { useAuth } from "../../auth/AuthContext";
 
-function Login() {
+function Signup() {
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth();
+  const { signup } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+
+    if (!role) {
+      setError("Please select whether you're a client or underwriter.");
+      return;
+    }
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+
     setLoading(true);
     try {
-      const data = await login(email, password);
-      // Role comes from the account itself, not a manual selection —
-      // backend decides where this user belongs.
+      const data = await signup(fullName, email, password, role);
       navigate(data.role === "underwriter" ? "/underwriter/dashboard" : "/client/dashboard");
     } catch (err) {
       setError(err.message);
@@ -61,8 +72,37 @@ function Login() {
 
       <div className="right-section">
         <form className="login-form" onSubmit={handleSubmit}>
-          <h2>Sign in to continue</h2>
-          <p className="subhead">Enter your account details</p>
+          <h2>Create an account</h2>
+          <p className="subhead">Select your role to get started</p>
+
+          <div className="roles">
+            <div
+              onClick={() => setRole("client")}
+              className={role === "client" ? "role-box active" : "role-box"}
+            >
+              <FaUser className="role-icon" />
+              <h3>Client</h3>
+              <p>Submit a proposal</p>
+            </div>
+
+            <div
+              onClick={() => setRole("underwriter")}
+              className={role === "underwriter" ? "role-box active" : "role-box"}
+            >
+              <FaUserTie className="role-icon" />
+              <h3>Underwriter</h3>
+              <p>Review proposals</p>
+            </div>
+          </div>
+
+          <label className="field-label">Full Name</label>
+          <input
+            type="text"
+            placeholder="Your name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            required
+          />
 
           <label className="field-label">Email</label>
           <input
@@ -76,7 +116,7 @@ function Login() {
           <label className="field-label">Password</label>
           <input
             type="password"
-            placeholder="••••••••"
+            placeholder="At least 8 characters"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -85,11 +125,11 @@ function Login() {
           {error && <p className="login-error">{error}</p>}
 
           <button type="submit" disabled={loading}>
-            {loading ? "Signing in…" : "Login"}
+            {loading ? "Creating account…" : "Sign up"}
           </button>
 
           <p className="subhead" style={{ marginTop: "1rem" }}>
-            Don't have an account? <Link to="/signup">Sign up</Link>
+            Already have an account? <Link to="/login">Log in</Link>
           </p>
         </form>
       </div>
@@ -97,4 +137,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Signup;
