@@ -1,0 +1,247 @@
+.login-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ---------- Left brand panel ---------- */
+
+.left-section {
+  width: 46%;
+  background: radial-gradient(circle at 15% 15%, var(--ink-soft), var(--ink) 70%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 64px 72px;
+  position: relative;
+  overflow: hidden;
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+  margin-bottom: 40px;
+}
+
+.brand-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+.left-section h1 {
+  font-size: 40px;
+  line-height: 1.15;
+  color: white;
+  max-width: 440px;
+  margin-bottom: 20px;
+}
+
+.left-section p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 400px;
+}
+
+.left-gauge {
+  margin-top: 56px;
+  opacity: 0.9;
+}
+
+/* ---------- Right form panel ---------- */
+
+.right-section {
+  width: 54%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: var(--mist);
+  padding: 40px;
+}
+
+.login-form {
+  width: 100%;
+  max-width: 420px;
+}
+
+.login-form h2 {
+  font-size: 26px;
+  margin-bottom: 6px;
+}
+
+.subhead {
+  color: var(--slate);
+  font-size: 14px;
+  margin-bottom: 32px;
+}
+
+/* Role cards */
+
+.roles {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.role-box {
+  flex: 1;
+  background: var(--paper);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 22px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.role-box:hover {
+  border-color: var(--signal);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.role-box.active {
+  background: var(--signal-tint);
+  border-color: var(--signal);
+}
+
+.role-icon {
+  font-size: 26px;
+  color: var(--signal);
+  margin-bottom: 10px;
+}
+
+.role-box h3 {
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.role-box p {
+  font-size: 12px;
+  color: var(--slate);
+}
+
+/* Client sub-mode tabs (new proposal vs existing client) */
+
+.client-mode-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  background: var(--mist);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+}
+
+.mode-tab {
+  flex: 1;
+  padding: 9px 10px;
+  border-radius: calc(var(--radius-sm) - 2px);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--slate);
+  background: transparent;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mode-tab:hover {
+  color: var(--ink);
+}
+
+.mode-tab.active {
+  background: var(--paper);
+  color: var(--signal-dark);
+  box-shadow: var(--shadow-sm);
+}
+
+.login-hint {
+  font-size: 12.5px;
+  color: var(--slate-light);
+  margin-top: 10px;
+}
+
+.inline-error {
+  background: var(--risk-high-tint);
+  color: #7a2323;
+  border-left: 4px solid var(--risk-high);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.login-error {
+  margin-top: 18px;
+}
+
+/* Fields */
+
+.field-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--slate);
+  margin-bottom: 6px;
+  margin-top: 16px;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 13px 14px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--line);
+  font-size: 14px;
+  background: var(--paper);
+  transition: border-color 0.15s ease;
+}
+
+.login-form input:focus {
+  border-color: var(--signal);
+}
+
+.login-form button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 28px;
+  border-radius: var(--radius-sm);
+  background: var(--signal);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  transition: background 0.15s ease;
+}
+
+.login-form button:hover {
+  background: var(--signal-dark);
+}
+
+.login-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 860px) {
+  .login-container {
+    flex-direction: column;
+  }
+  .left-section,
+  .right-section {
+    width: 100%;
+  }
+  .left-section {
+    padding: 40px 32px;
+  }
+  .left-gauge {
+    display: none;
+  }
+}

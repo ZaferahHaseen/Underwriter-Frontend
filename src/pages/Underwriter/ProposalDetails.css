@@ -1,0 +1,229 @@
+.proposal-container {
+  min-height: 100vh;
+  background: var(--mist);
+  padding: 36px 48px 60px;
+}
+
+.proposal-topbar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.proposal-topbar h1 {
+  font-size: 24px;
+}
+
+.proposal-card {
+  max-width: 860px;
+  margin: 0 auto;
+  background: var(--paper);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.section {
+  padding: 28px 36px;
+  border-bottom: 1px solid var(--line);
+}
+
+.section:last-of-type {
+  border-bottom: none;
+}
+
+.section h2 {
+  font-size: 17px;
+}
+
+.section h3 {
+  font-size: 15px;
+  margin-bottom: 14px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  row-gap: 12px;
+}
+
+.info-grid .label {
+  color: var(--slate);
+  font-size: 13px;
+}
+
+.info-grid .value {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ---- Gauge + summary ---- */
+
+.gauge-row {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.summary-text {
+  flex: 1;
+  color: var(--slate);
+  font-size: 14px;
+  line-height: 1.65;
+  background: var(--mist);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
+}
+
+.graph-toggle-btn {
+  margin-top: 20px;
+  background: var(--signal-tint);
+  color: var(--signal-dark);
+  padding: 9px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.15s ease;
+}
+
+.graph-toggle-btn:hover {
+  background: #dde7fd;
+}
+
+.risk-chart-wrap {
+  margin-top: 20px;
+}
+
+/* ---- Factor lists ---- */
+
+.factor-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.factor-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+}
+
+.factor-icon {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.factor-item.risk {
+  background: var(--risk-high-tint);
+  color: #7a2323;
+}
+
+.factor-item.risk .factor-icon {
+  background: var(--risk-high);
+}
+
+.factor-item.positive {
+  background: var(--risk-low-tint);
+  color: #14532d;
+}
+
+.factor-item.positive .factor-icon {
+  background: var(--risk-low);
+}
+
+
+/* ---- Decision ---- */
+
+.decision-buttons {
+  display: flex;
+  gap: 14px;
+}
+
+.approve-btn,
+.reject-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+}
+
+.approve-btn {
+  background: var(--risk-low);
+  color: white;
+}
+
+.reject-btn {
+  background: var(--risk-high);
+  color: white;
+}
+
+.approve-btn:hover,
+.reject-btn:hover {
+  opacity: 0.9;
+}
+
+.approve-btn:active,
+.reject-btn:active {
+  transform: scale(0.98);
+}
+
+.approve-btn:disabled,
+.reject-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.final-decision {
+  font-size: 14px;
+  color: var(--slate);
+}
+
+.state-text {
+  margin-top: 24px;
+  color: var(--slate);
+}
+
+.error-text {
+  color: var(--risk-high);
+}
+
+@media (max-width: 720px) {
+  .proposal-container {
+    padding: 24px;
+  }
+  .section {
+    padding: 22px;
+  }
+  .gauge-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .info-grid {
+    grid-template-columns: 130px 1fr;
+  }
+}
+.doc-view-link { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 12px; color: #1e3a5f; font-weight: 600; text-decoration: none; }
+.check-pass { color: #1a7f37; }
+.check-fail { color: #c0392b; }

@@ -1,0 +1,301 @@
+.mvp-page {
+  min-height: 100vh;
+  background: var(--mist);
+  padding-bottom: 60px;
+}
+
+.mvp-loading {
+  padding: 40px 48px;
+  color: var(--slate);
+}
+
+/* ---------------- Hero header ---------------- */
+
+.mvp-hero {
+  margin-bottom: 32px;
+  padding: 36px 48px 40px;
+  background: linear-gradient(135deg, var(--ink) 0%, var(--ink-soft) 65%, #0e4a4d 100%);
+  border-bottom: 1px solid var(--line);
+}
+
+.mvp-topbar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.mvp-topbar .back-button {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: white;
+}
+
+.mvp-topbar .back-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.mvp-topbar-text {
+  flex: 1;
+}
+
+.mvp-topbar-text h1 {
+  font-size: 26px;
+  color: white;
+}
+
+.mvp-topbar-text p {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* ---------------- Layout ---------------- */
+
+.mvp-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  padding: 0 48px;
+  align-items: start;
+}
+
+.mvp-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mvp-side {
+  position: sticky;
+  top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ---------------- Cards ---------------- */
+
+.mvp-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.mvp-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+.mvp-card-head-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mvp-vehicle-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  background: var(--motor-tint);
+  color: var(--motor);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.mvp-card-head h2 {
+  font-size: 15.5px;
+}
+
+.mvp-reg {
+  font-size: 12px;
+  color: var(--slate);
+  margin-top: 2px;
+}
+
+.mvp-pill {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 4px 11px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.mvp-pill-success {
+  background: var(--risk-low-tint);
+  color: var(--risk-low);
+}
+
+.mvp-pill-warning {
+  background: #fdf3d8;
+  color: var(--gold);
+}
+
+/* Document checklist grid */
+
+.mvp-check-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  padding: 20px 22px;
+}
+
+@media (max-width: 720px) {
+  .mvp-check-grid { grid-template-columns: 1fr; }
+}
+
+.mvp-check-card {
+  display: flex;
+  gap: 10px;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+}
+
+.mvp-check-pass {
+  background: var(--risk-low-tint);
+  border-color: transparent;
+}
+
+.mvp-check-fail {
+  background: var(--risk-high-tint);
+  border-color: transparent;
+}
+
+.mvp-check-warn {
+  background: #fdf3d8;
+  border-color: transparent;
+}
+
+.mvp-check-icon {
+  font-size: 16px;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.mvp-check-pass .mvp-check-icon { color: var(--risk-low); }
+.mvp-check-fail .mvp-check-icon { color: var(--risk-high); }
+.mvp-check-warn .mvp-check-icon { color: var(--gold); }
+
+.mvp-check-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.mvp-check-sub {
+  font-size: 13.5px;
+  color: var(--slate);
+  margin-top: 2px;
+}
+
+/* ---------------- Decision banner ---------------- */
+
+.mvp-decision-banner {
+  display: flex;
+  gap: 14px;
+  padding: 20px 22px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.mvp-decision-success {
+  background: var(--risk-low-tint);
+  border: 1px solid rgba(30, 158, 99, 0.25);
+}
+.mvp-decision-warning {
+  background: #fdf3d8;
+  border: 1px solid rgba(201, 154, 46, 0.3);
+}
+
+.mvp-decision-icon {
+  font-size: 20px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.mvp-decision-success .mvp-decision-icon { color: var(--risk-low); }
+.mvp-decision-warning .mvp-decision-icon { color: var(--gold); }
+
+.mvp-decision-title {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.mvp-decision-body {
+  font-size: 14px;
+  color: var(--slate);
+  margin-top: 4px;
+  line-height: 1.55;
+}
+
+/* ---------------- Side rail ---------------- */
+
+.mvp-side-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 18px 20px;
+}
+
+.mvp-side-title {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--slate);
+  margin-bottom: 12px;
+}
+
+.mvp-detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13.5px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--slate);
+  text-transform: capitalize;
+}
+
+.mvp-detail-row:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.mvp-detail-row b {
+  color: var(--ink);
+  font-weight: 600;
+  text-align: right;
+}
+
+/* ---------------- Responsive ---------------- */
+
+@media (max-width: 900px) {
+  .mvp-hero {
+    padding: 24px 20px 28px;
+  }
+  .mvp-layout {
+    grid-template-columns: 1fr;
+    padding: 0 20px;
+  }
+  .mvp-side {
+    position: relative;
+    top: 0;
+  }
+  .mvp-check-grid {
+    grid-template-columns: 1fr;
+  }
+}

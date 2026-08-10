@@ -1,0 +1,366 @@
+.mra-page {
+  min-height: 100vh;
+  background: var(--mist);
+  padding-bottom: 60px;
+}
+
+.mra-hero {
+  margin-bottom: 28px;
+  padding: 36px 48px 40px;
+  background: linear-gradient(135deg, var(--ink) 0%, var(--ink-soft) 65%, #0e4a4d 100%);
+  border-bottom: 1px solid var(--line);
+}
+
+.mra-page-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.mra-hero .back-button {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: white;
+}
+
+.mra-hero .back-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.mra-hero .page-title {
+  color: white;
+  font-size: 24px;
+  margin: 0;
+}
+
+.mra-hero .page-subhead {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.state-text {
+  max-width: 1000px;
+  margin: 0 auto;
+  color: var(--slate);
+  padding: 20px 48px;
+}
+
+/* ---------- Fleet summary strip ---------- */
+
+.mra-fleet-summary {
+  max-width: 1120px;
+  margin: 0 auto 24px;
+  padding: 0 48px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 32px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+.mra-fleet-gauge {
+  display: flex;
+  justify-content: center;
+}
+
+.mra-fleet-stats {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: 24px;
+  align-items: center;
+}
+
+.mra-fleet-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mra-fleet-stat-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.mra-fleet-stat-label {
+  font-size: 12px;
+  color: var(--slate-light);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.mra-fleet-stat-wide {
+  border-left: 1px solid var(--line);
+  padding-left: 24px;
+}
+
+.mra-fleet-stat-highlight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--risk-high);
+  margin-top: 4px;
+}
+
+.mra-fleet-stat-highlight .mono {
+  color: var(--slate);
+  font-weight: 500;
+}
+
+/* ---------- Vehicle tabs ---------- */
+
+.mra-vehicle-tabs {
+  max-width: 1120px;
+  margin: 0 auto 24px;
+  padding: 0 48px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mra-vehicle-tab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--line);
+  background: var(--paper);
+  color: var(--slate);
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.mra-vehicle-tab:hover {
+  border-color: var(--motor);
+}
+
+.mra-vehicle-tab.active {
+  background: var(--motor);
+  border-color: var(--motor);
+  color: white;
+}
+
+.mra-tab-score {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.mra-vehicle-tab:not(.active) .mra-tab-score-low { background: var(--risk-low-tint); color: var(--risk-low); }
+.mra-vehicle-tab:not(.active) .mra-tab-score-moderate { background: var(--risk-mod-tint); color: var(--risk-mod); }
+.mra-vehicle-tab:not(.active) .mra-tab-score-high { background: var(--risk-high-tint); color: var(--risk-high); }
+
+.mra-vehicle-tab.active .mra-tab-score {
+  background: rgba(255, 255, 255, 0.22);
+  color: white;
+}
+
+/* ---------- Result shell (full-screen split) ---------- */
+
+.mra-result-shell {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 28px;
+  padding: 0 48px;
+  align-items: start;
+}
+
+.mra-result-aside {
+  position: sticky;
+  top: 24px;
+  background: var(--paper);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.mra-confidence-box {
+  text-align: center;
+  width: 100%;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.mra-confidence-box h4 {
+  color: var(--slate);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.mra-confidence-box p {
+  color: var(--motor);
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.mra-vehicle-info {
+  text-align: center;
+  width: 100%;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.mra-vehicle-info p:first-child {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.mra-vehicle-info p:last-child {
+  font-size: 12.5px;
+  color: var(--slate);
+  text-transform: capitalize;
+}
+
+.mra-result-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-bottom: 24px;
+}
+
+.mra-summary-box {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--motor);
+  padding: 22px 24px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.mra-summary-box h3 {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--slate);
+  margin-bottom: 10px;
+}
+
+.mra-summary-box p {
+  color: var(--ink);
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+/* ---------- Factor lists ---------- */
+
+.mra-list-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.mra-list-box {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  padding: 20px;
+  border-radius: var(--radius-md);
+}
+
+.mra-list-box h3 {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--slate);
+  margin-bottom: 14px;
+}
+
+.mra-list-empty {
+  color: var(--slate-light);
+  font-size: 13px;
+  font-style: italic;
+}
+
+.mra-list-box ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mra-list-box li {
+  background: var(--mist);
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+  line-height: 1.5;
+  border-left: 4px solid var(--motor);
+}
+
+.mra-risk-item {
+  border-left-color: var(--risk-high) !important;
+}
+
+.mra-positive-item {
+  border-left-color: var(--risk-low) !important;
+}
+
+.mra-chart-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+@media (max-width: 900px) {
+  .mra-list-section {
+    grid-template-columns: 1fr;
+  }
+  .mra-result-shell {
+    grid-template-columns: 1fr;
+    padding: 0 20px;
+  }
+  .mra-result-aside {
+    position: relative;
+    top: 0;
+  }
+  .mra-hero {
+    padding: 24px 20px 28px;
+  }
+  .mra-fleet-summary {
+    grid-template-columns: 1fr;
+    padding: 24px 20px;
+    margin: 0 20px 20px;
+  }
+  .mra-fleet-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  .mra-fleet-stat-wide {
+    grid-column: span 2;
+    border-left: none;
+    border-top: 1px solid var(--line);
+    padding-left: 0;
+    padding-top: 16px;
+  }
+  .mra-vehicle-tabs {
+    padding: 0 20px;
+  }
+}
