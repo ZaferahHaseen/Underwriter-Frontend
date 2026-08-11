@@ -3,6 +3,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login/Login";
 import ClientDashboard from "./pages/Client/ClientDashboard";
 import ClientPolicy from "./pages/Client/ClientPolicy";
+import ClientHome from "./pages/Client/ClientHome";
+import ClientMotorPolicy from "./pages/Client/ClientMotorPolicy";
+import MotorProposalForm from "./pages/Client/MotorProposalForm";
 import UnderwriterDashboard from "./pages/Underwriter/UnderwriterDashboard";
 import ProposalDetails from "./pages/Underwriter/ProposalDetails";
 import RiskAnalysis from "./pages/Underwriter/RiskAnalysis";
@@ -21,6 +24,12 @@ function App() {
 
         <Route path="/" element={<Login />} />
 
+        {/* ---- Client side ---- */}
+        <Route
+          path="/client/home"
+          element={<ClientHome />}
+        />
+
         <Route
           path="/client/dashboard"
           element={<ClientDashboard />}
@@ -29,6 +38,16 @@ function App() {
         <Route
           path="/client/my-policy"
           element={<ClientPolicy />}
+        />
+
+        <Route
+          path="/client/motor"
+          element={<ClientMotorPolicy />}
+        />
+
+        <Route
+          path="/client/motor/proposal"
+          element={<MotorProposalForm />}
         />
 
         <Route

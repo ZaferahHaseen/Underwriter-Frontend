@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FaShieldAlt, FaSignOutAlt, FaFileContract, FaCalendarAlt,
-  FaCoins, FaUserAlt, FaEnvelope, FaBriefcase,
+  FaCoins, FaUserAlt, FaEnvelope, FaBriefcase, FaPlus,
 } from "react-icons/fa";
 import "./ClientPolicy.css";
 import { clientLogin } from "../../api/underwritingApi";
@@ -31,7 +31,10 @@ function ClientPolicy() {
   useEffect(() => {
     const email = sessionStorage.getItem("client_email");
     if (!email) {
-      navigate("/");
+      // No session yet (brand-new client, arrived via Client Home without
+      // logging in with an email) — just show the empty state below
+      // instead of bouncing back to login.
+      setLoading(false);
       return;
     }
 
@@ -106,9 +109,14 @@ function ClientPolicy() {
             <FaShieldAlt />
             <span>AI Underwriter</span>
           </div>
-          <button className="cp-logout" onClick={handleLogout}>
-            <FaSignOutAlt /> Log out
-          </button>
+          <div className="cp-topbar-actions">
+            <button className="cp-apply-btn" onClick={() => navigate("/client/dashboard")}>
+              <FaPlus /> Insurance Application
+            </button>
+            <button className="cp-logout" onClick={handleLogout}>
+              <FaSignOutAlt /> Log out
+            </button>
+          </div>
         </div>
 
         <div className="cp-identity">
