@@ -154,3 +154,62 @@ export async function clientLogin(email) {
   }
   return res.json();
 }
+// ---------------------------------------------------------------------------
+// VEHICLE (Motor) endpoints -- add these to the bottom of underwritingApi.js.
+// AUTH_DISABLED=true on backend right now, so no Authorization header needed.
+// When auth is re-enabled later, add:
+//   headers: { Authorization: `Bearer ${token}`, ... }
+// to each of these.
+// ---------------------------------------------------------------------------
+
+// Manual entry OR already-parsed Excel rows -> one call, N independent
+// vehicle proposals created (each vehicle = its own proposal + risk score,
+// matches backend's 1-proposal-per-vehicle model -- NOT a single fleet
+// proposal with a nested vehicles array).
+export async function submitVehicleProposalsBatch(vehicles) {
+  const res = await fetch(`${API_BASE}/api/v1/vehicle/proposals/batch`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(vehicles), // array of vehicle objects, field names must match motorFormFields.js keys exactly
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail ? JSON.stringify(err.detail) : `API error: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function listVehicleProposals() {
+  const res = await fetch(`${API_BASE}/api/v1/vehicle/proposals`);
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
+
+export async function getVehicleProposal(id) {
+  const res = await fetch(`${API_BASE}/api/v1/vehicle/proposals/${id}`);
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
+
+// Underwriter: build a URL to view/download the vehicle proposal's attached
+// document (license image etc). Only populated if the proposal was submitted
+// via the single-submit endpoint (with file) -- bulk/batch-created proposals
+// have no document attached, this URL will 404 for those.
+export function getVehicleProposalDocumentUrl(id) {
+  return `${API_BASE}/api/v1/vehicle/proposals/${id}/document`;
+}
+
+// Decision endpoint is SHARED with the life module (works for vehicle rows
+// too -- it's a generic status UPDATE, doesn't touch vehicle-only fields).
+export async function decideVehicleProposal(id, status) {
+  const res = await fetch(`${API_BASE}/api/v1/proposals/${id}/decision`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `API error: ${res.status}`);
+  }
+  return res.json();
+}

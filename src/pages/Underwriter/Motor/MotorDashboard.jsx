@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaClipboardList, FaHourglassHalf, FaCheckCircle, FaTimesCircle, FaSearch, FaCarSide } from "react-icons/fa";
 import "./MotorDashboard.css";
-import { getDummyMotorProposalList } from "../../../api/dummyMotorProposals";
+import { listVehicleProposals } from "../../../api/underwritingApi";
 import BackButton from "../../../components/BackButton";
 
-// Flip to false once the backend teammate's motor list endpoint is live.
-const USE_DUMMY_DATA = true;
+// Real backend wired -- one row = one proposal = one vehicle (flat),
+// NOT fleet-grouped like the old dummy data assumed.
+const USE_DUMMY_DATA = false;
 
 function MotorDashboard() {
   const navigate = useNavigate();
@@ -17,31 +18,34 @@ function MotorDashboard() {
 
   useEffect(() => {
     if (USE_DUMMY_DATA) {
-      setProposals(getDummyMotorProposalList());
       setLoading(false);
       return;
     }
-    // Real endpoint wiring goes here once ready, e.g. listMotorProposals().
-    setLoading(false);
+    listVehicleProposals()
+      .then((data) => {
+        setProposals(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
   }, []);
 
   const total = proposals.length;
-  const totalVehicles = proposals.reduce((sum, p) => sum + p.vehicles.length, 0);
   const pending = proposals.filter((p) => p.status === "PENDING").length;
   const approved = proposals.filter((p) => p.status === "APPROVED").length;
   const rejected = proposals.filter((p) => p.status === "REJECTED").length;
 
-  const filtered = proposals.filter(
-    (p) =>
-      p.full_name?.toLowerCase().includes(query.toLowerCase()) ||
-      p.fleet_type?.toLowerCase().includes(query.toLowerCase())
+  const filtered = proposals.filter((p) =>
+    p.full_name?.toLowerCase().includes(query.toLowerCase())
   );
 
   const stats = [
     { label: "Total Proposals", value: total, icon: <FaClipboardList />, tone: "motor" },
-    { label: "Vehicles Insured", value: totalVehicles, icon: <FaCarSide />, tone: "gold" },
     { label: "Pending Review", value: pending, icon: <FaHourglassHalf />, tone: "gold" },
     { label: "Approved", value: approved, icon: <FaCheckCircle />, tone: "low" },
+    { label: "Rejected", value: rejected, icon: <FaTimesCircle />, tone: "high" },
   ];
 
   return (
@@ -50,7 +54,7 @@ function MotorDashboard() {
         <BackButton to="/underwriter/home" />
         <div className="mdash-header-text">
           <h1>Motor Insurance Dashboard</h1>
-          <p className="mdash-subhead">Review incoming vehicle & fleet proposals and issue decisions.</p>
+          <p className="mdash-subhead">Review incoming vehicle proposals and issue decisions.</p>
         </div>
       </div>
 
@@ -72,7 +76,7 @@ function MotorDashboard() {
           <div className="mdash-search-box">
             <FaSearch />
             <input
-              placeholder="Search by owner or fleet type"
+              placeholder="Search by policyholder name"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
@@ -87,8 +91,8 @@ function MotorDashboard() {
             <thead>
               <tr>
                 <th>Policyholder</th>
-                <th>Type</th>
-                <th>Vehicles</th>
+                <th>Vehicle</th>
+                <th>Created</th>
                 <th>Status</th>
                 <th></th>
               </tr>
@@ -102,8 +106,8 @@ function MotorDashboard() {
                 filtered.map((p) => (
                   <tr key={p.id}>
                     <td>{p.full_name}</td>
-                    <td>{p.fleet_type}</td>
-                    <td className="mono">{p.vehicles.length}</td>
+                    <td className="mono">#{p.vehicle_id}</td>
+                    <td>{p.created_at}</td>
                     <td>
                       <span className={`mdash-status-pill mdash-status-${p.status?.toLowerCase()}`}>
                         {p.status}

@@ -21,6 +21,7 @@ import {
 } from "../../data/motorFormFields";
 
 import "./MotorProposalForm.css";
+import { submitVehicleProposalsBatch } from "../../api/underwritingApi";
 
 function MotorProposalForm() {
   const navigate = useNavigate();
@@ -213,44 +214,34 @@ function MotorProposalForm() {
      FINAL SUBMISSION
      ========================================================= */
 
-  const handleSubmit = () => {
-    // There must be at least one saved vehicle
-    if (savedVehicles.length === 0) {
-      setSubmitAttempted(true);
+  const handleSubmit = async () => {
+  if (savedVehicles.length === 0) {
+    setSubmitAttempted(true);
+    alert("Please save at least one vehicle before submitting.");
+    return;
+  }
 
-      alert("Please save at least one vehicle before submitting.");
+  const allErrors = savedVehicles.map((vehicle) => validateVehicle(vehicle));
+  const hasErrors = allErrors.some((errors) => Object.keys(errors).length > 0);
+  if (hasErrors) {
+    alert("One or more saved vehicles contain invalid details. Please edit and correct them before submitting.");
+    return;
+  }
+
+  try {
+    const result = await submitVehicleProposalsBatch(savedVehicles);
+    console.log("Batch submit result:", result);
+    if (result.created === 0) {
+      alert("No proposals were created - check console for details (likely a duplicate pending proposal already exists).");
       return;
     }
-
-    // Validate all saved vehicles again before final submission
-    const allErrors = savedVehicles.map((vehicle) =>
-      validateVehicle(vehicle)
-    );
-
-    const hasErrors = allErrors.some(
-      (errors) => Object.keys(errors).length > 0
-    );
-
-    if (hasErrors) {
-      alert(
-        "One or more saved vehicles contain invalid details. Please edit and correct them before submitting."
-      );
-      return;
-    }
-
-    const payload = {
-      vehicles: savedVehicles,
-    };
-
-    console.log(
-      "Motor proposal submission payload:",
-      payload
-    );
-
-    // TODO:
-    // Replace this with the real backend submission call.
     setSubmitted(true);
-  };
+  } catch (err) {
+    alert(`Submission failed: ${err.message}`);
+  }
+};
+
+    
 
   /* =========================================================
      SUCCESS SCREEN
