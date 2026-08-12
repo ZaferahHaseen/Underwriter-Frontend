@@ -5,12 +5,10 @@ import {
   FaShieldAlt,
   FaUserTie,
   FaGasPump,
-  FaCheckCircle,
-  FaTimesCircle,
   FaChartLine,
 } from "react-icons/fa";
 import "./MotorProposalDetails.css";
-import { getVehicleProposal, decideVehicleProposal, getVehicleProposalDocumentUrl } from "../../../api/underwritingApi";
+import { getVehicleProposal, getVehicleProposalDocumentUrl } from "../../../api/underwritingApi";
 import { FaFileAlt } from "react-icons/fa";
 import BackButton from "../../../components/BackButton";
 import StatusStamp from "../../../components/StatusStamp";
@@ -25,7 +23,6 @@ function MotorProposalDetails() {
   const [proposal, setProposal] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [deciding, setDeciding] = useState(false);
 
   const loadProposal = () => {
     setLoading(true);
@@ -49,18 +46,6 @@ function MotorProposalDetails() {
     loadProposal();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
-
-  const handleDecision = async (status) => {
-    setDeciding(true);
-    try {
-      await decideVehicleProposal(id, status);
-      loadProposal(); // refresh to show new status
-    } catch (err) {
-      alert(`Decision failed: ${err.message}`);
-    } finally {
-      setDeciding(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -195,29 +180,6 @@ function MotorProposalDetails() {
           </section>
         )}
 
-        <section className="mpd-section mpd-section-last">
-          <div className="mpd-section-head">
-            <FaChartLine className="mpd-section-icon" />
-            <h3>AI Risk Explanation</h3>
-          </div>
-          <p className="mpd-reasoning">{proposal.reasoning_summary}</p>
-
-          <div className="mpd-factor-grid">
-            <div>
-              <h4>Risk Factors</h4>
-              {(proposal.risk_factors || []).length === 0 && <p className="mpd-none-text">None flagged</p>}
-              {(proposal.risk_factors || []).map((f, i) => (
-                <p key={i} className="mpd-factor mpd-factor-risk">{f.detail}</p>
-              ))}
-            </div>
-            <div>
-              <h4>Positive Factors</h4>
-              {(proposal.positive_factors || []).map((f, i) => (
-                <p key={i} className="mpd-factor mpd-factor-positive">{f.detail}</p>
-              ))}
-            </div>
-          </div>
-        </section>
       </div>
 
       <div className="mpd-actions">
@@ -237,28 +199,6 @@ function MotorProposalDetails() {
           AI Risk Analysis
         </button>
       </div>
-
-      {proposal.status === "PENDING" && (
-        <div className="mpd-actions">
-          <button
-            className="mpd-action-btn mpd-action-secondary"
-            disabled={deciding}
-            onClick={() => handleDecision("REJECTED")}
-          >
-            <FaTimesCircle />
-            Reject
-          </button>
-
-          <button
-            className="mpd-action-btn mpd-action-primary"
-            disabled={deciding}
-            onClick={() => handleDecision("APPROVED")}
-          >
-            <FaCheckCircle />
-            Approve
-          </button>
-        </div>
-      )}
     </div>
   );
 }

@@ -24,7 +24,7 @@ function UnderwriterDashboard() {
     }
 
     listProposals()
-      .then(setProposals)
+      .then((data) => setProposals(data.filter((p) => p.insurance_type !== "vehicle")))
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
