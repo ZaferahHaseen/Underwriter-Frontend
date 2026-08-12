@@ -5,6 +5,7 @@ import "./UnderwriterDashboard.css";
 import { listProposals } from "../../api/underwritingApi";
 import { getDummyProposalList } from "../../api/dummyProposals";
 import BackButton from "../../components/BackButton";
+import TopBar from "../../components/TopBar";
 
 // Flip to false once the backend teammate's GET /proposals list endpoint is live.
 const USE_DUMMY_DATA = false;
@@ -24,7 +25,7 @@ function UnderwriterDashboard() {
     }
 
     listProposals()
-      .then((data) => setProposals(data.filter((p) => p.insurance_type !== "vehicle")))
+      .then(setProposals)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
@@ -54,9 +55,10 @@ function UnderwriterDashboard() {
           <h1>Underwriter Dashboard</h1>
           <p className="dashboard-subhead">Review incoming proposals and issue decisions.</p>
         </div>
-        <button className="quick-check-btn" onClick={() => navigate("/risk-analysis/new")}>
+        <button className="quick-check-btn" onClick={() => navigate("/risk-analysis/new?type=health")}>
           Quick Risk Check
         </button>
+        <TopBar homeTo="/underwriter/home" />
       </div>
 
       <div className="cards">

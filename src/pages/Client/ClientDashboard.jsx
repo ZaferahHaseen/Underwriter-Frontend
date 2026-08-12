@@ -15,6 +15,7 @@ import {
   getDocTypesForCountry,
 } from "../../api/underwritingApi";
 import BackButton from "../../components/BackButton";
+import TopBar from "../../components/TopBar";
 
 const COUNTRY_NAMES = {
   AE: "United Arab Emirates",
@@ -362,12 +363,14 @@ function ClientDashboard() {
 
         <div className="client-rail-top">
 
-          <BackButton to="/" />
+          <BackButton to="/client/home" />
 
           <div className="client-brand">
             <FaShieldAlt />
             <span>AI Underwriter</span>
           </div>
+
+          <TopBar homeTo="/client/home" />
 
         </div>
 

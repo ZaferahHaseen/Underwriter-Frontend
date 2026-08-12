@@ -6,6 +6,8 @@ import {
 } from "react-icons/fa";
 import "./ClientPolicy.css";
 import { clientLogin } from "../../api/underwritingApi";
+import BackButton from "../../components/BackButton";
+import TopBar from "../../components/TopBar";
 
 function statusTone(status) {
   const s = (status || "").toLowerCase();
@@ -105,17 +107,18 @@ function ClientPolicy() {
       {/* ---- Hero header ---- */}
       <div className="cp-hero">
         <div className="cp-topbar">
-          <div className="cp-brand">
-            <FaShieldAlt />
-            <span>AI Underwriter</span>
+          <div className="cp-topbar-left">
+            <BackButton to="/client/home" />
+            <div className="cp-brand">
+              <FaShieldAlt />
+              <span>AI Underwriter</span>
+            </div>
           </div>
           <div className="cp-topbar-actions">
             <button className="cp-apply-btn" onClick={() => navigate("/client/dashboard")}>
               <FaPlus /> Insurance Application
             </button>
-            <button className="cp-logout" onClick={handleLogout}>
-              <FaSignOutAlt /> Log out
-            </button>
+            <TopBar homeTo="/client/home" />
           </div>
         </div>
 

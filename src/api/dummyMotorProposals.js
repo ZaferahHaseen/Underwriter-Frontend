@@ -55,6 +55,9 @@ function makeVehicle(proposalSeed, idx) {
   const priorClaim = seed % 5 === 0 ? 1 : 0;
   const commercialUse = seed % 3 === 0 ? 1 : 0;
   const numPreviousClaims = seed % 4 === 0 ? 2 : seed % 3;
+  const driverAge = 21 + (seed % 45);
+  const previousAccidents = priorClaim ? 1 + (seed % 2) : seed % 6 === 0 ? 1 : 0;
+  const annualMileageKm = 6000 + (seed % 20) * 1500;
 
   return {
     vehicle_id: `${proposalSeed}-V${idx + 1}`,
@@ -65,6 +68,9 @@ function makeVehicle(proposalSeed, idx) {
     fuel_type: seededPick(FUEL_TYPES, seed),
     vehicle_usage: commercialUse ? "commercial" : "personal",
     vehicle_age_years: vehicleAge,
+    driver_age: driverAge,
+    previous_accidents: previousAccidents,
+    annual_mileage_km: annualMileageKm,
     driving_experience_years: drivingExperience,
     no_claim_bonus_percent: ncb,
     prior_accident_claim: priorClaim,

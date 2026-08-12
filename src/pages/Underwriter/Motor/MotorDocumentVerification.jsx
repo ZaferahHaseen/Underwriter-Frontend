@@ -4,38 +4,37 @@ import {
   FaCarSide, FaCheckCircle, FaTimesCircle, FaExclamationTriangle,
 } from "react-icons/fa";
 import "./MotorDocumentVerification.css";
-import { getVehicleProposal, getVehicleProposalDocumentUrl } from "../../../api/underwritingApi";
+import { getDummyMotorProposal } from "../../../api/dummyMotorProposals";
 import BackButton from "../../../components/BackButton";
 import StatusStamp from "../../../components/StatusStamp";
+import TopBar from "../../../components/TopBar";
 
-// Real backend wired -- validation_results comes from OCR-vs-form comparison
-// (app/document_validation/validator.py), one entry per checked field
-// (currently: name, age). No per-vehicle grouping needed (flat model).
-const USE_DUMMY_DATA = false;
+// Flip to false once the backend teammate's motor document endpoint is live.
+const USE_DUMMY_DATA = true;
+
+const STATUS_META = {
+  VERIFIED: { icon: FaCheckCircle, cls: "mvp-check-pass", label: "Verified" },
+  MISMATCH: { icon: FaTimesCircle, cls: "mvp-check-fail", label: "Mismatch" },
+  FLAGGED: { icon: FaExclamationTriangle, cls: "mvp-check-warn", label: "Flagged" },
+  MISSING: { icon: FaExclamationTriangle, cls: "mvp-check-warn", label: "Missing" },
+};
 
 function MotorDocumentVerification() {
   const { id } = useParams();
   const [proposal, setProposal] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (USE_DUMMY_DATA) {
+      setProposal(getDummyMotorProposal(id));
       setLoading(false);
       return;
     }
-    getVehicleProposal(id)
-      .then((data) => {
-        setProposal(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
+    // Real endpoint wiring goes here once ready.
+    setLoading(false);
   }, [id]);
 
-  if (loading) {
+  if (loading || !proposal) {
     return (
       <div className="mvp-page">
         <p className="mvp-loading">Loading case…</p>
@@ -43,37 +42,19 @@ function MotorDocumentVerification() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="mvp-page">
-        <BackButton to={`/motor-proposal/${id}`} />
-        <p className="state-text error-text">Error: {error}</p>
-      </div>
-    );
-  }
-
-  if (!proposal) return null;
-
-  const v = proposal.vehicle || {};
-  const validationResults = proposal.validation_results || [];
-  const extracted = proposal.extracted_fields || {};
-  const hasDocument = !!proposal.document_filename;
-  const failedCount = validationResults.filter((r) => !r.valid).length;
+  const allDocs = proposal.vehicles.flatMap((v) => v.documents);
+  const failedCount = allDocs.filter((d) => d.status !== "VERIFIED").length;
+  const vehiclesFlagged = proposal.vehicles.filter((v) => v.documents.some((d) => d.status !== "VERIFIED")).length;
 
   let decisionTone = "success";
-  let decisionTitle = "Document Verified";
-  let decisionBody = "Extracted document details match the submitted form.";
+  let decisionTitle = "All Documents Verified";
+  let decisionBody = "Every vehicle on this policy has matching, verified documentation.";
   let DecisionIcon = FaCheckCircle;
 
-  if (!hasDocument) {
-    decisionTone = "warning";
-    decisionTitle = "No Document Attached";
-    decisionBody = "This proposal was created without an attached license/ID document (e.g. via bulk/manual batch entry).";
-    DecisionIcon = FaExclamationTriangle;
-  } else if (failedCount > 0) {
+  if (failedCount > 0) {
     decisionTone = "warning";
     decisionTitle = "Needs Review";
-    decisionBody = `AI detected a mismatch on ${failedCount} field${failedCount > 1 ? "s" : ""} between the form and the submitted document. Manual review is required before approval.`;
+    decisionBody = `AI detected an issue on ${failedCount} document${failedCount > 1 ? "s" : ""} across ${vehiclesFlagged} vehicle${vehiclesFlagged > 1 ? "s" : ""}. Manual review is required before approval.`;
     DecisionIcon = FaExclamationTriangle;
   }
 
@@ -84,9 +65,10 @@ function MotorDocumentVerification() {
           <BackButton to={`/motor-proposal/${id}`} />
           <div className="mvp-topbar-text">
             <h1>Document Verification</h1>
-            <p>{proposal.full_name} · {v.make} {v.model} · Case #{proposal.id}</p>
+            <p>{proposal.full_name} · {proposal.fleet_type} · Case #{proposal.id}</p>
           </div>
           <StatusStamp status={proposal.status} />
+          <TopBar homeTo="/underwriter/home" />
         </div>
       </div>
 
@@ -100,64 +82,57 @@ function MotorDocumentVerification() {
             </div>
           </div>
 
-          {hasDocument && (
-            <section className="mvp-card">
-              <div className="mvp-card-head">
-                <div className="mvp-card-head-title">
-                  <span className="mvp-vehicle-icon"><FaCarSide /></span>
-                  <div>
-                    <h2>{v.make} {v.model}</h2>
-                    <p className="mono mvp-reg">
-                      <a href={getVehicleProposalDocumentUrl(proposal.id)} target="_blank" rel="noreferrer">
-                        {proposal.document_filename}
-                      </a>
-                    </p>
-                  </div>
-                </div>
-                <span className={`mvp-pill ${failedCount === 0 ? "mvp-pill-success" : "mvp-pill-warning"}`}>
-                  {failedCount === 0 ? "All Clear" : `${failedCount} Issue${failedCount > 1 ? "s" : ""}`}
-                </span>
-              </div>
-
-              <div className="mvp-check-grid">
-                {validationResults.length === 0 && (
-                  <p className="mra-list-empty">No fields were checked against the document.</p>
-                )}
-                {validationResults.map((r, i) => {
-                  const ok = r.valid;
-                  const Icon = ok ? FaCheckCircle : FaTimesCircle;
-                  return (
-                    <div key={i} className={`mvp-check-card ${ok ? "mvp-check-pass" : "mvp-check-fail"}`}>
-                      <span className="mvp-check-icon"><Icon /></span>
-                      <div>
-                        <p className="mvp-check-title">{r.field}</p>
-                        <p className="mvp-check-sub">
-                          {ok ? "Matches" : r.reason}
-                        </p>
-                        {!ok && (
-                          <p className="mvp-check-sub mono">
-                            form: {String(r.form_value)} · doc: {String(r.document_value ?? r.document_computed_age ?? "—")}
-                          </p>
-                        )}
-                      </div>
+          {proposal.vehicles.map((v) => {
+            const vFailed = v.documents.filter((d) => d.status !== "VERIFIED").length;
+            return (
+              <section className="mvp-card" key={v.vehicle_id}>
+                <div className="mvp-card-head">
+                  <div className="mvp-card-head-title">
+                    <span className="mvp-vehicle-icon"><FaCarSide /></span>
+                    <div>
+                      <h2>{v.vehicle_make} {v.vehicle_model}</h2>
+                      <p className="mono mvp-reg">{v.registration_number}</p>
                     </div>
-                  );
-                })}
-              </div>
-            </section>
-          )}
+                  </div>
+                  <span className={`mvp-pill ${vFailed === 0 ? "mvp-pill-success" : "mvp-pill-warning"}`}>
+                    {vFailed === 0 ? "All Clear" : `${vFailed} Issue${vFailed > 1 ? "s" : ""}`}
+                  </span>
+                </div>
+
+                <div className="mvp-check-grid">
+                  {v.documents.map((d, i) => {
+                    const meta = STATUS_META[d.status] || STATUS_META.MISSING;
+                    const Icon = meta.icon;
+                    return (
+                      <div key={i} className={`mvp-check-card ${meta.cls}`}>
+                        <span className="mvp-check-icon"><Icon /></span>
+                        <div>
+                          <p className="mvp-check-title">{d.name}</p>
+                          <p className="mvp-check-sub">{meta.label}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            );
+          })}
         </main>
 
         <aside className="mvp-side">
           <div className="mvp-side-card">
-            <span className="mvp-side-title">Vehicle</span>
+            <span className="mvp-side-title">Policyholder</span>
             <div className="mvp-detail-row">
-              <span>Make / Model</span>
-              <b>{v.make} {v.model}</b>
+              <span>Type</span>
+              <b>{proposal.fleet_type}</b>
             </div>
             <div className="mvp-detail-row">
-              <span>Year</span>
-              <b>{v.year}</b>
+              <span>Occupation</span>
+              <b>{proposal.occupation}</b>
+            </div>
+            <div className="mvp-detail-row">
+              <span>Years With Insurer</span>
+              <b>{proposal.years_with_insurer}</b>
             </div>
           </div>
 
@@ -168,21 +143,13 @@ function MotorDocumentVerification() {
               <b>#{proposal.id}</b>
             </div>
             <div className="mvp-detail-row">
+              <span>Vehicles</span>
+              <b>{proposal.vehicles.length}</b>
+            </div>
+            <div className="mvp-detail-row">
               <span>Status</span>
               <b>{proposal.status}</b>
             </div>
-            {extracted.name && (
-              <div className="mvp-detail-row">
-                <span>Extracted Name</span>
-                <b>{extracted.name}</b>
-              </div>
-            )}
-            {extracted.dob && (
-              <div className="mvp-detail-row">
-                <span>Extracted DOB</span>
-                <b>{extracted.dob}</b>
-              </div>
-            )}
           </div>
         </aside>
       </div>

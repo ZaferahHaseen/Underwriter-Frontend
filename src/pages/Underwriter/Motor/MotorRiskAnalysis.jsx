@@ -1,35 +1,40 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { FaCarSide } from "react-icons/fa";
+import { FaCarSide, FaExclamationTriangle } from "react-icons/fa";
 import "./MotorRiskAnalysis.css";
-import { getVehicleProposal } from "../../../api/underwritingApi";
+import { getDummyMotorProposal } from "../../../api/dummyMotorProposals";
+import { getDummyFleetRiskResult } from "../../../api/dummyMotorRisk";
 import BackButton from "../../../components/BackButton";
+import TopBar from "../../../components/TopBar";
 import RiskGauge from "../../../components/RiskGauge";
 import RiskChart from "../RiskChart";
 
-// Real backend wired -- one proposal = one vehicle, no fleet tabs needed.
-const USE_DUMMY_DATA = false;
+// Flip to false once the backend teammate's motor risk endpoint is live.
+const USE_DUMMY_DATA = true;
 
 function MotorRiskAnalysis() {
   const { id } = useParams();
   const [proposal, setProposal] = useState(null);
+  const [fleetResult, setFleetResult] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [activeVehicleId, setActiveVehicleId] = useState(null);
+  // Local decision state per vehicle (dummy — swap for a real decide-vehicle
+  // API call once the backend teammate exposes one).
+  const [decisions, setDecisions] = useState({});
 
   useEffect(() => {
+    setLoading(true);
     if (USE_DUMMY_DATA) {
+      const p = getDummyMotorProposal(id);
+      const fr = getDummyFleetRiskResult(p.vehicles);
+      setProposal(p);
+      setFleetResult(fr);
+      setActiveVehicleId(fr.per_vehicle[0]?.vehicle.vehicle_id ?? null);
       setLoading(false);
       return;
     }
-    getVehicleProposal(id)
-      .then((data) => {
-        setProposal(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
+    // Real endpoint wiring goes here once ready.
+    setLoading(false);
   }, [id]);
 
   if (loading) {
@@ -41,76 +46,136 @@ function MotorRiskAnalysis() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="mra-page">
-        <BackButton to={`/motor-proposal/${id}`} />
-        <p className="state-text error-text">Error: {error}</p>
-      </div>
-    );
-  }
+  if (!proposal || !fleetResult) return null;
 
-  if (!proposal) return null;
+  const active = fleetResult.per_vehicle.find((r) => r.vehicle.vehicle_id === activeVehicleId) || fleetResult.per_vehicle[0];
+  const activeDecision = decisions[active.vehicle.vehicle_id];
 
-  const v = proposal.vehicle || {};
+  const handleDecide = (decision) => {
+    setDecisions((prev) => ({ ...prev, [active.vehicle.vehicle_id]: decision }));
+  };
 
   return (
     <div className="mra-page">
       <div className="mra-hero">
         <div className="mra-page-header">
           <BackButton to={`/motor-proposal/${id}`} />
-          <div>
+          <div className="mra-page-header-text">
             <h1 className="page-title">AI Risk Analysis</h1>
             <p className="page-subhead">
-              {proposal.full_name} · {v.make} {v.model} · Reference #{proposal.id}
+              {proposal.full_name} · {fleetResult.vehicle_count} vehicle{fleetResult.vehicle_count > 1 ? "s" : ""} · Reference #{proposal.id}
             </p>
           </div>
+          <TopBar homeTo="/underwriter/home" />
         </div>
       </div>
 
-      <div className="mra-result-shell">
-        <aside className="mra-result-aside">
-          <RiskGauge score={proposal.risk_score} label="Vehicle Risk Score" size={200} />
-          <div className="mra-confidence-box">
-            <h4>Model Confidence</h4>
-            <p className="mono">{proposal.confidence}%</p>
+      <div className="mra-scroll-area">
+        {/* ---- Fleet summary ---- */}
+        <div className="mra-fleet-summary">
+          <div className="mra-fleet-gauge">
+            <RiskGauge score={fleetResult.fleet_risk_score} label="Fleet Risk Score" size={160} />
           </div>
-          <div className="mra-vehicle-info">
-            <p className="mono"><FaCarSide /> {v.make} {v.model}</p>
-            <p>{v.year} · {v.fuel_type} · {v.vehicle_type}</p>
-          </div>
-        </aside>
-
-        <div className="mra-result-main">
-          <div className="mra-summary-box">
-            <h3>AI Summary</h3>
-            <p>{proposal.reasoning_summary}</p>
-          </div>
-
-          <div className="mra-list-section">
-            <div className="mra-list-box mra-list-box-risk">
-              <h3>Risk Factors</h3>
-              {(proposal.risk_factors || []).length === 0 && <p className="mra-list-empty">No risk factors flagged.</p>}
-              <ul>
-                {(proposal.risk_factors || []).map((factor, index) => (
-                  <li key={index} className="mra-risk-item">{factor.detail}</li>
-                ))}
-              </ul>
+          <div className="mra-fleet-stats">
+            <div className="mra-fleet-stat">
+              <span className="mono mra-fleet-stat-value">{fleetResult.vehicle_count}</span>
+              <span className="mra-fleet-stat-label">Vehicles Assessed</span>
             </div>
-
-            <div className="mra-list-box mra-list-box-positive">
-              <h3>Positive Factors</h3>
-              {(proposal.positive_factors || []).length === 0 && <p className="mra-list-empty">No positive factors identified.</p>}
-              <ul>
-                {(proposal.positive_factors || []).map((factor, index) => (
-                  <li key={index} className="mra-positive-item">{factor.detail}</li>
-                ))}
-              </ul>
+            <div className="mra-fleet-stat">
+              <span className="mono mra-fleet-stat-value">{fleetResult.vehicles_needing_review}</span>
+              <span className="mra-fleet-stat-label">Needing Review</span>
+            </div>
+            <div className="mra-fleet-stat mra-fleet-stat-wide">
+              <span className="mra-fleet-stat-label">Highest Risk Vehicle</span>
+              <span className="mra-fleet-stat-highlight">
+                <FaExclamationTriangle />
+                {fleetResult.highest_risk_vehicle.vehicle_make} {fleetResult.highest_risk_vehicle.vehicle_model}
+                <span className="mono"> · {fleetResult.highest_risk_vehicle.registration_number}</span>
+              </span>
             </div>
           </div>
+        </div>
 
-          <div className="mra-chart-card">
-            <RiskChart riskFactors={proposal.risk_factors || []} positiveFactors={proposal.positive_factors || []} />
+        {/* ---- Vehicle selector tabs ---- */}
+        <div className="mra-vehicle-tabs">
+          {fleetResult.per_vehicle.map(({ vehicle, result }) => (
+            <button
+              key={vehicle.vehicle_id}
+              className={vehicle.vehicle_id === active.vehicle.vehicle_id ? "mra-vehicle-tab active" : "mra-vehicle-tab"}
+              onClick={() => setActiveVehicleId(vehicle.vehicle_id)}
+            >
+              <FaCarSide />
+              <span>{vehicle.vehicle_make} {vehicle.vehicle_model}</span>
+              <span className={`mra-tab-score mra-tab-score-${result.risk_score >= 60 ? "high" : result.risk_score >= 35 ? "moderate" : "low"}`}>
+                {result.risk_score}
+              </span>
+              {decisions[vehicle.vehicle_id] && (
+                <span className={`mra-tab-decision mra-tab-decision-${decisions[vehicle.vehicle_id].toLowerCase()}`}>
+                  {decisions[vehicle.vehicle_id]}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* ---- Active vehicle detail ---- */}
+        <div className="mra-result-shell">
+          <aside className="mra-result-aside">
+            <RiskGauge score={active.result.risk_score} label="Vehicle Risk Score" size={170} />
+            <div className="mra-vehicle-info">
+              <p className="mono">{active.vehicle.registration_number}</p>
+              <p>{active.vehicle.vehicle_year} · {active.vehicle.fuel_type} · {active.vehicle.vehicle_usage}</p>
+            </div>
+
+            {!activeDecision && (
+              <div className="mra-decision-buttons">
+                <button className="mra-decision-approve" onClick={() => handleDecide("APPROVED")}>
+                  Approve
+                </button>
+                <button className="mra-decision-reject" onClick={() => handleDecide("REJECTED")}>
+                  Reject
+                </button>
+              </div>
+            )}
+
+            {activeDecision && (
+              <p className={`mra-final-decision ${activeDecision === "APPROVED" ? "mra-final-approved" : "mra-final-rejected"}`}>
+                Decision: {activeDecision}
+              </p>
+            )}
+          </aside>
+
+          <div className="mra-result-main">
+            <div className="mra-summary-box">
+              <h3>AI Summary</h3>
+              <p>{active.result.reasoning_summary}</p>
+            </div>
+
+            <div className="mra-list-section">
+              <div className="mra-list-box mra-list-box-risk">
+                <h3>Risk Factors</h3>
+                {active.result.risk_factors.length === 0 && <p className="mra-list-empty">No risk factors flagged.</p>}
+                <ul>
+                  {active.result.risk_factors.map((factor, index) => (
+                    <li key={index} className="mra-risk-item">{factor.detail}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="mra-list-box mra-list-box-positive">
+                <h3>Positive Factors</h3>
+                {active.result.positive_factors.length === 0 && <p className="mra-list-empty">No positive factors identified.</p>}
+                <ul>
+                  {active.result.positive_factors.map((factor, index) => (
+                    <li key={index} className="mra-positive-item">{factor.detail}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className="mra-chart-card">
+              <RiskChart riskFactors={active.result.risk_factors} positiveFactors={active.result.positive_factors} />
+            </div>
           </div>
         </div>
       </div>

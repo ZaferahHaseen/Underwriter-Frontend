@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { getUnderwritingDecision, getProposal, decideProposal } from "../../api/underwritingApi";  
 import { getDummyProposal } from "../../api/dummyProposals";
 import { getDummyMotorRiskResult } from "../../api/dummyMotorRisk";
 import "./RiskAnalysis.css";
 import BackButton from "../../components/BackButton";
+import TopBar from "../../components/TopBar";
 import RiskGauge from "../../components/RiskGauge";
 import RiskChart from "./RiskChart";
 
@@ -152,10 +153,16 @@ function ResultView({ result, status, deciding, onDecide }) {
 
 function RiskAnalysis() {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
   const isQuickCheck = id === "new";
 
   // ---- Quick Check mode (manual form) ----
-  const [checkType, setCheckType] = useState("health"); // "health" | "motor"
+  // Which question set to show is decided by where the user came from:
+  // the Health/Life dashboard links here with ?type=health, the Motor
+  // dashboard with ?type=motor. No in-page toggle — each dashboard only
+  // ever sees its own questions.
+  const checkType = searchParams.get("type") === "motor" ? "motor" : "health";
+  const backTarget = checkType === "motor" ? "/underwriter/motor/dashboard" : "/underwriter/dashboard";
   const [healthForm, setHealthForm] = useState(initialHealthForm);
   const [motorForm, setMotorForm] = useState(initialMotorForm);
   const [result, setResult] = useState(null);
@@ -189,12 +196,6 @@ function RiskAnalysis() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: Number(value) }));
-  };
-
-  const handleModeSwitch = (mode) => {
-    setCheckType(mode);
-    setResult(null);
-    setError(null);
   };
 
   const handleSubmit = async (e) => {
@@ -239,12 +240,13 @@ function RiskAnalysis() {
         <div className="risk-hero">
           <div className="risk-page-header">
             <BackButton to={`/proposal/${id}`} />
-            <div>
+            <div className="risk-page-header-text">
               <h1 className="page-title">AI Risk Analysis</h1>
               <p className="page-subhead">
                 {proposal ? `${proposal.full_name} · Reference #${proposal.id}` : "Loading…"}
               </p>
             </div>
+            <TopBar homeTo="/underwriter/home" />
           </div>
         </div>
 
@@ -265,28 +267,18 @@ function RiskAnalysis() {
   return (
     <div className="risk-page">
       <div className="risk-page-header">
-        <BackButton to="/underwriter/dashboard" />
-        <div>
-          <h1 className="page-title">Quick Risk Check</h1>
-          <p className="page-subhead">Run a raw applicant profile through the AI model without creating a proposal.</p>
+        <BackButton to={backTarget} />
+        <div className="risk-page-header-text">
+          <h1 className="page-title">
+            {checkType === "motor" ? "Motor Quick Risk Check" : "Health / Life Quick Risk Check"}
+          </h1>
+          <p className="page-subhead">
+            {checkType === "motor"
+              ? "Run a raw vehicle & driver profile through the AI model without creating a proposal."
+              : "Run a raw applicant profile through the AI model without creating a proposal."}
+          </p>
         </div>
-      </div>
-
-      <div className="check-type-tabs">
-        <button
-          type="button"
-          className={checkType === "health" ? "check-type-tab active" : "check-type-tab"}
-          onClick={() => handleModeSwitch("health")}
-        >
-          Health / Life
-        </button>
-        <button
-          type="button"
-          className={checkType === "motor" ? "check-type-tab active" : "check-type-tab"}
-          onClick={() => handleModeSwitch("motor")}
-        >
-          Motor
-        </button>
+        <TopBar homeTo="/underwriter/home" />
       </div>
 
       {checkType === "motor" && USE_DUMMY_MOTOR_SCORING && (

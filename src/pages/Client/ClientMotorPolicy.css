@@ -31,6 +31,24 @@
   justify-content: space-between;
 }
 
+.cm-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cm-topbar .back-button,
+.cm-topbar .topbar-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: white;
+}
+
+.cm-topbar .back-button:hover,
+.cm-topbar .topbar-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 .cm-brand {
   display: flex;
   align-items: center;

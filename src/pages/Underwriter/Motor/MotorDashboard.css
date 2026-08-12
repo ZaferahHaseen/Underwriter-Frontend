@@ -1,14 +1,18 @@
 .mdash-page {
-  padding: 36px 48px 60px;
+  padding: 28px 40px;
   background: var(--mist);
-  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .mdash-header {
   display: flex;
   align-items: center;
-  gap: 18px;
-  margin-bottom: 32px;
+  gap: 16px;
+  margin-bottom: 22px;
+  flex-shrink: 0;
 }
 
 .mdash-header-text {
@@ -16,7 +20,7 @@
 }
 
 .mdash-header h1 {
-  font-size: 26px;
+  font-size: 24px;
 }
 
 .mdash-subhead {
@@ -25,34 +29,52 @@
   margin-top: 2px;
 }
 
+.quick-check-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--motor);
+  color: white;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.15s ease;
+}
+
+.quick-check-btn:hover {
+  background: var(--motor-dark);
+}
+
 /* ---------- Stat cards ---------- */
 
 .mdash-cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
-  margin-bottom: 36px;
+  gap: 14px;
+  margin-bottom: 20px;
+  flex-shrink: 0;
 }
 
 .mdash-stat-card {
   background: var(--paper);
-  padding: 20px 22px;
+  padding: 16px 20px;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--line);
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 
 .mdash-stat-icon {
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 17px;
+  font-size: 16px;
   flex-shrink: 0;
 }
 
@@ -62,36 +84,41 @@
 .mdash-stat-icon-high { background: var(--risk-high-tint); color: var(--risk-high); }
 
 .mdash-stat-card h2 {
-  font-size: 24px;
+  font-size: 22px;
   line-height: 1;
 }
 
 .mdash-stat-card p {
-  margin-top: 6px;
+  margin-top: 4px;
   color: var(--slate);
   font-size: 13px;
 }
 
-/* ---------- Table panel ---------- */
+/* ---------- Card-list panel (fills remaining height, scrolls internally) ---------- */
 
-.mdash-table-panel {
+.mdash-list-panel {
   background: var(--paper);
   border-radius: var(--radius-md);
   border: 1px solid var(--line);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .mdash-table-panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px;
+  padding: 16px 22px;
   border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
 }
 
 .mdash-table-panel-header h2 {
-  font-size: 17px;
+  font-size: 16px;
 }
 
 .mdash-search-box {
@@ -116,34 +143,86 @@
   color: var(--ink);
 }
 
-.mdash-table-panel table {
-  width: 100%;
-  border-collapse: collapse;
+.mdash-list-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 8px 8px;
 }
 
-.mdash-table-panel th {
-  text-align: left;
+.mdash-row {
+  display: grid;
+  grid-template-columns: 130px 1.6fr 110px 140px 110px;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  margin: 6px 0;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.mdash-row:not(.mdash-row-head):hover {
   background: var(--mist);
+}
+
+.mdash-row-head {
+  cursor: default;
+  padding: 10px 16px;
+  position: sticky;
+  top: 0;
+  background: var(--paper);
+  z-index: 1;
+}
+
+.mdash-row-head .mdash-col {
   color: var(--slate);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  padding: 12px 24px;
 }
 
-.mdash-table-panel td {
-  padding: 16px 24px;
-  border-bottom: 1px solid var(--line);
+.mdash-col {
   font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.mdash-table-panel tbody tr:last-child td {
-  border-bottom: none;
+.mdash-col-holder {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
 }
 
-.mdash-table-panel tbody tr:hover {
-  background: var(--mist);
+.mdash-holder-name {
+  font-weight: 600;
+}
+
+.mdash-holder-type {
+  color: var(--slate);
+  font-size: 12px;
+}
+
+.mdash-col-action {
+  justify-content: flex-end;
+}
+
+.mdash-col-action button {
+  background: var(--motor);
+  color: white;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.15s ease;
+}
+
+.mdash-col-action button:hover {
+  background: var(--motor-dark);
 }
 
 .empty-row {
@@ -164,24 +243,6 @@
 .mdash-status-approved { background: var(--risk-low-tint); color: var(--risk-low); }
 .mdash-status-rejected { background: var(--risk-high-tint); color: var(--risk-high); }
 
-.action-cell {
-  text-align: right;
-}
-
-.action-cell button {
-  background: var(--motor);
-  color: white;
-  padding: 8px 18px;
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  font-weight: 600;
-  transition: background 0.15s ease;
-}
-
-.action-cell button:hover {
-  background: var(--motor-dark);
-}
-
 .state-text {
   padding: 40px 24px;
   text-align: center;
@@ -192,11 +253,17 @@
   color: var(--risk-high);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
   .mdash-cards {
     grid-template-columns: repeat(2, 1fr);
   }
+  .mdash-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
   .mdash-page {
-    padding: 24px;
+    height: auto;
+    overflow: auto;
+    padding: 20px;
   }
 }

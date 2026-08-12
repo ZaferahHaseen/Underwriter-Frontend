@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
+  FaFileAlt,
+  FaChartLine,
   FaCarSide,
   FaShieldAlt,
   FaUserTie,
   FaGasPump,
-  FaChartLine,
+  FaRoad,
+  FaChevronDown,
 } from "react-icons/fa";
 import "./MotorProposalDetails.css";
-import { getVehicleProposal, getVehicleProposalDocumentUrl } from "../../../api/underwritingApi";
-import { FaFileAlt } from "react-icons/fa";
+import { getDummyMotorProposal } from "../../../api/dummyMotorProposals";
 import BackButton from "../../../components/BackButton";
-import StatusStamp from "../../../components/StatusStamp";
+import TopBar from "../../../components/TopBar";
 
-// Real backend wired -- one proposal = one vehicle (flat), no fleet nesting.
-const USE_DUMMY_DATA = false;
+// Flip to false once the backend teammate's motor proposal endpoint is live.
+const USE_DUMMY_DATA = true;
 
 function MotorProposalDetails() {
   const { id } = useParams();
@@ -23,35 +25,28 @@ function MotorProposalDetails() {
   const [proposal, setProposal] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const loadProposal = () => {
-    setLoading(true);
-    setError(null);
-    getVehicleProposal(id)
-      .then((data) => {
-        setProposal(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
-  };
+  const [expandedVehicleId, setExpandedVehicleId] = useState(null);
 
   useEffect(() => {
+    setLoading(true);
+    setError(null);
+
     if (USE_DUMMY_DATA) {
+      const p = getDummyMotorProposal(id);
+      setProposal(p);
+      setExpandedVehicleId(p.vehicles[0]?.vehicle_id ?? null);
       setLoading(false);
       return;
     }
-    loadProposal();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Real endpoint wiring goes here once ready, e.g. getMotorProposal(id).
+    setLoading(false);
   }, [id]);
 
   if (loading) {
     return (
       <div className="mpd-page">
         <BackButton to="/underwriter/motor/dashboard" />
-        <p className="state-text">Loading vehicle details…</p>
+        <p className="state-text">Loading fleet details…</p>
       </div>
     );
   }
@@ -67,14 +62,15 @@ function MotorProposalDetails() {
 
   if (!proposal) return null;
 
-  const v = proposal.vehicle || {};
-  const raw = proposal.raw_input || {};
+  const vehicleCount = proposal.vehicles.length;
+  const totalIdv = proposal.vehicles.reduce((sum, v) => sum + v.idv, 0);
+  const flaggedVehicles = proposal.vehicles.filter((v) => v.status === "PENDING" || v.status === "REJECTED").length;
 
   const highlights = [
-    { label: "Risk Score", value: `${proposal.risk_score}/100`, icon: <FaChartLine />, tone: proposal.risk_score > 50 ? "high" : "low" },
-    { label: "Confidence", value: `${proposal.confidence}%`, icon: <FaShieldAlt />, tone: "motor" },
-    { label: "Vehicle Value", value: `₹${Number(v.vehicle_value || 0).toLocaleString("en-IN")}`, icon: <FaCarSide />, tone: "gold" },
-    { label: "Driver Age", value: raw.driver_age, icon: <FaUserTie />, tone: "motor" },
+    { label: "Policyholder Type", value: proposal.fleet_type, icon: <FaUserTie />, tone: "motor" },
+    { label: "Vehicles Insured", value: vehicleCount, icon: <FaCarSide />, tone: "gold" },
+    { label: "Total Insured Value", value: `₹${totalIdv.toLocaleString("en-IN")}`, icon: <FaShieldAlt />, tone: "low" },
+    { label: "Flagged Vehicles", value: flaggedVehicles, icon: <FaRoad />, tone: "high" },
   ];
 
   const initials = (proposal.full_name || "?")
@@ -93,10 +89,31 @@ function MotorProposalDetails() {
           <div className="mpd-header-text">
             <h1>{proposal.full_name}</h1>
             <p className="mpd-subhead">
-              Vehicle Insurance · Reference #{proposal.id} · Submitted {proposal.created_at}
+              {proposal.insurance_type} · {proposal.fleet_type} · Reference #{proposal.id} · Submitted {proposal.created_at}
             </p>
           </div>
-          <StatusStamp status={proposal.status} />
+
+          {/* Document Verification + AI Risk Analysis now live at the top,
+              replacing the old pending/approved/rejected status stamp. */}
+          <div className="mpd-hero-actions">
+            <button
+              className="mpd-action-btn mpd-action-secondary"
+              onClick={() => navigate(`/motor-document-verification/${id}`)}
+            >
+              <FaFileAlt />
+              Document Verification
+            </button>
+
+            <button
+              className="mpd-action-btn mpd-action-primary"
+              onClick={() => navigate(`/motor-risk-analysis/${id}`)}
+            >
+              <FaChartLine />
+              AI Risk Analysis
+            </button>
+          </div>
+
+          <TopBar homeTo="/underwriter/home" />
         </div>
       </div>
 
@@ -112,92 +129,133 @@ function MotorProposalDetails() {
         ))}
       </div>
 
-      <div className="mpd-panel">
-        <section className="mpd-section">
-          <div className="mpd-section-head">
-            <FaCarSide className="mpd-section-icon" />
-            <h3>Vehicle Details</h3>
-          </div>
-          <div className="mpd-grid">
-            <div className="mpd-field"><span className="mpd-field-label">Make / Model</span><span className="mpd-field-value">{v.make} {v.model}</span></div>
-            <div className="mpd-field"><span className="mpd-field-label">Year</span><span className="mpd-field-value">{v.year}</span></div>
-            <div className="mpd-field"><span className="mpd-field-label">Type</span><span className="mpd-field-value">{v.vehicle_type}</span></div>
-            <div className="mpd-field"><span className="mpd-field-label"><FaGasPump /> Fuel</span><span className="mpd-field-value">{v.fuel_type}</span></div>
-            <div className="mpd-field"><span className="mpd-field-label">Engine (cc)</span><span className="mpd-field-value">{v.engine_cc}</span></div>
-            <div className="mpd-field"><span className="mpd-field-label">Color</span><span className="mpd-field-value">{v.color}</span></div>
-            <div className="mpd-field"><span className="mpd-field-label">Safety Features</span><span className="mpd-field-value">{v.safety_features ? "Yes" : "No"}</span></div>
-            <div className="mpd-field"><span className="mpd-field-label">Anti-Theft</span><span className="mpd-field-value">{v.anti_theft ? "Yes" : "No"}</span></div>
-          </div>
-        </section>
-
+      <div className="mpd-panel mpd-scroll-panel">
         <section className="mpd-section">
           <div className="mpd-section-head">
             <FaUserTie className="mpd-section-icon" />
-            <h3>Driver & Usage</h3>
+            <h3>Policyholder Profile</h3>
           </div>
           <div className="mpd-grid">
-            <div className="mpd-field"><span className="mpd-field-label">Driver Age</span><span className="mpd-field-value">{raw.driver_age}</span></div>
-            <div className="mpd-field"><span className="mpd-field-label">Driving Experience</span><span className="mpd-field-value">{raw.driving_experience} yrs</span></div>
-            <div className="mpd-field"><span className="mpd-field-label">License Age</span><span className="mpd-field-value">{raw.license_age} yrs</span></div>
-            <div className="mpd-field"><span className="mpd-field-label">Previous Accidents</span><span className="mpd-field-value">{raw.previous_accidents}</span></div>
-            <div className="mpd-field"><span className="mpd-field-label">Previous Claims</span><span className="mpd-field-value">{raw.previous_claims}</span></div>
-            <div className="mpd-field"><span className="mpd-field-label">Traffic Violations</span><span className="mpd-field-value">{raw.traffic_violations}</span></div>
-            <div className="mpd-field"><span className="mpd-field-label">Usage Type</span><span className="mpd-field-value">{raw.usage_type}</span></div>
-            <div className="mpd-field"><span className="mpd-field-label">Annual Mileage</span><span className="mpd-field-value">{raw.annual_mileage} km</span></div>
-            <div className="mpd-field"><span className="mpd-field-label">City / Region</span><span className="mpd-field-value">{raw.city}, {raw.region}</span></div>
-            <div className="mpd-field"><span className="mpd-field-label">Previously Insured</span><span className="mpd-field-value">{raw.previous_insurance}</span></div>
-            <div className="mpd-field"><span className="mpd-field-label">Policy Lapses</span><span className="mpd-field-value">{raw.policy_lapses}</span></div>
+            <div className="mpd-field">
+              <span className="mpd-field-label">Occupation</span>
+              <span className="mpd-field-value">{proposal.occupation}</span>
+            </div>
+            <div className="mpd-field">
+              <span className="mpd-field-label">Annual Income</span>
+              <span className="mpd-field-value">₹{Number(proposal.annual_income).toLocaleString("en-IN")}</span>
+            </div>
+            <div className="mpd-field">
+              <span className="mpd-field-label">Credit Score</span>
+              <span className="mpd-field-value">{proposal.credit_score}</span>
+            </div>
+            <div className="mpd-field">
+              <span className="mpd-field-label">Years With Insurer</span>
+              <span className="mpd-field-value">{proposal.years_with_insurer}</span>
+            </div>
           </div>
         </section>
 
-        {proposal.document_filename && (
-          <section className="mpd-section">
-            <div className="mpd-section-head">
-              <FaFileAlt className="mpd-section-icon" />
-              <h3>Submitted Document</h3>
-            </div>
-            <div className="mpd-grid">
-              <div className="mpd-field">
-                <span className="mpd-field-label">File</span>
-                <span className="mpd-field-value">
-                  <a href={getVehicleProposalDocumentUrl(proposal.id)} target="_blank" rel="noreferrer">
-                    {proposal.document_filename}
-                  </a>
-                </span>
+        <section className="mpd-section mpd-section-last">
+          <div className="mpd-section-head">
+            <FaCarSide className="mpd-section-icon" />
+            <h3>Vehicle{vehicleCount > 1 ? "s" : ""} on this Policy</h3>
+          </div>
+
+          {/* ---- Fleet summary table ---- */}
+          <div className="mpd-vehicle-table-wrap">
+            <table className="mpd-vehicle-table">
+              <thead>
+                <tr>
+                  <th>Vehicle</th>
+                  <th>Vehicle Age</th>
+                  <th>Vehicle Value</th>
+                  <th>Driver Age</th>
+                  <th>Previous Accidents</th>
+                  <th>Previous Claims</th>
+                  <th>Annual Mileage</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {proposal.vehicles.map((v) => {
+                  const isOpen = v.vehicle_id === expandedVehicleId;
+                  return (
+                    <tr
+                      key={v.vehicle_id}
+                      className={isOpen ? "mpd-vt-row mpd-vt-row-active" : "mpd-vt-row"}
+                      onClick={() => setExpandedVehicleId(isOpen ? null : v.vehicle_id)}
+                    >
+                      <td>
+                        <span className="mpd-vt-vehicle">
+                          <FaCarSide /> {v.vehicle_make} {v.vehicle_model}
+                        </span>
+                        <span className="mpd-vt-reg mono">{v.registration_number}</span>
+                      </td>
+                      <td className="mono">{v.vehicle_age_years} yrs</td>
+                      <td className="mono">₹{v.idv.toLocaleString("en-IN")}</td>
+                      <td className="mono">{v.driver_age}</td>
+                      <td className="mono">{v.previous_accidents}</td>
+                      <td className="mono">{v.num_previous_claims}</td>
+                      <td className="mono">{v.annual_mileage_km.toLocaleString("en-IN")} km</td>
+                      <td className="mpd-vt-chevron">
+                        <FaChevronDown className={isOpen ? "open" : ""} />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* ---- Full detail for the selected vehicle ---- */}
+          {proposal.vehicles
+            .filter((v) => v.vehicle_id === expandedVehicleId)
+            .map((v) => (
+              <div className="mpd-vehicle-detail" key={v.vehicle_id}>
+                <div className="mpd-vehicle-detail-top">
+                  <div>
+                    <h4>{v.vehicle_make} {v.vehicle_model} · {v.vehicle_year}</h4>
+                    <p className="mono">{v.registration_number}</p>
+                  </div>
+                  <span className={`mdash-status-pill mdash-status-${v.status.toLowerCase()}`}>{v.status}</span>
+                </div>
+                <div className="mpd-grid">
+                  <div className="mpd-field">
+                    <span className="mpd-field-label"><FaGasPump /> Fuel Type</span>
+                    <span className="mpd-field-value">{v.fuel_type}</span>
+                  </div>
+                  <div className="mpd-field">
+                    <span className="mpd-field-label">Usage</span>
+                    <span className="mpd-field-value">{v.vehicle_usage}</span>
+                  </div>
+                  <div className="mpd-field">
+                    <span className="mpd-field-label">Driving Experience</span>
+                    <span className="mpd-field-value">{v.driving_experience_years} yrs</span>
+                  </div>
+                  <div className="mpd-field">
+                    <span className="mpd-field-label">No-Claim Bonus</span>
+                    <span className="mpd-field-value">{v.no_claim_bonus_percent}%</span>
+                  </div>
+                  <div className="mpd-field">
+                    <span className="mpd-field-label">Prior Accident/Claim Flag</span>
+                    <span className="mpd-field-value">{v.prior_accident_claim ? "Yes" : "No"}</span>
+                  </div>
+                  <div className="mpd-field">
+                    <span className="mpd-field-label">Years With Insurer</span>
+                    <span className="mpd-field-value">{v.years_with_insurer}</span>
+                  </div>
+                  <div className="mpd-field">
+                    <span className="mpd-field-label">Credit Score</span>
+                    <span className="mpd-field-value">{v.credit_score}</span>
+                  </div>
+                  <div className="mpd-field">
+                    <span className="mpd-field-label">Insured Declared Value</span>
+                    <span className="mpd-field-value">₹{v.idv.toLocaleString("en-IN")}</span>
+                  </div>
+                </div>
               </div>
-              {proposal.extracted_fields?.name && (
-                <div className="mpd-field"><span className="mpd-field-label">Extracted Name</span><span className="mpd-field-value">{proposal.extracted_fields.name}</span></div>
-              )}
-              {proposal.extracted_fields?.dob && (
-                <div className="mpd-field"><span className="mpd-field-label">Extracted DOB</span><span className="mpd-field-value">{proposal.extracted_fields.dob}</span></div>
-              )}
-            </div>
-            {(proposal.validation_results || []).some((r) => !r.valid) && (
-              <p className="mpd-none-text" style={{ color: "#D64545", marginTop: "8px" }}>
-                ⚠ Document validation flagged mismatches — check details before approving.
-              </p>
-            )}
-          </section>
-        )}
-
-      </div>
-
-      <div className="mpd-actions">
-        <button
-          className="mpd-action-btn mpd-action-secondary"
-          onClick={() => navigate(`/motor-document-verification/${id}`)}
-        >
-          <FaFileAlt />
-          Document Verification
-        </button>
-
-        <button
-          className="mpd-action-btn mpd-action-secondary"
-          onClick={() => navigate(`/motor-risk-analysis/${id}`)}
-        >
-          <FaChartLine />
-          AI Risk Analysis
-        </button>
+            ))}
+        </section>
       </div>
     </div>
   );

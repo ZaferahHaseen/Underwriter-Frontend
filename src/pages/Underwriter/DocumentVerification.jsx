@@ -6,6 +6,7 @@ import {
 import "./DocumentVerification.css";
 import { getProposal, getProposalDocumentUrl } from "../../api/underwritingApi";
 import BackButton from "../../components/BackButton";
+import TopBar from "../../components/TopBar";
 import StatusStamp from "../../components/StatusStamp";
 
 function DocumentVerification() {
@@ -78,6 +79,7 @@ function DocumentVerification() {
             <p>{proposal.full_name} · Case #{proposal.id}</p>
           </div>
           <StatusStamp status={proposal.status} />
+          <TopBar homeTo="/underwriter/home" />
         </div>
       </div>
 

@@ -3,9 +3,12 @@
    ========================================================= */
 
 .mpf-page {
-  min-height: 100vh;
+  height: 100vh;
   width: 100%;
   box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 
   background:
     radial-gradient(
@@ -15,7 +18,7 @@
     ),
     var(--mist);
 
-  padding: 34px 48px 140px;
+  padding: 26px 44px 0;
 }
 
 /* =========================================================
@@ -27,12 +30,18 @@
   align-items: flex-start;
   gap: 18px;
 
-  max-width: 900px;
-  margin: 0 auto 28px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto 20px;
+  flex-shrink: 0;
+}
+
+.mpf-header-text {
+  flex: 1;
 }
 
 .mpf-header-text h1 {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--ink);
@@ -52,8 +61,10 @@
    ========================================================= */
 
 .mpf-tabs {
-  max-width: 900px;
-  margin: 0 auto 24px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto 20px;
+  flex-shrink: 0;
 
   display: flex;
   gap: 8px;
@@ -111,12 +122,46 @@
    ========================================================= */
 
 .mpf-content {
-  max-width: 900px;
+  max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
 
   display: flex;
   flex-direction: column;
   gap: 20px;
+
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 100px; /* keeps last card clear of the fixed submit bar */
+}
+
+/* Two-column layout: saved vehicles on the left, the current vehicle
+   form being filled in on the right — makes better use of wide screens
+   and keeps the page from turning into one long scroll. */
+.mpf-columns {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 24px;
+  align-items: start;
+  flex: 1;
+  min-height: 0;
+}
+
+.mpf-col-left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mpf-col-right {
+  min-width: 0;
+}
+
+@media (max-width: 980px) {
+  .mpf-columns {
+    grid-template-columns: 1fr;
+  }
 }
 
 .mpf-card {
@@ -743,11 +788,19 @@
 
 @media (max-width: 900px) {
   .mpf-page {
-    padding: 26px 20px 130px;
+    height: auto;
+    overflow: visible;
+    padding: 20px 20px 130px;
+  }
+
+  .mpf-content {
+    overflow-y: visible;
+    padding-bottom: 90px;
   }
 
   .mpf-header {
     max-width: 100%;
+    flex-wrap: wrap;
   }
 
   .mpf-tabs {

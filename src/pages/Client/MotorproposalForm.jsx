@@ -13,6 +13,7 @@ import {
 } from "react-icons/fa";
 
 import BackButton from "../../components/BackButton";
+import TopBar from "../../components/TopBar";
 import VehicleFormBlock from "../../components/VehicleFormBlock";
 import ExcelUploadPanel from "../../components/ExcelUploadPanel";
 import {
@@ -21,7 +22,6 @@ import {
 } from "../../data/motorFormFields";
 
 import "./MotorProposalForm.css";
-import { submitVehicleProposalsBatch } from "../../api/underwritingApi";
 
 function MotorProposalForm() {
   const navigate = useNavigate();
@@ -214,34 +214,44 @@ function MotorProposalForm() {
      FINAL SUBMISSION
      ========================================================= */
 
-  const handleSubmit = async () => {
-  if (savedVehicles.length === 0) {
-    setSubmitAttempted(true);
-    alert("Please save at least one vehicle before submitting.");
-    return;
-  }
+  const handleSubmit = () => {
+    // There must be at least one saved vehicle
+    if (savedVehicles.length === 0) {
+      setSubmitAttempted(true);
 
-  const allErrors = savedVehicles.map((vehicle) => validateVehicle(vehicle));
-  const hasErrors = allErrors.some((errors) => Object.keys(errors).length > 0);
-  if (hasErrors) {
-    alert("One or more saved vehicles contain invalid details. Please edit and correct them before submitting.");
-    return;
-  }
-
-  try {
-    const result = await submitVehicleProposalsBatch(savedVehicles);
-    console.log("Batch submit result:", result);
-    if (result.created === 0) {
-      alert("No proposals were created - check console for details (likely a duplicate pending proposal already exists).");
+      alert("Please save at least one vehicle before submitting.");
       return;
     }
-    setSubmitted(true);
-  } catch (err) {
-    alert(`Submission failed: ${err.message}`);
-  }
-};
 
-    
+    // Validate all saved vehicles again before final submission
+    const allErrors = savedVehicles.map((vehicle) =>
+      validateVehicle(vehicle)
+    );
+
+    const hasErrors = allErrors.some(
+      (errors) => Object.keys(errors).length > 0
+    );
+
+    if (hasErrors) {
+      alert(
+        "One or more saved vehicles contain invalid details. Please edit and correct them before submitting."
+      );
+      return;
+    }
+
+    const payload = {
+      vehicles: savedVehicles,
+    };
+
+    console.log(
+      "Motor proposal submission payload:",
+      payload
+    );
+
+    // TODO:
+    // Replace this with the real backend submission call.
+    setSubmitted(true);
+  };
 
   /* =========================================================
      SUCCESS SCREEN
@@ -302,6 +312,8 @@ function MotorProposalForm() {
             and submit the complete proposal when you're ready.
           </p>
         </div>
+
+        <TopBar homeTo="/client/home" />
       </div>
 
       {/* =====================================================
@@ -357,11 +369,12 @@ function MotorProposalForm() {
             =================================================== */}
 
         {mode === "manual" && (
-          <>
+          <div className="mpf-columns">
 
             {/* =================================================
-                SAVED VEHICLES
+                LEFT COLUMN: saved vehicles + count
                 ================================================= */}
+            <div className="mpf-col-left">
 
             {savedVehicles.length > 0 && (
               <section className="mpf-saved-section">
@@ -523,10 +536,14 @@ function MotorProposalForm() {
               </span>
             </div>
 
+            </div>
+            {/* end .mpf-col-left */}
+
             {/* =================================================
-                CURRENT SINGLE FORM
+                RIGHT COLUMN: current single vehicle form
                 ================================================= */}
 
+            <div className="mpf-col-right">
             <section className="mpf-current-section">
 
               <div className="mpf-current-heading">
@@ -641,8 +658,10 @@ function MotorProposalForm() {
               </button>
 
             </section>
+            </div>
+            {/* end .mpf-col-right */}
 
-          </>
+          </div>
         )}
 
       </div>

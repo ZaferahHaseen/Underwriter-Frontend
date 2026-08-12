@@ -52,6 +52,21 @@ export function getDummyMotorRiskResult(form) {
     positiveFactors.push({ detail: "No accidents or claims in the last 3 years", feature: "prior_accident_claim", weight: 0.12 });
   }
 
+  // Previous accident count (independent of the claim flag above)
+  if (form.previous_accidents >= 2) {
+    score += 10;
+    riskFactors.push({ detail: `${form.previous_accidents} previous accidents on record`, feature: "previous_accidents", weight: 0.1 });
+  }
+
+  // Annual mileage
+  if (form.annual_mileage_km >= 25000) {
+    score += 8;
+    riskFactors.push({ detail: "High annual mileage increases road exposure", feature: "annual_mileage", weight: 0.08 });
+  } else if (form.annual_mileage_km && form.annual_mileage_km <= 8000) {
+    score -= 4;
+    positiveFactors.push({ detail: "Low annual mileage limits road exposure", feature: "annual_mileage", weight: 0.04 });
+  }
+
   // Commercial use
   if (form.commercial_use === 1) {
     score += 12;

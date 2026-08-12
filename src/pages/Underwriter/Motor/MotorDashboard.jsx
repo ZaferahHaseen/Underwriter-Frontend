@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaClipboardList, FaHourglassHalf, FaCheckCircle, FaTimesCircle, FaSearch, FaCarSide } from "react-icons/fa";
+import { FaClipboardList, FaHourglassHalf, FaCheckCircle, FaCarSide, FaSearch, FaChevronRight, FaBolt } from "react-icons/fa";
 import "./MotorDashboard.css";
-import { listVehicleProposals } from "../../../api/underwritingApi";
+import { getDummyMotorProposalList } from "../../../api/dummyMotorProposals";
 import BackButton from "../../../components/BackButton";
+import TopBar from "../../../components/TopBar";
 
-// Real backend wired -- one row = one proposal = one vehicle (flat),
-// NOT fleet-grouped like the old dummy data assumed.
-const USE_DUMMY_DATA = false;
+// Flip to false once the backend teammate's motor list endpoint is live.
+const USE_DUMMY_DATA = true;
 
 function MotorDashboard() {
   const navigate = useNavigate();
@@ -18,34 +18,31 @@ function MotorDashboard() {
 
   useEffect(() => {
     if (USE_DUMMY_DATA) {
+      setProposals(getDummyMotorProposalList());
       setLoading(false);
       return;
     }
-    listVehicleProposals()
-      .then((data) => {
-        setProposals(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
+    // Real endpoint wiring goes here once ready, e.g. listMotorProposals().
+    setLoading(false);
   }, []);
 
   const total = proposals.length;
+  const totalVehicles = proposals.reduce((sum, p) => sum + p.vehicles.length, 0);
   const pending = proposals.filter((p) => p.status === "PENDING").length;
   const approved = proposals.filter((p) => p.status === "APPROVED").length;
-  const rejected = proposals.filter((p) => p.status === "REJECTED").length;
 
-  const filtered = proposals.filter((p) =>
-    p.full_name?.toLowerCase().includes(query.toLowerCase())
+  const filtered = proposals.filter(
+    (p) =>
+      p.full_name?.toLowerCase().includes(query.toLowerCase()) ||
+      p.fleet_type?.toLowerCase().includes(query.toLowerCase()) ||
+      String(p.id).includes(query)
   );
 
   const stats = [
     { label: "Total Proposals", value: total, icon: <FaClipboardList />, tone: "motor" },
+    { label: "Vehicles Insured", value: totalVehicles, icon: <FaCarSide />, tone: "gold" },
     { label: "Pending Review", value: pending, icon: <FaHourglassHalf />, tone: "gold" },
     { label: "Approved", value: approved, icon: <FaCheckCircle />, tone: "low" },
-    { label: "Rejected", value: rejected, icon: <FaTimesCircle />, tone: "high" },
   ];
 
   return (
@@ -54,8 +51,12 @@ function MotorDashboard() {
         <BackButton to="/underwriter/home" />
         <div className="mdash-header-text">
           <h1>Motor Insurance Dashboard</h1>
-          <p className="mdash-subhead">Review incoming vehicle proposals and issue decisions.</p>
+          <p className="mdash-subhead">Review incoming vehicle & fleet proposals and issue decisions.</p>
         </div>
+        <button className="quick-check-btn" onClick={() => navigate("/risk-analysis/new?type=motor")}>
+          <FaBolt /> Quick Risk Check
+        </button>
+        <TopBar homeTo="/underwriter/home" />
       </div>
 
       <div className="mdash-cards">
@@ -70,13 +71,13 @@ function MotorDashboard() {
         ))}
       </div>
 
-      <div className="mdash-table-panel">
+      <div className="mdash-list-panel">
         <div className="mdash-table-panel-header">
           <h2>All Motor Proposals</h2>
           <div className="mdash-search-box">
             <FaSearch />
             <input
-              placeholder="Search by policyholder name"
+              placeholder="Search by owner, fleet type, or policy #"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
@@ -87,40 +88,47 @@ function MotorDashboard() {
         {error && <p className="state-text error-text">Error: {error}</p>}
 
         {!loading && !error && (
-          <table>
-            <thead>
-              <tr>
-                <th>Policyholder</th>
-                <th>Vehicle</th>
-                <th>Created</th>
-                <th>Status</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="empty-row">No proposals match your search.</td>
-                </tr>
-              ) : (
-                filtered.map((p) => (
-                  <tr key={p.id}>
-                    <td>{p.full_name}</td>
-                    <td className="mono">#{p.vehicle_id}</td>
-                    <td>{p.created_at}</td>
-                    <td>
-                      <span className={`mdash-status-pill mdash-status-${p.status?.toLowerCase()}`}>
-                        {p.status}
-                      </span>
-                    </td>
-                    <td className="action-cell">
-                      <button onClick={() => navigate("/motor-proposal/" + p.id)}>View</button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+          <div className="mdash-list-scroll">
+            {/* Column headings for the card list below */}
+            <div className="mdash-row mdash-row-head">
+              <span className="mdash-col mdash-col-policy">Policy Number</span>
+              <span className="mdash-col mdash-col-holder">Policyholder</span>
+              <span className="mdash-col mdash-col-vehicles">Vehicles</span>
+              <span className="mdash-col mdash-col-status">Status</span>
+              <span className="mdash-col mdash-col-action"></span>
+            </div>
+
+            {filtered.length === 0 ? (
+              <p className="empty-row">No proposals match your search.</p>
+            ) : (
+              filtered.map((p) => (
+                <div
+                  className="mdash-row"
+                  key={p.id}
+                  onClick={() => navigate("/motor-proposal/" + p.id)}
+                >
+                  <span className="mdash-col mdash-col-policy mono">MTR-{String(p.id).padStart(4, "0")}</span>
+                  <span className="mdash-col mdash-col-holder">
+                    <span className="mdash-holder-name">{p.full_name}</span>
+                    <span className="mdash-holder-type">{p.fleet_type}</span>
+                  </span>
+                  <span className="mdash-col mdash-col-vehicles">
+                    <FaCarSide /> <span className="mono">{p.vehicles.length}</span>
+                  </span>
+                  <span className="mdash-col mdash-col-status">
+                    <span className={`mdash-status-pill mdash-status-${p.status?.toLowerCase()}`}>
+                      {p.status}
+                    </span>
+                  </span>
+                  <span className="mdash-col mdash-col-action">
+                    <button onClick={(e) => { e.stopPropagation(); navigate("/motor-proposal/" + p.id); }}>
+                      View <FaChevronRight />
+                    </button>
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
         )}
       </div>
     </div>

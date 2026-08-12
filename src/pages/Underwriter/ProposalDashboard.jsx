@@ -16,6 +16,7 @@ import { getProposal } from "../../api/underwritingApi";
 import { getDummyProposal } from "../../api/dummyProposals";
 import BackButton from "../../components/BackButton";
 import StatusStamp from "../../components/StatusStamp";
+import TopBar from "../../components/TopBar";
 
 // ---------------------------------------------------------------------------
 // Flip this to false once the backend teammate's /proposals/:id endpoint is
@@ -131,6 +132,7 @@ function ProposalDashboard() {
             </p>
           </div>
           <StatusStamp status={proposal.status} />
+          <TopBar homeTo="/underwriter/home" />
         </div>
       </div>
 

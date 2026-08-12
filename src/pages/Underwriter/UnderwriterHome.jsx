@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { FaHeartbeat, FaCarSide, FaArrowRight } from "react-icons/fa";
 import "./UnderwriterHome.css";
 import BackButton from "../../components/BackButton";
+import TopBar from "../../components/TopBar";
 
 const LINES = [
   {
@@ -37,6 +38,7 @@ function UnderwriterHome() {
           <h1>Welcome back, Underwriter</h1>
           <p className="uh-subhead">Choose an insurance line to review proposals in.</p>
         </div>
+        <TopBar homeTo="/underwriter/home" />
       </div>
 
       <div className="uh-grid">

@@ -6,6 +6,8 @@ import {
 } from "react-icons/fa";
 import "./ClientMotorPolicy.css";
 import { getMockMotorData } from "../../data/mockMotorPolicies";
+import BackButton from "../../components/BackButton";
+import TopBar from "../../components/TopBar";
 
 function statusTone(status) {
   const s = (status || "").toLowerCase();
@@ -75,17 +77,18 @@ function ClientMotorPolicy() {
       {/* ---- Hero header ---- */}
       <div className="cm-hero">
         <div className="cm-topbar">
-          <div className="cm-brand">
-            <FaShieldAlt />
-            <span>AI Underwriter</span>
+          <div className="cm-topbar-left">
+            <BackButton to="/client/home" />
+            <div className="cm-brand">
+              <FaShieldAlt />
+              <span>AI Underwriter</span>
+            </div>
           </div>
           <div className="cm-topbar-actions">
             <button className="cm-apply-btn" onClick={() => navigate("/client/motor/proposal")}>
               <FaPlus /> <span>Proposal Application</span>
             </button>
-            <button className="cm-logout" onClick={handleLogout}>
-              <FaSignOutAlt /> Log out
-            </button>
+            <TopBar homeTo="/client/home" />
           </div>
         </div>
 

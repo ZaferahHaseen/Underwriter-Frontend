@@ -24,6 +24,16 @@
   gap: 18px;
 }
 
+.mvp-topbar .topbar-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: white;
+}
+
+.mvp-topbar .topbar-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 .mvp-topbar .back-button {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.18);

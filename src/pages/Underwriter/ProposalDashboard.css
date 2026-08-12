@@ -19,6 +19,16 @@
   gap: 20px;
 }
 
+.pd-header .topbar-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: white;
+}
+
+.pd-header .topbar-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 .pd-header .back-button {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.18);
