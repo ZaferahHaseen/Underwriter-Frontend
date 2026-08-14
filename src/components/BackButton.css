@@ -1,0 +1,50 @@
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  font-size: 15px;
+  transition: background 0.15s ease, transform 0.1s ease, width 0.15s ease;
+  flex-shrink: 0;
+}
+
+.back-button:hover {
+  background: var(--signal-tint);
+  color: var(--signal-dark);
+}
+
+.back-button:active {
+  transform: scale(0.94);
+}
+
+/* svg defaults to inline, which throws off vertical centering inside
+   a flex circle — forcing block display centers the arrow correctly. */
+.back-button svg {
+  display: block;
+  width: 15px;
+  height: 15px;
+}
+
+.back-button span {
+  display: none;
+}
+
+/* When a label is provided, expand into a pill */
+.back-button:has(span) {
+  width: auto;
+  padding: 0 16px 0 14px;
+  border-radius: 999px;
+}
+
+.back-button:has(span) span {
+  display: inline;
+  font-size: 14px;
+  font-weight: 600;
+}

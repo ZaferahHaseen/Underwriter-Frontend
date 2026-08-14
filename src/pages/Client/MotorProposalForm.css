@@ -1,0 +1,1063 @@
+/* =========================================================
+   MOTOR PROPOSAL PAGE — split layout (mirrors the Health
+   proposal page: dark left rail + scrollable right content)
+   ========================================================= */
+
+.mpf-shell {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  height: 100vh;
+  background: var(--mist);
+  overflow: hidden;
+}
+
+/* ---------- Left rail ---------- */
+
+.mpf-rail {
+  height: 100vh;
+  background: linear-gradient(165deg, var(--ink) 0%, var(--ink-soft) 65%, #1c3d63 100%);
+  color: white;
+  padding: 28px 32px 32px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.mpf-rail-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.mpf-rail .back-button,
+.mpf-rail .topbar-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: white;
+}
+
+.mpf-rail .back-button:hover,
+.mpf-rail .topbar-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.mpf-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.85);
+  flex: 1;
+}
+
+.mpf-brand svg {
+  color: var(--gold);
+  font-size: 16px;
+}
+
+.mpf-rail-heading {
+  margin-top: 40px;
+}
+
+.mpf-rail-heading h1 {
+  color: white;
+  font-size: 28px;
+  line-height: 1.15;
+  max-width: 280px;
+}
+
+.mpf-rail-heading p {
+  margin-top: 14px;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 13.5px;
+  line-height: 1.6;
+  max-width: 280px;
+}
+
+.mpf-steps {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mpf-step {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  text-align: left;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.mpf-step:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.mpf-step-active {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.mpf-step-num {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.mpf-step-active .mpf-step-num {
+  background: var(--motor);
+  color: white;
+}
+
+.mpf-step-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: color 0.15s ease;
+}
+
+.mpf-step-active .mpf-step-label {
+  color: white;
+}
+
+.mpf-step-label em {
+  font-style: normal;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.mpf-rail-footer {
+  margin-top: auto;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.mpf-rail-footer p {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* ---------- Right content ---------- */
+
+.mpf-main {
+  min-width: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 26px 44px 0;
+  position: relative;
+}
+
+.mpf-subhead {
+  display: none; /* superseded by .mpf-rail-heading p */
+}
+
+/* =========================================================
+   TABS
+   ========================================================= */
+
+.mpf-tabs {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto 20px;
+  flex-shrink: 0;
+
+  display: flex;
+  gap: 8px;
+
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+
+  padding: 6px;
+  width: fit-content;
+
+  box-shadow: var(--shadow-sm);
+}
+
+.mpf-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 10px 18px;
+
+  border: none;
+  border-radius: var(--radius-sm);
+
+  background: transparent;
+
+  font-size: 13.5px;
+  font-weight: 700;
+
+  color: var(--slate);
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.mpf-tab:hover {
+  color: var(--ink);
+}
+
+.mpf-tab-active {
+  background: var(--motor);
+  color: white;
+}
+
+.mpf-tab-active:hover {
+  color: white;
+}
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.mpf-content {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 100px; /* keeps last card clear of the fixed submit bar */
+}
+
+.mpf-card {
+  background: var(--paper);
+
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+
+  box-shadow: var(--shadow-sm);
+
+  padding: 24px;
+}
+
+.mpf-excel-card {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   VEHICLE COUNT
+   ========================================================= */
+
+.mpf-vehicle-count {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  color: var(--motor-dark);
+}
+
+.mpf-vehicle-count svg {
+  font-size: 16px;
+}
+
+/* =========================================================
+   SAVED VEHICLES
+   ========================================================= */
+
+.mpf-saved-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mpf-saved-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mpf-saved-heading-left {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.mpf-saved-heading-left svg {
+  color: var(--motor);
+  font-size: 15px;
+}
+
+.mpf-saved-heading h2 {
+  margin: 0;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  color: var(--ink);
+}
+
+.mpf-saved-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 24px;
+  height: 24px;
+
+  padding: 0 8px;
+
+  border-radius: 999px;
+
+  background: var(--motor-tint);
+  color: var(--motor-dark);
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   SAVED VEHICLE LIST
+   ========================================================= */
+
+.mpf-saved-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* =========================================================
+   SAVED VEHICLE CARD
+   ========================================================= */
+
+.mpf-saved-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  padding: 15px 17px;
+
+  background: var(--paper);
+
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+
+  box-shadow: var(--shadow-sm);
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+.mpf-saved-card:hover {
+  border-color: rgba(0, 0, 0, 0.12);
+
+  box-shadow: var(--shadow-md);
+
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   SAVED VEHICLE ICON
+   ========================================================= */
+
+.mpf-saved-icon {
+  flex: 0 0 auto;
+
+  width: 42px;
+  height: 42px;
+
+  border-radius: 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--motor-tint);
+  color: var(--motor);
+
+  font-size: 17px;
+}
+
+/* =========================================================
+   SAVED VEHICLE INFORMATION
+   ========================================================= */
+
+.mpf-saved-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.mpf-saved-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 7px;
+
+  margin-bottom: 4px;
+}
+
+.mpf-saved-title strong {
+  color: var(--ink);
+
+  font-size: 13.5px;
+  font-weight: 750;
+}
+
+.mpf-saved-number {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 3px 8px;
+
+  border-radius: 5px;
+
+  background: var(--mist);
+  color: var(--slate);
+
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.mpf-saved-details {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 5px 13px;
+
+  color: var(--slate);
+
+  font-size: 11.5px;
+}
+
+.mpf-saved-detail {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 5px;
+}
+
+/* =========================================================
+   SAVED STATUS
+   ========================================================= */
+
+.mpf-saved-status {
+  flex: 0 0 auto;
+
+  display: inline-flex;
+  align-items: center;
+
+  gap: 5px;
+
+  padding: 6px 9px;
+
+  border-radius: 999px;
+
+  background: rgba(30, 158, 99, 0.09);
+  color: var(--risk-low);
+
+  font-size: 10.5px;
+  font-weight: 750;
+}
+
+.mpf-saved-status svg {
+  font-size: 10px;
+}
+
+/* =========================================================
+   SAVED VEHICLE ACTIONS
+   ========================================================= */
+
+.mpf-saved-actions {
+  flex: 0 0 auto;
+
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+}
+
+.mpf-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding: 7px 11px;
+
+  border: none;
+  border-radius: 7px;
+
+  background: var(--motor-tint);
+  color: var(--motor-dark);
+
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.mpf-edit-btn:hover {
+  background: var(--motor);
+  color: white;
+
+  transform: translateY(-1px);
+}
+
+.mpf-delete-btn {
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 7px;
+
+  background: transparent;
+  color: var(--slate-light);
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.mpf-delete-btn:hover {
+  background: rgba(214, 69, 69, 0.08);
+  color: #d64545;
+}
+
+/* =========================================================
+   CURRENT VEHICLE SECTION
+   ========================================================= */
+
+.mpf-current-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  scroll-margin-top: 25px;
+}
+
+.mpf-current-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+}
+
+.mpf-current-heading h2 {
+  margin: 0;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  color: var(--ink);
+}
+
+.mpf-current-badge {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 6px 10px;
+
+  border-radius: 999px;
+
+  background: var(--motor-tint);
+  color: var(--motor-dark);
+
+  font-size: 10.5px;
+  font-weight: 750;
+}
+
+/* =========================================================
+   EDITING BANNER
+   ========================================================= */
+
+.mpf-editing-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  padding: 11px 14px;
+
+  border-radius: var(--radius-md);
+
+  background: var(--motor-tint);
+
+  border: 1px solid rgba(0, 0, 0, 0.06);
+
+  color: var(--motor-dark);
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.mpf-cancel-edit-btn {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 5px;
+
+  border: none;
+  background: transparent;
+
+  color: var(--slate);
+
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+}
+
+.mpf-cancel-edit-btn:hover {
+  color: var(--ink);
+}
+
+/* =========================================================
+   VEHICLE FORM LIST
+   ========================================================= */
+
+.mpf-vehicle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* =========================================================
+   SAVE VEHICLE BUTTON
+   ========================================================= */
+
+.mpf-save-btn {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 9px;
+
+  padding: 14px 18px;
+
+  border: none;
+  border-radius: var(--radius-md);
+
+  background: var(--motor);
+  color: white;
+
+  font-size: 13.5px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.mpf-save-btn:hover {
+  background: var(--motor-dark);
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.1);
+}
+
+.mpf-save-btn:active {
+  transform: translateY(0);
+}
+
+/* =========================================================
+   STICKY SUBMIT BAR
+   ========================================================= */
+
+.mpf-submit-bar {
+  position: fixed;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  background: var(--paper);
+
+  border-top: 1px solid var(--line);
+
+  box-shadow:
+    0 -8px 24px rgba(20, 40, 70, 0.06);
+
+  padding: 16px 48px;
+
+  z-index: 10;
+}
+
+.mpf-submit-bar-inner {
+  max-width: 900px;
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+}
+
+.mpf-submit-hint {
+  font-size: 13px;
+
+  color: var(--slate);
+
+  font-weight: 600;
+}
+
+.mpf-submit-btn {
+  padding: 13px 30px;
+
+  border: none;
+  border-radius: var(--radius-sm);
+
+  background: var(--motor);
+  color: white;
+
+  font-weight: 700;
+  font-size: 14px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.mpf-submit-btn:hover:not(:disabled) {
+  background: var(--motor-dark);
+
+  transform: translateY(-1px);
+}
+
+.mpf-submit-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   SUCCESS PAGE (uses its own full-page container, not the
+   split shell above, since there's nothing to navigate)
+   ========================================================= */
+
+.mpf-page {
+  min-height: 100vh;
+  width: 100%;
+  background: var(--mist);
+}
+
+.mpf-success-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+}
+
+.mpf-success-card {
+  max-width: 460px;
+
+  text-align: center;
+
+  background: var(--paper);
+
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-md);
+
+  padding: 48px 40px;
+}
+
+.mpf-success-icon {
+  font-size: 44px;
+
+  color: var(--risk-low);
+
+  margin-bottom: 18px;
+}
+
+.mpf-success-card h1 {
+  font-size: 22px;
+
+  margin: 0 0 12px;
+
+  color: var(--ink);
+}
+
+.mpf-success-card p {
+  color: var(--slate);
+
+  font-size: 14px;
+
+  line-height: 1.6;
+
+  margin: 0 0 6px;
+}
+
+.mpf-success-sub {
+  font-size: 12.5px !important;
+
+  color: var(--slate-light) !important;
+
+  margin-bottom: 26px !important;
+}
+
+.mpf-success-btn {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 12px 24px;
+
+  border: none;
+  border-radius: var(--radius-sm);
+
+  background: var(--motor);
+  color: white;
+
+  font-weight: 700;
+  font-size: 13.5px;
+
+  cursor: pointer;
+}
+
+.mpf-success-btn:hover {
+  background: var(--motor-dark);
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .mpf-shell {
+    grid-template-columns: 1fr;
+    height: auto;
+    overflow: visible;
+  }
+
+  .mpf-rail {
+    height: auto;
+    position: relative;
+    padding: 22px 24px;
+  }
+
+  .mpf-main {
+    height: auto;
+    overflow: visible;
+    padding: 20px 20px 130px;
+  }
+
+  .mpf-content {
+    overflow-y: visible;
+    padding-bottom: 90px;
+    max-width: 100%;
+  }
+
+  .mpf-tabs {
+    max-width: 100%;
+  }
+
+  .mpf-submit-bar {
+    padding: 14px 20px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 560px) {
+  .mpf-main {
+    padding: 18px 14px 150px;
+  }
+
+  .mpf-rail-heading h1 {
+    font-size: 24px;
+  }
+
+  .mpf-tabs {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .mpf-tab {
+    flex: 1;
+
+    padding: 10px;
+
+    font-size: 12.5px;
+  }
+
+  .mpf-card {
+    padding: 17px;
+  }
+
+  /* Saved vehicle */
+
+  .mpf-saved-card {
+    align-items: flex-start;
+
+    gap: 10px;
+
+    padding: 13px;
+  }
+
+  .mpf-saved-icon {
+    width: 36px;
+    height: 36px;
+
+    border-radius: 10px;
+
+    font-size: 14px;
+  }
+
+  .mpf-saved-title strong {
+    font-size: 12.5px;
+  }
+
+  .mpf-saved-details {
+    gap: 4px 10px;
+
+    font-size: 10.5px;
+  }
+
+  .mpf-saved-status {
+    display: none;
+  }
+
+  .mpf-saved-actions {
+    gap: 4px;
+  }
+
+  .mpf-edit-btn {
+    padding: 6px 8px;
+
+    font-size: 10px;
+  }
+
+  .mpf-edit-btn span {
+    display: none;
+  }
+
+  .mpf-delete-btn {
+    width: 27px;
+    height: 27px;
+  }
+
+  /* Current form */
+
+  .mpf-current-heading {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 7px;
+  }
+
+  .mpf-editing-banner {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 8px;
+  }
+
+  /* Submit */
+
+  .mpf-submit-bar-inner {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 10px;
+  }
+
+  .mpf-submit-hint {
+    text-align: center;
+  }
+
+  .mpf-submit-btn {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 380px) {
+  .mpf-main {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .mpf-tab {
+    font-size: 11.5px;
+
+    gap: 5px;
+  }
+
+  .mpf-saved-details {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 2px;
+  }
+}

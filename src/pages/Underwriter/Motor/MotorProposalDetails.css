@@ -1,0 +1,445 @@
+.mpd-page {
+  padding: 0 40px 24px;
+  background: var(--mist);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Hero header ---------- */
+
+.mpd-hero {
+  margin: 0 -40px 20px;
+  padding: 22px 40px;
+  background: linear-gradient(135deg, var(--ink) 0%, var(--motor-dark) 100%);
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.mpd-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.mpd-header .back-button {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: white;
+}
+
+.mpd-header .back-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Document Verification / AI Risk Analysis buttons, now living in the
+   hero where the old pending/approved/rejected stamp used to sit. */
+.mpd-hero-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.mpd-hero-actions .mpd-action-btn {
+  padding: 10px 16px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.mpd-header .topbar-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: white;
+}
+
+.mpd-header .topbar-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.mpd-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  color: white;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mpd-header-text {
+  flex: 1;
+}
+
+.mpd-header h1 {
+  font-size: 27px;
+  color: white;
+}
+
+.mpd-subhead {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* ---------- Stat tiles ---------- */
+
+.mpd-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+
+.mpd-stat-card {
+  background: var(--paper);
+  padding: 20px 22px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.mpd-stat-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.mpd-stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.mpd-stat-icon-motor { background: var(--motor-tint); color: var(--motor); }
+.mpd-stat-icon-gold { background: var(--gold-tint); color: var(--gold); }
+.mpd-stat-icon-low { background: var(--risk-low-tint); color: var(--risk-low); }
+.mpd-stat-icon-high { background: var(--risk-high-tint); color: var(--risk-high); }
+
+.mpd-stat-card h2 {
+  font-size: 22px;
+  line-height: 1;
+  text-transform: capitalize;
+}
+
+.mpd-stat-card p {
+  margin-top: 6px;
+  color: var(--slate);
+  font-size: 13px;
+}
+
+/* ---------- Scroll area holding the profile card + vehicle list ---------- */
+
+.mpd-scroll-panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mpd-panel {
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.mpd-profile-panel {
+  flex-shrink: 0;
+}
+
+.mpd-section {
+  padding: 22px 26px;
+}
+
+.mpd-section-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.mpd-section-icon {
+  color: var(--motor);
+  font-size: 14px;
+}
+
+.mpd-section-head h3 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--slate);
+  font-family: var(--font-body);
+  font-weight: 700;
+}
+
+.mpd-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 16px 24px;
+}
+
+.mpd-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--mist);
+}
+
+.mpd-field-label {
+  font-size: 12px;
+  color: var(--slate-light);
+}
+
+.mpd-field-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  text-transform: capitalize;
+}
+
+/* ---------- Vehicle list panel — matches the Motor Insurance Dashboard ---------- */
+
+.mdash-status-pending { background: var(--gold-tint); color: var(--gold); }
+.mdash-status-approved { background: var(--risk-low-tint); color: var(--risk-low); }
+.mdash-status-rejected { background: var(--risk-high-tint); color: var(--risk-high); }
+
+.mpd-list-panel {
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.mpd-list-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.mpd-list-panel-header h2 {
+  font-size: 16px;
+}
+
+.mpd-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--mist);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  color: var(--slate-light);
+  font-size: 13px;
+  width: 280px;
+}
+
+.mpd-search-box input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13px;
+  width: 100%;
+  color: var(--ink);
+}
+
+.mpd-list-scroll {
+  padding: 0 8px 8px;
+}
+
+.mpd-row {
+  display: grid;
+  grid-template-columns: 1.8fr 140px 110px 120px 130px 110px;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  margin: 6px 0;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.mpd-row:not(.mpd-row-head):hover {
+  background: var(--motor-tint);
+}
+
+.mpd-row-head {
+  cursor: default;
+  padding: 10px 16px;
+  position: sticky;
+  top: 0;
+  background: var(--paper);
+  z-index: 1;
+}
+
+.mpd-row-head .mpd-col {
+  color: var(--slate);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.mpd-col {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mpd-col-vehicle {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.mpd-vt-vehicle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.mpd-vt-vehicle svg {
+  color: var(--motor);
+}
+
+.mpd-vt-reg {
+  font-size: 12px;
+  color: var(--slate);
+}
+
+.mpd-col-action {
+  justify-content: flex-end;
+}
+
+.mpd-col-action button {
+  background: var(--motor);
+  color: white;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.15s ease;
+}
+
+.mpd-col-action button:hover {
+  background: var(--motor-dark);
+}
+
+.empty-row {
+  text-align: center;
+  color: var(--slate-light);
+  padding: 40px;
+}
+
+/* ---------- Action buttons (rendered in the hero, top of page) ---------- */
+
+.mpd-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 17px;
+  border-radius: var(--radius-md);
+  font-size: 14.5px;
+  font-weight: 600;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.mpd-action-btn:active {
+  transform: scale(0.98);
+}
+
+.mpd-action-primary {
+  background: var(--motor);
+  color: white;
+}
+
+.mpd-action-primary:hover {
+  background: var(--motor-dark);
+}
+
+.mpd-action-secondary {
+  background: var(--paper);
+  color: var(--ink);
+  border: 1.5px solid var(--line);
+}
+
+.mpd-action-secondary:hover {
+  border-color: var(--motor);
+  background: var(--motor-tint);
+  color: var(--motor-dark);
+}
+
+.state-text {
+  padding: 40px 0;
+  color: var(--slate);
+}
+
+.error-text {
+  color: var(--risk-high);
+}
+
+@media (max-width: 900px) {
+  .mpd-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .mpd-page {
+    height: auto;
+    overflow: auto;
+    padding: 0 20px 32px;
+  }
+  .mpd-hero {
+    margin: 0 -20px 20px;
+    padding: 20px;
+  }
+  .mpd-header {
+    flex-wrap: wrap;
+  }
+  .mpd-avatar {
+    display: none;
+  }
+  .mpd-hero-actions {
+    order: 3;
+    width: 100%;
+  }
+  .mpd-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .mpd-row-head {
+    display: none;
+  }
+}

@@ -1,0 +1,503 @@
+/* =========================================================
+   CLIENT POLICY DETAILS
+   ========================================================= */
+
+.cpd-page {
+  min-height: 100vh;
+  background: var(--mist);
+  color: var(--ink);
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.cpd-header {
+  height: 78px;
+  padding: 0 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.cpd-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.cpd-icon-btn {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+  border: 1px solid var(--line);
+
+  background: var(--paper);
+  color: var(--slate);
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.cpd-icon-btn:hover {
+  background: var(--mist);
+  color: var(--ink);
+}
+
+.cpd-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  color: var(--ink);
+}
+
+.cpd-brand svg {
+  color: var(--signal);
+  font-size: 18px;
+}
+
+
+/* =========================================================
+   EDIT BUTTON
+   ========================================================= */
+
+.cpd-edit-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 18px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: var(--signal);
+  color: white;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.cpd-edit-btn:hover {
+  background: var(--signal-dark);
+  transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.cpd-content {
+  width: min(1180px, calc(100% - 80px));
+  margin: 0 auto;
+
+  padding: 42px 0 70px;
+}
+
+
+/* =========================================================
+   PAGE HEADING
+   ========================================================= */
+
+.cpd-page-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 30px;
+
+  margin-bottom: 28px;
+}
+
+.cpd-eyebrow {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: var(--signal);
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cpd-page-heading h1 {
+  margin: 0;
+
+  font-size: 30px;
+  line-height: 1.2;
+}
+
+.cpd-page-heading p {
+  margin-top: 7px;
+
+  color: var(--slate);
+
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.cpd-policy-status {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+.cpd-status-label {
+  font-size: 11px;
+  font-weight: 700;
+
+  color: var(--slate);
+
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.cpd-status {
+  padding: 8px 15px;
+
+  border-radius: 999px;
+
+  background: var(--risk-low-tint);
+  color: var(--risk-low);
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   SECTION
+   ========================================================= */
+
+.cpd-section {
+  background: var(--paper);
+
+  border: 1px solid var(--line);
+  border-radius: 12px;
+
+  box-shadow: var(--shadow-sm);
+
+  margin-bottom: 20px;
+
+  overflow: hidden;
+}
+
+.cpd-section-header {
+  padding: 20px 24px;
+
+  border-bottom: 1px solid var(--line);
+}
+
+.cpd-section-header > div {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cpd-section-number {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  background: var(--signal-tint);
+  color: var(--signal);
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.cpd-section-header h2 {
+  margin: 0;
+
+  font-size: 16px;
+}
+
+.cpd-section-header p {
+  margin-top: 3px;
+
+  color: var(--slate);
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   INFORMATION GRID
+   ========================================================= */
+
+.cpd-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.cpd-info-item {
+  min-height: 82px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 18px 24px;
+
+  border-bottom: 1px solid var(--line);
+}
+
+.cpd-info-item:nth-child(odd) {
+  border-right: 1px solid var(--line);
+}
+
+.cpd-info-icon {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  background: var(--mist);
+  color: var(--signal);
+
+  font-size: 13px;
+}
+
+.cpd-info-content {
+  min-width: 0;
+}
+
+.cpd-info-label {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: var(--slate);
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.cpd-info-value {
+  display: block;
+
+  color: var(--ink);
+
+  font-size: 14px;
+  font-weight: 700;
+
+  word-break: break-word;
+}
+
+
+/* =========================================================
+   BOTTOM ACTIONS
+   ========================================================= */
+
+.cpd-bottom-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: 28px;
+}
+
+.cpd-secondary-btn,
+.cpd-primary-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 11px 18px;
+
+  border-radius: 8px;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.cpd-secondary-btn {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  color: var(--slate);
+}
+
+.cpd-secondary-btn:hover {
+  background: var(--mist);
+  color: var(--ink);
+}
+
+.cpd-primary-btn {
+  background: var(--signal);
+  border: 1px solid var(--signal);
+  color: white;
+}
+
+.cpd-primary-btn:hover {
+  background: var(--signal-dark);
+}
+
+
+/* =========================================================
+   LOADING / ERROR
+   ========================================================= */
+
+.cpd-loading-page {
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cpd-loading-card {
+  width: min(420px, calc(100% - 40px));
+
+  padding: 35px;
+
+  background: var(--paper);
+
+  border: 1px solid var(--line);
+  border-radius: 12px;
+
+  text-align: center;
+
+  box-shadow: var(--shadow-md);
+}
+
+.cpd-loading-card h2 {
+  margin-bottom: 8px;
+}
+
+.cpd-loading-card p {
+  color: var(--slate);
+  font-size: 14px;
+  margin-bottom: 22px;
+}
+
+.cpd-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 17px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: var(--signal);
+  color: white;
+
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+  .cpd-header {
+    padding: 0 20px;
+  }
+
+  .cpd-content {
+    width: calc(100% - 40px);
+    padding-top: 28px;
+  }
+
+  .cpd-page-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .cpd-policy-status {
+    align-items: flex-start;
+  }
+
+  .cpd-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cpd-info-item:nth-child(odd) {
+    border-right: none;
+  }
+
+  .cpd-bottom-actions {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 520px) {
+
+  .cpd-brand {
+    display: none;
+  }
+
+  .cpd-edit-btn {
+    padding: 9px 12px;
+  }
+
+  .cpd-edit-btn {
+    font-size: 12px;
+  }
+
+  .cpd-page-heading h1 {
+    font-size: 25px;
+  }
+
+  .cpd-bottom-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .cpd-secondary-btn,
+  .cpd-primary-btn {
+    justify-content: center;
+  }
+}

@@ -1,0 +1,217 @@
+.mvd-page {
+  padding: 0 40px 60px;
+  background: var(--mist);
+  min-height: 100vh;
+}
+
+.mvd-hero {
+  margin: 0 -40px 24px;
+  padding: 28px 40px;
+  background: linear-gradient(135deg, var(--ink) 0%, var(--motor-dark) 100%);
+  border-bottom: 1px solid var(--line);
+}
+
+.mvd-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.mvd-header .back-button,
+.mvd-header .topbar-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: white;
+}
+
+.mvd-header .back-button:hover,
+.mvd-header .topbar-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.mvd-header-text {
+  flex: 1;
+}
+
+.mvd-header h1 {
+  font-size: 25px;
+  color: white;
+}
+
+.mvd-year {
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+  font-size: 18px;
+}
+
+.mvd-subhead {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* ---------- Stat tiles ---------- */
+
+.mvd-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.mvd-stat-card {
+  background: var(--paper);
+  padding: 20px 22px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.mvd-stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.mvd-stat-icon-motor { background: var(--motor-tint); color: var(--motor); }
+.mvd-stat-icon-gold { background: var(--gold-tint); color: var(--gold); }
+.mvd-stat-icon-low { background: var(--risk-low-tint); color: var(--risk-low); }
+.mvd-stat-icon-high { background: var(--risk-high-tint); color: var(--risk-high); }
+
+.mvd-stat-card h2 {
+  font-size: 22px;
+  line-height: 1;
+  text-transform: capitalize;
+}
+
+.mvd-stat-card p {
+  margin-top: 6px;
+  color: var(--slate);
+  font-size: 13px;
+}
+
+/* ---------- Panels ---------- */
+
+.mvd-panel {
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  padding: 24px 26px;
+  margin-bottom: 18px;
+}
+
+.mvd-section-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.mvd-section-icon {
+  color: var(--motor);
+  font-size: 14px;
+}
+
+.mvd-section-head h3 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--slate);
+  font-family: var(--font-body);
+  font-weight: 700;
+}
+
+.mvd-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 16px 24px;
+}
+
+.mvd-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--mist);
+}
+
+.mvd-field-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--slate-light);
+  text-transform: capitalize;
+}
+
+.mvd-field-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  text-transform: capitalize;
+}
+
+/* ---------- Document status list ---------- */
+
+.mvd-doc-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.mvd-doc-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+
+.mvd-doc-row:last-child {
+  border-bottom: none;
+}
+
+.mvd-doc-pill {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.mvd-doc-verified { background: var(--risk-low-tint); color: var(--risk-low); }
+.mvd-doc-mismatch { background: var(--risk-high-tint); color: var(--risk-high); }
+.mvd-doc-flagged { background: var(--gold-tint); color: var(--gold); }
+.mvd-doc-missing { background: var(--risk-high-tint); color: var(--risk-high); }
+
+.state-text {
+  padding: 40px 0;
+  color: var(--slate);
+}
+
+.error-text {
+  color: var(--risk-high);
+}
+
+@media (max-width: 900px) {
+  .mvd-page {
+    padding: 0 20px 40px;
+  }
+  .mvd-hero {
+    margin: 0 -20px 20px;
+    padding: 22px 20px;
+  }
+  .mvd-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

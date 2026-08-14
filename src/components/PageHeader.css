@@ -1,0 +1,224 @@
+/* ================================================================
+   PAGE HEADER — the single navbar component used on every page.
+   ================================================================ */
+
+.ph-header {
+  padding: 28px 48px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.ph-compact {
+  padding: 20px 40px;
+}
+
+/* ---- Theme backgrounds ---- */
+/* Health & Life = blue. Motor = green. Hub pages = neutral navy. */
+
+.ph-theme-health {
+  background: linear-gradient(135deg, var(--ink) 0%, var(--signal-dark) 100%);
+}
+
+.ph-theme-motor {
+  background: linear-gradient(135deg, var(--ink) 0%, var(--motor-dark) 100%);
+}
+
+.ph-theme-neutral {
+  background: linear-gradient(135deg, var(--ink) 0%, var(--ink-soft) 100%);
+}
+
+/* ---- Layout row ---- */
+
+.ph-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ---- Circular icon buttons (back / home / logout) ---- */
+
+.ph-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 15px;
+  line-height: 1;
+  padding: 0;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+/* svg defaults to inline, which throws off vertical centering inside
+   a flex circle — forcing block display is what actually centers the
+   arrow glyph correctly. */
+.ph-icon-btn svg {
+  display: block;
+  width: 15px;
+  height: 15px;
+}
+
+.ph-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.ph-icon-btn:active {
+  transform: scale(0.94);
+}
+
+.ph-logout:hover {
+  background: rgba(214, 69, 69, 0.35);
+  border-color: rgba(214, 69, 69, 0.55);
+}
+
+/* ---- Optional avatar ---- */
+
+.ph-avatar {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+}
+
+/* ---- Titles ---- */
+
+.ph-titles {
+  flex: 1;
+  min-width: 0;
+}
+
+.ph-eyebrow {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 4px;
+}
+
+.ph-titles h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -0.02em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ph-subtitle {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.72);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- Badge / extra action buttons slot ---- */
+
+.ph-badge-slot,
+.ph-actions-slot {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Buttons a page passes into `actions` should use these classes
+   so they match the header style automatically. */
+
+.ph-header-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1.5px solid rgba(255, 255, 255, 0.26);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.ph-header-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.44);
+}
+
+.ph-header-btn-primary {
+  background: #ffffff;
+  color: var(--ink);
+  border-color: #ffffff;
+}
+
+.ph-header-btn-primary:hover {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+/* ---- Controls (home + logout) ---- */
+
+.ph-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+/* ---- Responsive ---- */
+
+@media (max-width: 900px) {
+  .ph-header {
+    padding: 22px 24px;
+  }
+}
+
+@media (max-width: 700px) {
+  .ph-row {
+    flex-wrap: wrap;
+  }
+
+  .ph-titles {
+    order: 2;
+    flex-basis: 100%;
+  }
+
+  .ph-titles h1 {
+    font-size: 20px;
+    white-space: normal;
+  }
+
+  .ph-badge-slot {
+    order: 3;
+  }
+
+  .ph-actions-slot {
+    order: 4;
+    flex-basis: 100%;
+    margin-top: 4px;
+  }
+
+  .ph-controls {
+    order: 1;
+    margin-left: auto;
+  }
+}

@@ -1,0 +1,41 @@
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.topbar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  font-size: 15px;
+  transition: background 0.15s ease, transform 0.1s ease, color 0.15s ease;
+}
+
+.topbar-btn:hover {
+  background: var(--signal-tint);
+  color: var(--signal-dark);
+}
+
+.topbar-btn-logout:hover {
+  background: var(--risk-high-tint);
+  color: var(--risk-high);
+}
+
+.topbar-btn:active {
+  transform: scale(0.94);
+}
+
+/* Dark/gradient hero headers (motor + health hero banners) need a
+   light-on-dark variant. Any page whose header sits on a dark hero
+   should add:  .my-header-class .topbar-btn { ... } with these values,
+   the same way BackButton is already overridden on those pages. */

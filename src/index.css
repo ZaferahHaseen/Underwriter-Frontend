@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root {
+  /* ---- Color: fintech/underwriting palette ---- */
+  --ink: #0B1E33;
+  --ink-soft: #16304F;
+  --slate: #4A5A70;
+  --slate-light: #8494A8;
+  --mist: #F5F7FA;
+  --paper: #FFFFFF;
+  --line: #E3E8EF;
+
+  --signal: #2F5FE0;
+  --signal-dark: #2347B3;
+  --signal-tint: #EAF0FE;
+
+  --gold: #C99A2E;
+  --gold-tint: #FAF1DD;
+
+  --risk-low: #1E9E63;
+  --risk-low-tint: #E7F7EF;
+  --risk-mod: #DB9A2C;
+  --risk-mod-tint: #FCF2DF;
+  --risk-high: #D64545;
+  --risk-high-tint: #FBEAEA;
+
+ 
+
+  /* ---- Motor line accent (kept in the same fintech system, distinct hue) ---- */
+  --motor: #17875A;
+  --motor-dark: #0F6344;
+  --motor-tint: #E4F6EE;
+
+  /* ---- Type ---- */
+  --font-display: "Space Grotesk", "Inter", sans-serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "IBM Plex Mono", "Courier New", monospace;
+
+  /* ---- Shape / elevation ---- */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --shadow-sm: 0 1px 2px rgba(11, 30, 51, 0.06);
+  --shadow-md: 0 4px 16px rgba(11, 30, 51, 0.08);
+  --shadow-lg: 0 12px 32px rgba(11, 30, 51, 0.12);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--font-body);
+}
+
+html, body {
+  margin: 0;
+  background: var(--mist);
+  color: var(--ink);
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+button {
+  cursor: pointer;
+  font-family: var(--font-body);
+  border: none;
+  outline: none;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+
+input, select {
+  font-family: var(--font-body);
+}
+
+/* Numbers everywhere use mono for that statement-precision feel */
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+::selection {
+  background: var(--signal-tint);
+  color: var(--signal-dark);
+}
