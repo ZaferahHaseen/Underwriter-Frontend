@@ -26,8 +26,24 @@ import {
   FIELD_SECTIONS,
   ALL_FIELD_KEYS,
 } from "../../data/motorFormFields";
+import { submitVehicleProposalsBatch } from "../../api/underwritingApi";
 
 import "./MotorProposalForm.css";
+
+// Field keys here match RawVehicleProposalRequest on the backend exactly
+// (app/vehicle/schemas.py) except these three, which the model expects as
+// numbers but HTML inputs always hand back as strings.
+const NUMERIC_KEYS = [
+  "year", "engine_cc", "vehicle_value", "driver_age", "driving_experience",
+  "license_age", "previous_accidents", "previous_claims", "traffic_violations",
+  "annual_mileage", "policy_lapses",
+];
+
+function toBackendVehicle(v) {
+  const out = { ...v };
+  NUMERIC_KEYS.forEach((k) => { out[k] = Number(out[k]); });
+  return out;
+}
 
 // Left-rail step nav, mirroring the Health proposal page — one entry per
 // section inside the currently-open VehicleFormBlock (see FIELD_SECTIONS
@@ -68,6 +84,7 @@ function MotorProposalForm() {
   const [currentErrors, setCurrentErrors] = useState({});
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const [activeStep, setActiveStep] = useState(STEPS[0]?.id);
 
@@ -260,7 +277,7 @@ function MotorProposalForm() {
      FINAL SUBMISSION
      ========================================================= */
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (savedVehicles.length === 0) {
       setSubmitAttempted(true);
       alert("Please save at least one vehicle before submitting.");
@@ -275,11 +292,19 @@ function MotorProposalForm() {
       return;
     }
 
-    const payload = { vehicles: savedVehicles };
-    console.log("Motor proposal submission payload:", payload);
-
-    // TODO: Replace this with the real backend submission call.
-    setSubmitted(true);
+    // WIRED TO BACKEND: POST /api/v1/vehicle/proposals/batch
+    // (app/vehicle/batch_router.py) — one call, N independent vehicle
+    // proposals created, each scored by the real vehicle risk model.
+    setSubmitting(true);
+    try {
+      const payload = savedVehicles.map(toBackendVehicle);
+      await submitVehicleProposalsBatch(payload);
+      setSubmitted(true);
+    } catch (err) {
+      alert(err.message || "Could not submit your proposal. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   /* =========================================================
@@ -579,9 +604,9 @@ function MotorProposalForm() {
               <button
                 className="mpf-submit-btn"
                 onClick={handleSubmit}
-                disabled={savedVehicles.length === 0}
+                disabled={savedVehicles.length === 0 || submitting}
               >
-                Submit Proposal
+                {submitting ? "Submitting…" : "Submit Proposal"}
               </button>
             </div>
           </div>

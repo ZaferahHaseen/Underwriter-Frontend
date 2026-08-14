@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { FaHome, FaSignOutAlt } from "react-icons/fa";
 import "./TopBar.css";
+import { clearAuth } from "../api/underwritingApi";
 
 /**
  * Consistent Home + Logout controls, shown top-right on every page.
@@ -25,7 +26,7 @@ function TopBar({ homeTo = "/" }) {
       <button
         type="button"
         className="topbar-btn topbar-btn-logout"
-        onClick={() => navigate("/")}
+        onClick={() => { clearAuth(); navigate("/"); }}
         aria-label="Log out"
         title="Log out"
       >

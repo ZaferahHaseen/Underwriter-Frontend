@@ -11,8 +11,12 @@ import {
 } from "react-icons/fa";
 
 import "./ClientPolicy.css";
-import { clientLogin } from "../../api/underwritingApi";
+import { getMyPolicies, getProposal, isLoggedIn, clearAuth } from "../../api/underwritingApi";
 import PageHeader from "../../components/PageHeader";
+
+// WIRED TO BACKEND: GET /api/v1/client/my-policies (JWT-identified, see
+// app/client_router.py). Dummy fallback below only fires if nobody is
+// logged in (shouldn't happen once Login.jsx is used, kept for safety).
 
 function statusTone(status) {
   const s = (status || "").toLowerCase();
@@ -53,9 +57,7 @@ function ClientPolicy() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const email = sessionStorage.getItem("client_email");
-
-    if (!email) {
+    if (!isLoggedIn()) {
       /*
        * No client is logged in yet — show dummy data so the
        * page (and the View -> proposal form flow) can still be
@@ -66,20 +68,7 @@ function ClientPolicy() {
       return;
     }
 
-    const cached = sessionStorage.getItem("client_login_data");
-
-    if (cached) {
-      try {
-        const data = JSON.parse(cached);
-        applyData(data);
-        setLoading(false);
-        return;
-      } catch {
-        // Continue to API call
-      }
-    }
-
-    clientLogin(email)
+    getMyPolicies()
       .then(applyData)
       .catch((err) => {
         setError(err.message || "Couldn't load your policies.");
@@ -202,19 +191,31 @@ function ClientPolicy() {
   }, []);
 
   const handleLogout = () => {
-    sessionStorage.removeItem("client_email");
-    sessionStorage.removeItem("client_login_data");
+    clearAuth();
     navigate("/");
   };
 
-  const handleView = (policy) => {
+  const handleView = async (policy) => {
     /*
-     * The proposal page can read this object
-     * and automatically fill its form fields.
+     * The proposal page can read this object and automatically fill its
+     * form fields. my-policies only returns summary fields, so for real
+     * (numeric-id) proposals we fetch the full detail first — the dummy
+     * fallback rows already carry their full proposal_details inline.
      */
+    let toStore = policy;
+
+    if (typeof policy.id === "number" && isLoggedIn()) {
+      try {
+        const full = await getProposal(policy.id);
+        toStore = { ...policy, id: full.id, proposal_details: full };
+      } catch {
+        // fall back to the summary row if the detail fetch fails
+      }
+    }
+
     sessionStorage.setItem(
       "editing_client_policy",
-      JSON.stringify(policy)
+      JSON.stringify(toStore)
     );
 
     navigate("/client/dashboard?edit=true");

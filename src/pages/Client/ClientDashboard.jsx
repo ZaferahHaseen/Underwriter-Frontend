@@ -16,6 +16,7 @@ import {
 import "./ClientDashboard.css";
 import {
   submitProposal,
+  editProposal,
   getCountries,
   getDocTypesForCountry,
 } from "../../api/underwritingApi";
@@ -63,6 +64,7 @@ function ClientDashboard() {
   const [submitted, setSubmitted] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [editingProposalId, setEditingProposalId] = useState(null);
 
     // --------------------------------------------------
   // Load existing policy when editing
@@ -85,6 +87,16 @@ function ClientDashboard() {
         policy.proposal_details ||
         policy.details ||
         policy;
+
+      // Real (backend-fetched) proposals carry their own id under
+      // proposal_details.id — that's the one PATCH/edit needs, NOT the
+      // outer policy.id (which is the summary row's id, same value here
+      // but kept separate for clarity / dummy-data safety).
+      if (details && details.id) {
+        setEditingProposalId(details.id);
+      } else if (policy.id && typeof policy.id === "number") {
+        setEditingProposalId(policy.id);
+      }
 
       setFormData((previous) => ({
         ...previous,
@@ -425,10 +437,13 @@ function ClientDashboard() {
     try {
       setLoading(true);
 
-      const data = await submitProposal(
-        payload,
-        docFile
-      );
+      // Edit mode -> POST /api/v1/proposals/{id}/edit (new version, no
+      // re-upload of the document). Otherwise -> POST /api/v1/proposals
+      // (new proposal, document required).
+      const data =
+        isEditMode && editingProposalId
+          ? await editProposal(editingProposalId, payload)
+          : await submitProposal(payload, docFile);
 
       setSubmitted(data);
     } catch (err) {

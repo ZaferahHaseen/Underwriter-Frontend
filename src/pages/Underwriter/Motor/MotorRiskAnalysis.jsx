@@ -4,13 +4,16 @@ import { FaCarSide, FaExclamationTriangle } from "react-icons/fa";
 import "./MotorRiskAnalysis.css";
 import { getDummyMotorProposal } from "../../../api/dummyMotorProposals";
 import { getDummyFleetRiskResult } from "../../../api/dummyMotorRisk";
+import { getMotorProposal, getMotorFleetRiskResult, decideMotorVehicle } from "../../../api/motorAdapter";
 import BackButton from "../../../components/BackButton";
 import TopBar from "../../../components/TopBar";
 import RiskGauge from "../../../components/RiskGauge";
 import RiskChart from "../RiskChart";
 
-// Flip to false once the backend teammate's motor risk endpoint is live.
-const USE_DUMMY_DATA = true;
+// WIRED TO BACKEND: reuses the risk_score/risk_factors already computed
+// server-side when each vehicle proposal was submitted (no re-scoring).
+// Approve/Reject now call the real PATCH /proposals/{id}/decision endpoint.
+const USE_DUMMY_DATA = false;
 
 function MotorRiskAnalysis() {
   const { id } = useParams();
@@ -33,8 +36,24 @@ function MotorRiskAnalysis() {
       setLoading(false);
       return;
     }
-    // Real endpoint wiring goes here once ready.
-    setLoading(false);
+
+    getMotorProposal(id)
+      .then(async (p) => {
+        const fr = await getMotorFleetRiskResult(p.vehicles);
+        setProposal(p);
+        setFleetResult(fr);
+        setActiveVehicleId(fr.per_vehicle[0]?.vehicle.vehicle_id ?? null);
+        // Pre-fill decisions from real status (already-decided vehicles
+        // show their real APPROVED/REJECTED instead of resetting to blank).
+        const initialDecisions = {};
+        p.vehicles.forEach((v) => {
+          if (v.status === "APPROVED" || v.status === "REJECTED") {
+            initialDecisions[v.vehicle_id] = v.status;
+          }
+        });
+        setDecisions(initialDecisions);
+      })
+      .finally(() => setLoading(false));
   }, [id]);
 
   if (loading) {
@@ -51,8 +70,16 @@ function MotorRiskAnalysis() {
   const active = fleetResult.per_vehicle.find((r) => r.vehicle.vehicle_id === activeVehicleId) || fleetResult.per_vehicle[0];
   const activeDecision = decisions[active.vehicle.vehicle_id];
 
-  const handleDecide = (decision) => {
+  const handleDecide = async (decision) => {
+    // Optimistic UI update, then persist via the real decision endpoint.
     setDecisions((prev) => ({ ...prev, [active.vehicle.vehicle_id]: decision }));
+    if (!USE_DUMMY_DATA) {
+      try {
+        await decideMotorVehicle(active.vehicle.vehicle_id, decision);
+      } catch (err) {
+        alert(err.message || "Could not save decision.");
+      }
+    }
   };
 
   return (

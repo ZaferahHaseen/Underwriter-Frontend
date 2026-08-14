@@ -2,23 +2,52 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { FaUser, FaUserTie } from "react-icons/fa";
 import "./Login.css";
+import { login, signup } from "../../api/underwritingApi";
 
 function Login() {
   const [role, setRole] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  // Real auth against the backend (app/auth/router.py).
+  // The "Username" field doubles as email — that's the only text field the
+  // existing form has, and the backend's users table is keyed on email.
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!role || !username || !password) return;
 
-    // Dummy login — no authentication or validation
-    if (role === "client") {
-      navigate("/client/home");
-    } else if (role === "underwriter") {
-      navigate("/underwriter/home");
+    setSubmitting(true);
+    try {
+      const data = await login(username, password);
+      routeByRole(data.role);
+    } catch (loginErr) {
+      // No account with this email/password yet -> offer to create one
+      // with the role currently selected on screen, so the same form
+      // handles both sign-in and first-time sign-up without new UI.
+      const fullName = window.prompt(
+        "No account found for that email/password. Enter your full name to create a new account (Cancel to go back):"
+      );
+      if (!fullName) {
+        setSubmitting(false);
+        alert(loginErr.message || "Login failed.");
+        return;
+      }
+      try {
+        const data = await signup(fullName, username, password, role);
+        routeByRole(data.role);
+      } catch (signupErr) {
+        setSubmitting(false);
+        alert(signupErr.message || "Could not create account.");
+      }
     }
+  };
+
+  const routeByRole = (serverRole) => {
+    if (serverRole === "underwriter") navigate("/underwriter/home");
+    else navigate("/client/home");
   };
 
   return (
@@ -179,4 +208,3 @@ function Login() {
 }
 
 export default Login;
-

@@ -3,10 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { FaClipboardList, FaHourglassHalf, FaCheckCircle, FaCarSide, FaSearch, FaChevronRight, FaBolt } from "react-icons/fa";
 import "./MotorDashboard.css";
 import { getDummyMotorProposalList } from "../../../api/dummyMotorProposals";
+import { getMotorProposalList } from "../../../api/motorAdapter";
 import PageHeader from "../../../components/PageHeader";
 
-// Flip to false once the backend teammate's motor list endpoint is live.
-const USE_DUMMY_DATA = true;
+// WIRED TO BACKEND: GET /api/v1/vehicle/proposals via api/motorAdapter.js
+// (grouped by fleet_group_id). Flip to true to fall back to dummy data.
+const USE_DUMMY_DATA = false;
 
 function MotorDashboard() {
   const navigate = useNavigate();
@@ -21,8 +23,10 @@ function MotorDashboard() {
       setLoading(false);
       return;
     }
-    // Real endpoint wiring goes here once ready, e.g. listMotorProposals().
-    setLoading(false);
+    getMotorProposalList()
+      .then(setProposals)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
   }, []);
 
   const total = proposals.length;

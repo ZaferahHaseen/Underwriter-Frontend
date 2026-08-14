@@ -11,8 +11,12 @@ import {
   FaUserAlt,
 } from "react-icons/fa";
 import "./ClientMotorPolicy.css";
-import { getMockMotorData } from "../../data/mockMotorPolicies";
+import { getMyVehiclePolicies, getVehicleProposal, isLoggedIn } from "../../api/underwritingApi";
 import PageHeader from "../../components/PageHeader";
+
+// WIRED TO BACKEND: GET /api/v1/client/my-vehicle-policies (JWT-identified,
+// see app/client_router.py). Dummy fallback below only fires if nobody is
+// logged in, or the backend call fails.
 
 function statusTone(status) {
   const s = (status || "").toLowerCase();
@@ -120,34 +124,48 @@ function ClientMotorPolicy() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const email = sessionStorage.getItem("client_email");
-
-    /*
-      When backend/session data is available, use it.
-      Otherwise show dummy data so the UI can be developed properly.
-    */
-    if (email) {
-      const data = getMockMotorData(email);
-
-      if (data?.client && data?.vehicles?.length > 0) {
-        setClient(data.client);
-        setVehicles(data.vehicles);
-      } else {
-        setClient(dummyClient);
-        setVehicles(dummyVehicles);
-      }
-    } else {
+    if (!isLoggedIn()) {
       setClient(dummyClient);
       setVehicles(dummyVehicles);
+      setLoading(false);
+      return;
     }
 
-    setLoading(false);
+    getMyVehiclePolicies()
+      .then((data) => {
+        if (data?.vehicles?.length > 0) {
+          setClient(data.client);
+          setVehicles(data.vehicles);
+        } else {
+          setClient(data.client || dummyClient);
+          setVehicles([]);
+        }
+      })
+      .catch(() => {
+        setClient(dummyClient);
+        setVehicles(dummyVehicles);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
-  const handleViewVehicle = (vehicle) => {
+  const handleViewVehicle = async (vehicle) => {
+    // Real rows only carry summary fields (make/model/idv/etc) — pull the
+    // full raw_input from the vehicle proposal so the edit form is
+    // properly prefilled. Dummy rows already carry every field inline.
+    let toStore = vehicle;
+
+    if (typeof vehicle.id === "number" && isLoggedIn()) {
+      try {
+        const full = await getVehicleProposal(vehicle.id);
+        toStore = { ...full.raw_input, id: full.id, registration_number: vehicle.registration_number };
+      } catch {
+        // fall back to the summary row if the detail fetch fails
+      }
+    }
+
     sessionStorage.setItem(
       "editing_client_vehicle",
-      JSON.stringify(vehicle)
+      JSON.stringify(toStore)
     );
 
     navigate("/client/motor/proposal?edit=true");
