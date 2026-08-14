@@ -5,10 +5,12 @@ import {
 } from "react-icons/fa";
 import "./MotorDocumentVerification.css";
 import { getDummyMotorProposal } from "../../../api/dummyMotorProposals";
+import { getMotorProposal } from "../../../api/motorAdapter";
 import PageHeader from "../../../components/PageHeader";
 
-// Flip to false once the backend teammate's motor document endpoint is live.
-const USE_DUMMY_DATA = true;
+// WIRED TO BACKEND via api/motorAdapter.js. Document status per vehicle comes
+// from the adapter's mapVehicle() (VERIFIED/FLAGGED based on validation_results).
+const USE_DUMMY_DATA = false;
 
 const STATUS_META = {
   VERIFIED: { icon: FaCheckCircle, cls: "mvp-check-pass", label: "Verified" },
@@ -28,9 +30,10 @@ function MotorDocumentVerification() {
       setLoading(false);
       return;
     }
-    // Real endpoint wiring goes here once ready.
-    setLoading(false);
-  }, [id]);
+    getMotorProposal(id)
+      .then(setProposal)
+      .finally(() => setLoading(false));
+  }, [id]); 
 
   if (loading || !proposal) {
     return (

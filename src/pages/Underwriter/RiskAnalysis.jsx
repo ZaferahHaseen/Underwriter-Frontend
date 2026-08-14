@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import { getUnderwritingDecision, getProposal, decideProposal } from "../../api/underwritingApi";  
+import { getUnderwritingDecision, getProposal, decideProposal, quickMotorUnderwrite } from "../../api/underwritingApi";  
 import { getDummyProposal } from "../../api/dummyProposals";
 import { getDummyMotorRiskResult } from "../../api/dummyMotorRisk";
 import "./RiskAnalysis.css";
@@ -15,7 +15,8 @@ const USE_DUMMY_DATA = false;
 // Motor risk-scoring has no backend endpoint yet, so Quick Check always runs
 // the local dummy scorer for it. Flip this off (and wire a real API call in
 // handleSubmit below) once that endpoint exists.
-const USE_DUMMY_MOTOR_SCORING = true;
+// WIRED TO BACKEND: POST /api/v1/vehicle/underwrite (app/vehicle/quick_router.py).
+const USE_DUMMY_MOTOR_SCORING = false;
 
 const initialHealthForm = {
   age: 30,
@@ -210,6 +211,9 @@ function RiskAnalysis() {
         // and the flag above for how to switch to a real API call later.
         await new Promise((r) => setTimeout(r, 400)); // small delay to feel like a real call
         setResult(getDummyMotorRiskResult(motorForm));
+      } else if (checkType === "motor") {
+        const data = await quickMotorUnderwrite(motorForm);
+        setResult(data);
       } else {
         const data = await getUnderwritingDecision(form);
         setResult(data);

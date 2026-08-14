@@ -9,10 +9,12 @@ import {
 } from "react-icons/fa";
 import "./MotorVehicleDetails.css";
 import { getDummyMotorProposal } from "../../../api/dummyMotorProposals";
+import { getMotorProposal } from "../../../api/motorAdapter";
 import PageHeader from "../../../components/PageHeader";
 
-// Flip to false once the backend teammate's motor proposal endpoint is live.
-const USE_DUMMY_DATA = true;
+// WIRED TO BACKEND via api/motorAdapter.js (same call MotorProposalDetails.jsx
+// uses — GET /api/v1/vehicle/proposals/:id or GET /api/v1/vehicle/fleet/:id).
+const USE_DUMMY_DATA = false;
 
 function MotorVehicleDetails() {
   const { id, vehicleId } = useParams();
@@ -32,8 +34,16 @@ function MotorVehicleDetails() {
       setLoading(false);
       return;
     }
-    // Real endpoint wiring goes here once ready.
-    setLoading(false);
+
+    getMotorProposal(id)
+      .then((p) => {
+        // vehicle_id from the real adapter is a number; the route param is
+        // always a string — compare as strings so the lookup actually matches.
+        const v = p.vehicles.find((veh) => String(veh.vehicle_id) === String(vehicleId));
+        setProposal(p);
+        setVehicle(v || null);
+      })
+      .finally(() => setLoading(false));
   }, [id, vehicleId]);
 
   if (loading) {

@@ -1,10 +1,94 @@
 const API_BASE =
   import.meta.env.VITE_API_BASE || "http://192.168.1.3:8000";
 export { API_BASE };
+
+// ---------------------------------------------------------------------------
+// AUTH / TOKEN STORAGE
+// Real JWT auth (app/auth/router.py). Token + role + name kept in
+// localStorage so a refresh doesn't log the user out.
+// ---------------------------------------------------------------------------
+const TOKEN_KEY = "uw_token";
+const ROLE_KEY = "uw_role";
+const NAME_KEY = "uw_full_name";
+
+export function getToken() {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+export function isLoggedIn() {
+  return !!getToken();
+}
+
+export function getRole() {
+  return localStorage.getItem(ROLE_KEY);
+}
+
+export function getFullName() {
+  return localStorage.getItem(NAME_KEY);
+}
+
+function setAuth(data) {
+  localStorage.setItem(TOKEN_KEY, data.access_token);
+  localStorage.setItem(ROLE_KEY, data.role);
+  localStorage.setItem(NAME_KEY, data.full_name);
+}
+
+export function clearAuth() {
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(ROLE_KEY);
+  localStorage.removeItem(NAME_KEY);
+}
+
+// Attach to every authenticated call. Spread this into `headers`.
+function authHeaders() {
+  const token = getToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+// ---- Login / Signup (Login.jsx calls these) ----
+export async function login(email, password) {
+  const res = await fetch(`${API_BASE}/api/v1/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `API error: ${res.status}`);
+  }
+  const data = await res.json();
+  setAuth(data);
+  return data;
+}
+
+export async function signup(fullName, email, password, role) {
+  const res = await fetch(`${API_BASE}/api/v1/auth/signup`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ full_name: fullName, email, password, role }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `API error: ${res.status}`);
+  }
+  const data = await res.json();
+  setAuth(data);
+  return data;
+}
+
+export async function getMe() {
+  const res = await fetch(`${API_BASE}/api/v1/auth/me`, {
+    headers: { ...authHeaders() },
+  });
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
+
+// ---------------------------------------------------------------------------
 export async function getUnderwritingDecision(applicant) {
   const res = await fetch(`${API_BASE}/api/v1/underwrite`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...authHeaders() },
     body: JSON.stringify(applicant),
   });
   if (!res.ok) throw new Error(`API error: ${res.status}`);
@@ -14,7 +98,7 @@ export async function getUnderwritingDecision(applicant) {
 export async function getUnderwritingFromProposal(rawProposal) {
   const res = await fetch(`${API_BASE}/api/v1/underwrite/from-proposal`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...authHeaders() },
     body: JSON.stringify(rawProposal),
   });
   if (!res.ok) {
@@ -25,23 +109,7 @@ export async function getUnderwritingFromProposal(rawProposal) {
 }
 
 // Client: submit proposal + attached document in ONE multipart request.
-// `payload` = plain field object, `file` = the attached document (required).
-//
-// Fields sent for EVERY insurance_type ("Health Insurance" | "Life Insurance" | "Vehicle Insurance"):
-//   full_name, insurance_type, age, annual_income, sum_assured, occupation,
-//   credit_score, num_previous_claims, years_with_insurer, country_code, doc_type
-//
-// Extra fields when insurance_type === "Vehicle Insurance":
-//   vehicle_make, vehicle_model, vehicle_year, registration_number, fuel_type
-//   ("petrol" | "diesel" | "electric" | "cng" | "hybrid"), vehicle_usage
-//   ("personal" | "commercial"), driving_experience_years, no_claim_bonus_percent,
-//   prior_accident_claim ("yes" | "no")
-//   (note: sum_assured is used as the vehicle's Insured Declared Value / IDV here)
-//
-// Extra fields for "Health Insurance" / "Life Insurance":
-//   height_cm, weight_kg, smoker ("yes"|"no"), alcohol_consumption
-//   ("none"|"occasional"|"regular"), pre_existing_disease ("yes"|"no"),
-//   family_medical_history ("yes"|"no")
+// full_name is now taken from the JWT on the backend, not sent from here.
 export async function submitProposal(payload, file) {
   const form = new FormData();
   form.append("file", file);
@@ -49,7 +117,8 @@ export async function submitProposal(payload, file) {
 
   const res = await fetch(`${API_BASE}/api/v1/proposals`, {
     method: "POST",
-    body: form, // no Content-Type - browser sets multipart boundary
+    headers: { ...authHeaders() }, // no Content-Type - browser sets multipart boundary
+    body: form,
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
@@ -58,13 +127,29 @@ export async function submitProposal(payload, file) {
   return res.json();
 }
 
-// Multi-country ID support: fetch supported country+doc combos for dropdown
+// Client: edit + resubmit a proposal (creates a new version, no file re-upload).
+export async function editProposal(proposalId, payload) {
+  const form = new FormData();
+  Object.entries(payload).forEach(([key, value]) => form.append(key, value));
+
+  const res = await fetch(`${API_BASE}/api/v1/proposals/${proposalId}/edit`, {
+    method: "POST",
+    headers: { ...authHeaders() },
+    body: form,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail ? JSON.stringify(err.detail) : `API error: ${res.status}`);
+  }
+  return res.json();
+}
+
+// Multi-country ID support: fetch supported country+doc combos for dropdown (public)
 export async function getSupportedDocuments() {
   const res = await fetch(`${API_BASE}/api/v1/supported-documents`);
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
-// Two-step country/doc-type dropdowns
 export async function getCountries() {
   const res = await fetch(`${API_BASE}/api/v1/countries`);
   if (!res.ok) throw new Error("Failed to load countries");
@@ -77,16 +162,20 @@ export async function getDocTypesForCountry(countryCode) {
   if (!res.ok) throw new Error("Failed to load document types");
   const data = await res.json();
   return data.doc_types || [];
-} 
+}
 
 export async function listProposals() {
-  const res = await fetch(`${API_BASE}/api/v1/proposals`);
+  const res = await fetch(`${API_BASE}/api/v1/proposals`, {
+    headers: { ...authHeaders() },
+  });
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
 
 export async function getProposal(id) {
-  const res = await fetch(`${API_BASE}/api/v1/proposals/${id}`);
+  const res = await fetch(`${API_BASE}/api/v1/proposals/${id}`, {
+    headers: { ...authHeaders() },
+  });
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
@@ -94,7 +183,7 @@ export async function getProposal(id) {
 export async function decideProposal(id, status) {
   const res = await fetch(`${API_BASE}/api/v1/proposals/${id}/decision`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...authHeaders() },
     body: JSON.stringify({ status }),
   });
   if (!res.ok) {
@@ -104,49 +193,21 @@ export async function decideProposal(id, status) {
   return res.json();
 }
 
-// Underwriter: build a URL to view/download the attached document
+// Underwriter: build a URL to view/download the attached document.
+// <a href>/<img src> can't send an Authorization header, so the JWT rides
+// along as ?token= (backend's get_current_user accepts either — see
+// app/auth/dependencies.py).
 export function getProposalDocumentUrl(id) {
-  return `${API_BASE}/api/v1/proposals/${id}/document`;
+  const token = getToken();
+  return `${API_BASE}/api/v1/proposals/${id}/document${token ? `?token=${token}` : ""}`;
 }
 
 // ---------------------------------------------------------------------------
-// Client login → "My Policy" page
-//
-// Frontend contract for the backend (email validation + data lookup):
-//   POST /api/v1/client/login
-//   body: { "email": "someone@example.com" }
-//
-// Expected 200 response shape:
-//   {
-//     "client": {
-//       "full_name": "Jane Doe",
-//       "email": "someone@example.com",
-//       "age": 34,                     // optional
-//       "occupation": "office"         // optional
-//     },
-//     "policies": [
-//       {
-//         "id": 12,
-//         "policy_number": "POL-2026-0012",
-//         "insurance_type": "Health Insurance",
-//         "status": "Active",          // Active | Expired | Lapsed | Pending
-//         "sum_assured": 500000,
-//         "premium": 8400,             // optional
-//         "issue_date": "2026-02-10",
-//         "expiry_date": "2027-02-09"
-//       }
-//     ]
-//   }
-//
-// If the email has no policy yet, return "policies": [] with a 200 (not a 404) —
-// the frontend renders a friendly empty state for that case.
-// If the email itself isn't found/valid, return a 4xx with { "detail": "..." }.
+// Client: "My Policy" page — real backend, JWT-identified (app/client_router.py)
 // ---------------------------------------------------------------------------
-export async function clientLogin(email) {
-  const res = await fetch(`${API_BASE}/api/v1/client/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email }),
+export async function getMyPolicies() {
+  const res = await fetch(`${API_BASE}/api/v1/client/my-policies`, {
+    headers: { ...authHeaders() },
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
@@ -154,23 +215,26 @@ export async function clientLogin(email) {
   }
   return res.json();
 }
-// ---------------------------------------------------------------------------
-// VEHICLE (Motor) endpoints -- add these to the bottom of underwritingApi.js.
-// AUTH_DISABLED=true on backend right now, so no Authorization header needed.
-// When auth is re-enabled later, add:
-//   headers: { Authorization: `Bearer ${token}`, ... }
-// to each of these.
-// ---------------------------------------------------------------------------
 
-// Manual entry OR already-parsed Excel rows -> one call, N independent
-// vehicle proposals created (each vehicle = its own proposal + risk score,
-// matches backend's 1-proposal-per-vehicle model -- NOT a single fleet
-// proposal with a nested vehicles array).
+export async function getMyVehiclePolicies() {
+  const res = await fetch(`${API_BASE}/api/v1/client/my-vehicle-policies`, {
+    headers: { ...authHeaders() },
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `API error: ${res.status}`);
+  }
+  return res.json();
+}
+
+// ---------------------------------------------------------------------------
+// VEHICLE (Motor) endpoints
+// ---------------------------------------------------------------------------
 export async function submitVehicleProposalsBatch(vehicles) {
   const res = await fetch(`${API_BASE}/api/v1/vehicle/proposals/batch`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(vehicles), // array of vehicle objects, field names must match motorFormFields.js keys exactly
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+    body: JSON.stringify(vehicles),
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
@@ -180,36 +244,86 @@ export async function submitVehicleProposalsBatch(vehicles) {
 }
 
 export async function listVehicleProposals() {
-  const res = await fetch(`${API_BASE}/api/v1/vehicle/proposals`);
+  const res = await fetch(`${API_BASE}/api/v1/vehicle/proposals`, {
+    headers: { ...authHeaders() },
+  });
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
 
 export async function getVehicleProposal(id) {
-  const res = await fetch(`${API_BASE}/api/v1/vehicle/proposals/${id}`);
+  const res = await fetch(`${API_BASE}/api/v1/vehicle/proposals/${id}`, {
+    headers: { ...authHeaders() },
+  });
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
 
-// Underwriter: build a URL to view/download the vehicle proposal's attached
-// document (license image etc). Only populated if the proposal was submitted
-// via the single-submit endpoint (with file) -- bulk/batch-created proposals
-// have no document attached, this URL will 404 for those.
-export function getVehicleProposalDocumentUrl(id) {
-  return `${API_BASE}/api/v1/vehicle/proposals/${id}/document`;
+// Underwriter: single-vehicle edit (backend: app/vehicle/router.py edit_vehicle_proposal).
+// Not wired into any page yet (no Motor edit UI exists) — exported so it's
+// ready to use the moment such a screen is added.
+export async function editVehicleProposal(id, payload) {
+  const form = new FormData();
+  Object.entries(payload).forEach(([key, value]) => form.append(key, value));
+
+  const res = await fetch(`${API_BASE}/api/v1/vehicle/proposals/${id}/edit`, {
+    method: "POST",
+    headers: { ...authHeaders() }, // multipart Form fields, no file
+    body: form,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail ? JSON.stringify(err.detail) : `API error: ${res.status}`);
+  }
+  return res.json();
 }
 
-// Decision endpoint is SHARED with the life module (works for vehicle rows
-// too -- it's a generic status UPDATE, doesn't touch vehicle-only fields).
+// Fleet aggregate view (app/vehicle/batch_router.py get_fleet_proposal) —
+// used by motorAdapter.js whenever the route id is a fleet_group_id (UUID).
+export async function getFleetProposal(fleetGroupId) {
+  const res = await fetch(`${API_BASE}/api/v1/vehicle/fleet/${fleetGroupId}`, {
+    headers: { ...authHeaders() },
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `API error: ${res.status}`);
+  }
+  return res.json();
+}
+
+// Underwriter: build a URL to view/download the vehicle proposal's attached
+// document. Bulk/batch-created proposals have no document -> this 404s for those.
+export function getVehicleProposalDocumentUrl(id) {
+  const token = getToken();
+  return `${API_BASE}/api/v1/vehicle/proposals/${id}/document${token ? `?token=${token}` : ""}`;
+}
+
+// Decision endpoint is SHARED with the life module (generic status UPDATE).
 export async function decideVehicleProposal(id, status) {
   const res = await fetch(`${API_BASE}/api/v1/proposals/${id}/decision`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...authHeaders() },
     body: JSON.stringify({ status }),
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.detail || `API error: ${res.status}`);
+  }
+  return res.json();
+}
+
+// Underwriter Motor Quick Check (RiskAnalysis.jsx, checkType==='motor') —
+// hits the real model via app/vehicle/quick_router.py instead of the local
+// dummy scorer.
+export async function quickMotorUnderwrite(payload) {
+  const res = await fetch(`${API_BASE}/api/v1/vehicle/underwrite`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail ? JSON.stringify(err.detail) : `API error: ${res.status}`);
   }
   return res.json();
 }
