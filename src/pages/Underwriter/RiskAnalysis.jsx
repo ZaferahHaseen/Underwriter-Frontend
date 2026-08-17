@@ -38,29 +38,47 @@ const healthFields = [
 ];
 
 const initialMotorForm = {
-  driver_age: 30,
   vehicle_age_years: 5,
+  engine_cc: 1200,
   idv: 600000,
+  safety_features: "yes",
+  anti_theft: "yes",
+  fuel_type: "petrol",
+
+  driver_age: 30,
   driving_experience_years: 8,
-  no_claim_bonus_percent: 20,
-  prior_accident_claim: 0,
-  commercial_use: 0,
-  credit_score: 700,
+  license_age: 8,
+  previous_accidents: 0,
   num_previous_claims: 0,
-  years_with_insurer: 0,
+  traffic_violations: 0,
+
+  usage_type: "private",
+  annual_mileage: 12000,
+
+  previous_insurance: "yes",
+  policy_lapses: 0,
 };
 
 const motorFields = [
-  { name: "driver_age", label: "Driver Age" },
   { name: "vehicle_age_years", label: "Vehicle Age (years)" },
+  { name: "engine_cc", label: "Engine Capacity (cc)" },
   { name: "idv", label: "Insured Declared Value" },
+  { name: "safety_features", label: "Safety Features (ABS/airbags)", type: "select", options: ["yes", "no"] },
+  { name: "anti_theft", label: "Anti-Theft Device", type: "select", options: ["yes", "no"] },
+  { name: "fuel_type", label: "Fuel Type", type: "select", options: ["petrol", "diesel", "cng", "hybrid", "electric"] },
+
+  { name: "driver_age", label: "Driver Age" },
   { name: "driving_experience_years", label: "Driving Experience (years)" },
-  { name: "no_claim_bonus_percent", label: "No-Claim Bonus (%)" },
-  { name: "prior_accident_claim", label: "Prior Accident/Claim (0/1)" },
-  { name: "commercial_use", label: "Commercial Use (0/1)" },
-  { name: "credit_score", label: "Credit Score" },
+  { name: "license_age", label: "License Held Since (years)" },
+  { name: "previous_accidents", label: "Previous Accidents" },
   { name: "num_previous_claims", label: "Previous Claims" },
-  { name: "years_with_insurer", label: "Years With Insurer" },
+  { name: "traffic_violations", label: "Traffic Violations" },
+
+  { name: "usage_type", label: "Usage Type", type: "select", options: ["private", "business", "delivery", "commercial", "taxi"] },
+  { name: "annual_mileage", label: "Annual Mileage (km)" },
+
+  { name: "previous_insurance", label: "Previously Insured Elsewhere", type: "select", options: ["yes", "no"] },
+  { name: "policy_lapses", label: "Policy Lapses (count)" },
 ];
 
 function ResultView({ result, status, deciding, onDecide }) {
@@ -73,13 +91,6 @@ function ResultView({ result, status, deciding, onDecide }) {
         <div className="result-gauge-block">
           <RiskGauge score={result.risk_score} label="Risk Score" size={220} />
         </div>
-
-        {result.confidence != null && (
-          <div className="confidence-box">
-            <h4>Model Confidence</h4>
-            <p className="mono">{result.confidence}%</p>
-          </div>
-        )}
 
         {status === "PENDING" && (
           <div className="decision-buttons">
@@ -179,8 +190,8 @@ function RiskAnalysis() {
   const activeFields = checkType === "motor" ? motorFields : healthFields;
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: Number(value) }));
+    const { name, value, type: inputType } = e.target;
+    setForm((prev) => ({ ...prev, [name]: inputType === "select-one" ? value : Number(value) }));
   };
 
   const handleSubmit = async (e) => {
@@ -268,13 +279,21 @@ function RiskAnalysis() {
           {activeFields.map((f) => (
             <div className="form-group" key={f.name}>
               <label>{f.label}</label>
-              <input
-                type="number"
-                step={f.step}
-                name={f.name}
-                value={form[f.name]}
-                onChange={handleChange}
-              />
+              {f.type === "select" ? (
+                <select name={f.name} value={form[f.name]} onChange={handleChange}>
+                  {f.options.map((opt) => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="number"
+                  step={f.step}
+                  name={f.name}
+                  value={form[f.name]}
+                  onChange={handleChange}
+                />
+              )}
             </div>
           ))}
         </div>

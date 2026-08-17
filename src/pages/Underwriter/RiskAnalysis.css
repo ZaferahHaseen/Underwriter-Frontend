@@ -159,6 +159,21 @@
   border-color: var(--signal);
 }
 
+.form-group select {
+  padding: 11px 13px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: var(--font-mono);
+  background: #fff;
+  transition: border-color 0.15s ease;
+}
+
+.form-group select:focus {
+  outline: none;
+  border-color: var(--signal);
+}
+
 .analyze-btn {
   width: 100%;
   margin-top: 26px;
@@ -221,28 +236,6 @@
 .result-gauge-block {
   display: flex;
   justify-content: center;
-}
-
-.confidence-box {
-  text-align: center;
-  width: 100%;
-  padding-top: 20px;
-  border-top: 1px solid var(--line);
-}
-
-.confidence-box h4 {
-  color: var(--slate);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-
-.confidence-box p {
-  color: var(--signal);
-  font-size: 30px;
-  font-weight: 600;
 }
 
 .result-main {
@@ -448,4 +441,4 @@
   .risk-hero {
     padding: 24px 20px 28px;
   }
-}
+} 

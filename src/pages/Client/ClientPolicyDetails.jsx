@@ -78,7 +78,7 @@ function ClientPolicyDetails() {
     you only need to map the backend fields here.
   */
 
-  const details = policy.proposal_data || policy.details || policy;
+  const details = policy.proposal_details || policy.proposal_data || policy.details || policy;
 
   const getValue = (...values) => {
     for (const value of values) {

@@ -81,31 +81,31 @@ function ClientPolicy() {
   };
 
   const handleView = async (policy) => {
-    /*
-     * The proposal page can read this object and automatically fill its
-     * form fields. my-policies only returns summary fields, so for real
-     * (numeric-id) proposals we fetch the full detail first — the dummy
-     * fallback rows already carry their full proposal_details inline.
-     */
-    let toStore = policy;
+  /*
+   * View -> read-only details page (ClientPolicyDetails.jsx @ /client/policy/:id).
+   * That page reads sessionStorage["selected_client_policy"]. my-policies
+   * only returns summary fields, so for real (numeric-id) proposals we
+   * fetch the full detail first — the dummy fallback rows already carry
+   * their full proposal_details inline.
+   */
+  let toStore = policy;
 
-    if (typeof policy.id === "number" && isLoggedIn()) {
-      try {
-        const full = await getProposal(policy.id);
-        toStore = { ...policy, id: full.id, proposal_details: full };
-      } catch {
-        // fall back to the summary row if the detail fetch fails
-      }
+  if (typeof policy.id === "number" && isLoggedIn()) {
+    try {
+      const full = await getProposal(policy.id);
+      toStore = { ...policy, id: full.id, proposal_details: full };
+    } catch {
+      // fall back to the summary row if the detail fetch fails
     }
+  }
 
-    sessionStorage.setItem(
-      "editing_client_policy",
-      JSON.stringify(toStore)
-    );
+  sessionStorage.setItem(
+    "selected_client_policy",
+    JSON.stringify(toStore)
+  );
 
-    navigate("/client/dashboard?edit=true");
-  };
-
+  navigate(`/client/policy/${policy.id}`);
+};
   const totalPolicies = policies.length;
 
   const activePolicies = policies.filter((policy) =>

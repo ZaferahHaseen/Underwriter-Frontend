@@ -52,6 +52,21 @@ function mapVehicle(row) {
     credit_score: null, // vehicle proposals don't collect this
     idv: raw.vehicle_value ?? vehicleRow.vehicle_value,
     status: row.status,
+
+    // --- previously dropped fields: backend/RawVehicleProposalRequest
+    // captures these from the client form but the adapter never surfaced
+    // them, so the underwriter UI had nothing to render. ---
+    vehicle_type: raw.vehicle_type,
+    engine_cc: raw.engine_cc,
+    color: raw.color,
+    safety_features: raw.safety_features,
+    anti_theft: raw.anti_theft,
+    license_age: raw.license_age,
+    traffic_violations: raw.traffic_violations,
+    city: raw.city,
+    region: raw.region,
+    previous_insurance: raw.previous_insurance,
+    policy_lapses: raw.policy_lapses,
     documents,
     // extras used directly by the adapter (not part of the original dummy shape,
     // but harmless additions — consumed below for risk-analysis wiring)

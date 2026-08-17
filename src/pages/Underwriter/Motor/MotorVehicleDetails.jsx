@@ -99,24 +99,65 @@ function MotorVehicleDetails() {
       <div className="mvd-panel">
         <div className="mvd-section-head">
           <FaCarSide className="mvd-section-icon" />
-          <h3>Vehicle & Risk Details</h3>
+          <h3>Vehicle Details</h3>
         </div>
         <div className="mvd-grid">
+          <div className="mvd-field">
+            <span className="mvd-field-label">Vehicle Type</span>
+            <span className="mvd-field-value">{vehicle.vehicle_type ?? "—"}</span>
+          </div>
+          <div className="mvd-field">
+            <span className="mvd-field-label">Engine Capacity</span>
+            <span className="mvd-field-value">{vehicle.engine_cc ? `${vehicle.engine_cc} cc` : "—"}</span>
+          </div>
           <div className="mvd-field">
             <span className="mvd-field-label"><FaGasPump /> Fuel Type</span>
             <span className="mvd-field-value">{vehicle.fuel_type}</span>
           </div>
           <div className="mvd-field">
-            <span className="mvd-field-label">Usage</span>
-            <span className="mvd-field-value">{vehicle.vehicle_usage}</span>
+            <span className="mvd-field-label">Color</span>
+            <span className="mvd-field-value">{vehicle.color ?? "—"}</span>
+          </div>
+          <div className="mvd-field">
+            <span className="mvd-field-label">Safety Features</span>
+            <span className="mvd-field-value">{vehicle.safety_features ?? "—"}</span>
+          </div>
+          <div className="mvd-field">
+            <span className="mvd-field-label">Anti-Theft Device</span>
+            <span className="mvd-field-value">{vehicle.anti_theft ?? "—"}</span>
           </div>
           <div className="mvd-field">
             <span className="mvd-field-label">Vehicle Age</span>
             <span className="mvd-field-value">{vehicle.vehicle_age_years} yrs</span>
           </div>
+        </div>
+      </div>
+
+      <div className="mvd-panel">
+        <div className="mvd-section-head">
+          <FaUserAlt className="mvd-section-icon" />
+          <h3>Driver Details</h3>
+        </div>
+        <div className="mvd-grid">
           <div className="mvd-field">
             <span className="mvd-field-label">Driving Experience</span>
             <span className="mvd-field-value">{vehicle.driving_experience_years} yrs</span>
+          </div>
+          <div className="mvd-field">
+            <span className="mvd-field-label">License Held Since</span>
+            <span className="mvd-field-value">{vehicle.license_age != null ? `${vehicle.license_age} yrs` : "—"}</span>
+          </div>
+          <div className="mvd-field">
+            <span className="mvd-field-label">Previous Accidents</span>
+            <span className="mvd-field-value">{vehicle.previous_accidents}</span>
+          </div>
+          <div className="mvd-field">
+            <span className="mvd-field-label">Previous Claims</span>
+            <span className="mvd-field-value">{vehicle.num_previous_claims}</span>
+          </div>
+          <div className="mvd-field">
+            <span className="mvd-field-label">Traffic Violations</span>
+            <span className="mvd-field-value">{vehicle.traffic_violations ?? "—"}</span>
           </div>
           <div className="mvd-field">
             <span className="mvd-field-label">No-Claim Bonus</span>
@@ -127,16 +168,54 @@ function MotorVehicleDetails() {
             <span className="mvd-field-value">{vehicle.prior_accident_claim ? "Yes" : "No"}</span>
           </div>
           <div className="mvd-field">
+            <span className="mvd-field-label">Credit Score</span>
+            <span className="mvd-field-value">{vehicle.credit_score ?? "—"}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="mvd-panel">
+        <div className="mvd-section-head">
+          <FaRoad className="mvd-section-icon" />
+          <h3>Usage & Location</h3>
+        </div>
+        <div className="mvd-grid">
+          <div className="mvd-field">
+            <span className="mvd-field-label">Usage</span>
+            <span className="mvd-field-value">{vehicle.vehicle_usage}</span>
+          </div>
+          <div className="mvd-field">
             <span className="mvd-field-label">Annual Mileage</span>
             <span className="mvd-field-value">{vehicle.annual_mileage_km.toLocaleString("en-IN")} km</span>
           </div>
           <div className="mvd-field">
-            <span className="mvd-field-label">Years With Insurer</span>
-            <span className="mvd-field-value">{vehicle.years_with_insurer}</span>
+            <span className="mvd-field-label">City</span>
+            <span className="mvd-field-value">{vehicle.city ?? "—"}</span>
           </div>
           <div className="mvd-field">
-            <span className="mvd-field-label">Credit Score</span>
-            <span className="mvd-field-value">{vehicle.credit_score}</span>
+            <span className="mvd-field-label">State / Region</span>
+            <span className="mvd-field-value">{vehicle.region ?? "—"}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="mvd-panel">
+        <div className="mvd-section-head">
+          <FaShieldAlt className="mvd-section-icon" />
+          <h3>Insurance History</h3>
+        </div>
+        <div className="mvd-grid">
+          <div className="mvd-field">
+            <span className="mvd-field-label">Previously Insured Elsewhere</span>
+            <span className="mvd-field-value">{vehicle.previous_insurance ?? "—"}</span>
+          </div>
+          <div className="mvd-field">
+            <span className="mvd-field-label">Policy Lapses (count)</span>
+            <span className="mvd-field-value">{vehicle.policy_lapses ?? "—"}</span>
+          </div>
+          <div className="mvd-field">
+            <span className="mvd-field-label">Years With Insurer</span>
+            <span className="mvd-field-value">{vehicle.years_with_insurer}</span>
           </div>
         </div>
       </div>
