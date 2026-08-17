@@ -309,3 +309,13 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ================================
+   FROZEN NAVBAR
+================================ */
+
+.mvp-page .ph-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}

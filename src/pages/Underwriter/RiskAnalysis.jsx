@@ -37,48 +37,43 @@ const healthFields = [
   { name: "years_with_insurer", label: "Years With Insurer" },
 ];
 
+// ---- Motor: matches backend QuickMotorCheckRequest exactly (16 raw fields) ----
 const initialMotorForm = {
   vehicle_age_years: 5,
   engine_cc: 1200,
   idv: 600000,
   safety_features: "yes",
-  anti_theft: "yes",
+  anti_theft: "no",
   fuel_type: "petrol",
-
   driver_age: 30,
   driving_experience_years: 8,
   license_age: 8,
   previous_accidents: 0,
   num_previous_claims: 0,
   traffic_violations: 0,
-
   usage_type: "private",
   annual_mileage: 12000,
-
   previous_insurance: "yes",
   policy_lapses: 0,
 };
 
 const motorFields = [
-  { name: "vehicle_age_years", label: "Vehicle Age (years)" },
-  { name: "engine_cc", label: "Engine Capacity (cc)" },
-  { name: "idv", label: "Insured Declared Value" },
-  { name: "safety_features", label: "Safety Features (ABS/airbags)", type: "select", options: ["yes", "no"] },
+  { name: "vehicle_age_years", label: "Vehicle Age (years)", type: "number" },
+  { name: "engine_cc", label: "Engine (CC)", type: "number" },
+  { name: "idv", label: "Insured Declared Value", type: "number" },
+  { name: "safety_features", label: "Safety Features (ABS/Airbags)", type: "select", options: ["yes", "no"] },
   { name: "anti_theft", label: "Anti-Theft Device", type: "select", options: ["yes", "no"] },
   { name: "fuel_type", label: "Fuel Type", type: "select", options: ["petrol", "diesel", "cng", "hybrid", "electric"] },
-
-  { name: "driver_age", label: "Driver Age" },
-  { name: "driving_experience_years", label: "Driving Experience (years)" },
-  { name: "license_age", label: "License Held Since (years)" },
-  { name: "previous_accidents", label: "Previous Accidents" },
-  { name: "num_previous_claims", label: "Previous Claims" },
-  { name: "traffic_violations", label: "Traffic Violations" },
-
+  { name: "driver_age", label: "Driver Age", type: "number" },
+  { name: "driving_experience_years", label: "Driving Experience (years)", type: "number" },
+  { name: "license_age", label: "License Age (years)", type: "number" },
+  { name: "previous_accidents", label: "Previous Accidents", type: "number" },
+  { name: "num_previous_claims", label: "Previous Claims", type: "number" },
+  { name: "traffic_violations", label: "Traffic Violations", type: "number" },
   { name: "usage_type", label: "Usage Type", type: "select", options: ["private", "business", "delivery", "commercial", "taxi"] },
-  { name: "annual_mileage", label: "Annual Mileage (km)" },
-
-  { name: "previous_insurance", label: "Previously Insured Elsewhere", type: "select", options: ["yes", "no"] },
-  { name: "policy_lapses", label: "Policy Lapses (count)" },
+  { name: "annual_mileage", label: "Annual Mileage", type: "number" },
+  { name: "previous_insurance", label: "Previous Insurance", type: "select", options: ["yes", "no"] },
+  { name: "policy_lapses", label: "Policy Lapses", type: "number" },
 ];
 
 function ResultView({ result, status, deciding, onDecide }) {
@@ -91,6 +86,13 @@ function ResultView({ result, status, deciding, onDecide }) {
         <div className="result-gauge-block">
           <RiskGauge score={result.risk_score} label="Risk Score" size={220} />
         </div>
+
+        {result.confidence != null && (
+          <div className="confidence-box">
+            <h4>Model Confidence</h4>
+            <p className="mono">{result.confidence}%</p>
+          </div>
+        )}
 
         {status === "PENDING" && (
           <div className="decision-buttons">
@@ -157,11 +159,6 @@ function RiskAnalysis() {
   const [searchParams] = useSearchParams();
   const isQuickCheck = id === "new";
 
-  // ---- Quick Check mode (manual form) ----
-  // Which question set to show is decided by where the user came from:
-  // the Health/Life dashboard links here with ?type=health, the Motor
-  // dashboard with ?type=motor. No in-page toggle — each dashboard only
-  // ever sees its own questions.
   const checkType = searchParams.get("type") === "motor" ? "motor" : "health";
   const backTarget = checkType === "motor" ? "/underwriter/motor/dashboard" : "/underwriter/dashboard";
   const [healthForm, setHealthForm] = useState(initialHealthForm);
@@ -170,7 +167,6 @@ function RiskAnalysis() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // ---- Proposal mode (real client, show results directly) ----
   const [proposal, setProposal] = useState(null);
   const [proposalLoading, setProposalLoading] = useState(!isQuickCheck);
   const [deciding, setDeciding] = useState(false);
@@ -191,7 +187,14 @@ function RiskAnalysis() {
 
   const handleChange = (e) => {
     const { name, value, type: inputType } = e.target;
-    setForm((prev) => ({ ...prev, [name]: inputType === "select-one" ? value : Number(value) }));
+    // health fields stay numeric; motor "select" fields (yes/no, fuel_type,
+    // usage_type) stay as raw strings — matches backend QuickMotorCheckRequest.
+    const field = activeFields.find((f) => f.name === name);
+    const isStringField = field?.type === "select";
+    setForm((prev) => ({
+      ...prev,
+      [name]: isStringField ? value : Number(value),
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -259,19 +262,21 @@ function RiskAnalysis() {
   // ---------------- Quick Check mode: manual entry form ----------------
   return (
     <div className="risk-page">
-      <div className="risk-page-header">
-        <BackButton to={backTarget} />
-        <div className="risk-page-header-text">
-          <h1 className="page-title">
-            {checkType === "motor" ? "Motor Quick Risk Check" : "Health / Life Quick Risk Check"}
-          </h1>
-          <p className="page-subhead">
-            {checkType === "motor"
-              ? "Run a raw vehicle & driver profile through the AI model without creating a proposal."
-              : "Run a raw applicant profile through the AI model without creating a proposal."}
-          </p>
+      <div className="risk-hero">
+        <div className="risk-page-header">
+          <BackButton to={backTarget} />
+          <div className="risk-page-header-text">
+            <h1 className="page-title">
+              {checkType === "motor" ? "Motor Quick Risk Check" : "Health / Life Quick Risk Check"}
+            </h1>
+            <p className="page-subhead">
+              {checkType === "motor"
+                ? "Run a raw vehicle & driver profile through the AI model without creating a proposal."
+                : "Run a raw applicant profile through the AI model without creating a proposal."}
+            </p>
+          </div>
+          <TopBar homeTo="/underwriter/home" />
         </div>
-        <TopBar homeTo="/underwriter/home" />
       </div>
 
       <form className="risk-form" onSubmit={handleSubmit}>

@@ -443,3 +443,22 @@
     display: none;
   }
 }
+/* ================================
+   FULL-WIDTH + FROZEN NAV
+================================ */
+
+.mpd-page {
+  padding: 0 0 40px;
+}
+
+.mpd-cards,
+.mpd-scroll-panel {
+  margin-left: 24px;
+  margin-right: 24px;
+}
+
+.mpd-page .ph-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}

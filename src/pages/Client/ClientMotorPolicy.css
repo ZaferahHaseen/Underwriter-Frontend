@@ -1020,3 +1020,9 @@
   }
 
 }
+/* freeze navbar on scroll — this page only */
+.cm-page .ph-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}

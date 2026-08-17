@@ -240,3 +240,43 @@ tbody tr:hover {
     padding: 24px 20px 24px;
   }
 }
+/* ================================
+   FULL-WIDTH + FROZEN NAV
+================================ */
+
+.dashboard {
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.dashboard-hero {
+  margin-left: -24px;
+  margin-right: -24px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.dashboard .ph-header,
+.dashboard-hero {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}/* ================================
+   FULL-WIDTH + FROZEN NAV
+================================ */
+
+.dashboard {
+  padding: 0 0 40px;
+}
+
+.cards,
+.table-panel {
+  margin-left: 24px;
+  margin-right: 24px;
+}
+
+.dashboard .ph-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}

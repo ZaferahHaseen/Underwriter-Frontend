@@ -441,4 +441,27 @@
   .risk-hero {
     padding: 24px 20px 28px;
   }
-} 
+}   
+.form-group select {
+  padding: 11px 13px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: var(--font-mono);
+  background: #fff;
+  transition: border-color 0.15s ease;
+}
+
+.form-group select:focus {
+  outline: none;
+  border-color: var(--signal);
+}
+/* ================================
+   FROZEN NAVBAR
+================================ */
+
+.risk-hero {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}

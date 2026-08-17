@@ -776,3 +776,9 @@
   }
 
 }
+/* freeze navbar on scroll — this page only */
+.cp-page .ph-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}

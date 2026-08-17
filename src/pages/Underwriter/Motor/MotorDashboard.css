@@ -288,3 +288,22 @@
     padding: 22px 20px 18px;
   }
 }
+/* ================================
+   FULL-WIDTH + FROZEN NAV
+================================ */
+
+.mdash-page {
+  padding: 0 0 40px;
+}
+
+.mdash-cards,
+.mdash-list-panel {
+  margin-left: 24px;
+  margin-right: 24px;
+}
+
+.mdash-page .ph-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
