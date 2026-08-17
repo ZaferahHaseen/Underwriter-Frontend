@@ -11,14 +11,11 @@ import {
   FaChevronRight,
 } from "react-icons/fa";
 import "./MotorProposalDetails.css";
-import { getDummyMotorProposal } from "../../../api/dummyMotorProposals";
 import { getMotorProposal } from "../../../api/motorAdapter";
 import PageHeader from "../../../components/PageHeader";
 
 // WIRED TO BACKEND via api/motorAdapter.js (GET /api/v1/vehicle/proposals/:id
 // or GET /api/v1/vehicle/fleet/:id depending on whether :id is a fleet_group_id).
-const USE_DUMMY_DATA = false;
-
 function MotorProposalDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -32,12 +29,6 @@ function MotorProposalDetails() {
     setLoading(true);
     setError(null);
 
-    if (USE_DUMMY_DATA) {
-      const p = getDummyMotorProposal(id);
-      setProposal(p);
-      setLoading(false);
-      return;
-    }
     getMotorProposal(id)
       .then(setProposal)
       .catch((err) => setError(err.message))

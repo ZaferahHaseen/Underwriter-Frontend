@@ -1,22 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import { getUnderwritingDecision, getProposal, decideProposal, quickMotorUnderwrite } from "../../api/underwritingApi";  
-import { getDummyProposal } from "../../api/dummyProposals";
-import { getDummyMotorRiskResult } from "../../api/dummyMotorRisk";
+import { getUnderwritingDecision, getProposal, decideProposal, quickMotorUnderwrite } from "../../api/underwritingApi";
 import "./RiskAnalysis.css";
 import BackButton from "../../components/BackButton";
 import TopBar from "../../components/TopBar";
 import RiskGauge from "../../components/RiskGauge";
 import RiskChart from "./RiskChart";
-
-// Flip to false once the backend teammate's proposal-lookup endpoint is live.
-const USE_DUMMY_DATA = false;
-
-// Motor risk-scoring has no backend endpoint yet, so Quick Check always runs
-// the local dummy scorer for it. Flip this off (and wire a real API call in
-// handleSubmit below) once that endpoint exists.
-// WIRED TO BACKEND: POST /api/v1/vehicle/underwrite (app/vehicle/quick_router.py).
-const USE_DUMMY_MOTOR_SCORING = false;
 
 const initialHealthForm = {
   age: 30,
@@ -179,11 +168,6 @@ function RiskAnalysis() {
     if (isQuickCheck) return;
 
     setProposalLoading(true);
-    if (USE_DUMMY_DATA) {
-      setProposal(getDummyProposal(id));
-      setProposalLoading(false);
-      return;
-    }
     getProposal(id)
       .then(setProposal)
       .catch((err) => console.error(err))
@@ -205,13 +189,7 @@ function RiskAnalysis() {
     setError(null);
 
     try {
-      if (checkType === "motor" && USE_DUMMY_MOTOR_SCORING) {
-        // No backend endpoint for motor yet — score it locally so the
-        // screen is fully demoable. See dummyMotorRisk.js for the logic,
-        // and the flag above for how to switch to a real API call later.
-        await new Promise((r) => setTimeout(r, 400)); // small delay to feel like a real call
-        setResult(getDummyMotorRiskResult(motorForm));
-      } else if (checkType === "motor") {
+      if (checkType === "motor") {
         const data = await quickMotorUnderwrite(motorForm);
         setResult(data);
       } else {
@@ -284,12 +262,6 @@ function RiskAnalysis() {
         </div>
         <TopBar homeTo="/underwriter/home" />
       </div>
-
-      {checkType === "motor" && USE_DUMMY_MOTOR_SCORING && (
-        <p className="dummy-data-note">
-          No backend model is connected for motor yet — this runs a local placeholder scorer so the screen works end-to-end. Swap it out once the real endpoint is ready.
-        </p>
-      )}
 
       <form className="risk-form" onSubmit={handleSubmit}>
         <div className="form-grid">

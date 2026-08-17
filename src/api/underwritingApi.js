@@ -46,11 +46,14 @@ function authHeaders() {
 }
 
 // ---- Login / Signup (Login.jsx calls these) ----
-export async function login(email, password) {
+// `role` is the box the user selected on the login screen (client /
+// underwriter). The backend rejects the login (403) if the account's
+// actual role doesn't match what was selected — see app/auth/router.py.
+export async function login(email, password, role) {
   const res = await fetch(`${API_BASE}/api/v1/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, role }),
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));

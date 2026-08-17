@@ -6,42 +6,40 @@ import { login, signup } from "../../api/underwritingApi";
 
 function Login() {
   const [role, setRole] = useState("");
-  const [username, setUsername] = useState("");
+  const [mode, setMode] = useState("login"); // "login" | "signup"
+  const [fullName, setFullName] = useState("");
+  const [username, setUsername] = useState(""); // doubles as email
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
 
-  // Real auth against the backend (app/auth/router.py).
-  // The "Username" field doubles as email — that's the only text field the
-  // existing form has, and the backend's users table is keyed on email.
+  // Real, strict role-based auth against the backend (app/auth/router.py).
+  // The role selected on screen is sent with the login request; the
+  // backend rejects (403) if the account was actually registered under
+  // a different role — e.g. an underwriter account cannot sign in through
+  // the "Client" box, and vice versa.
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
     if (!role || !username || !password) return;
+    if (mode === "signup" && !fullName) {
+      setError("Enter your full name to create an account.");
+      return;
+    }
 
     setSubmitting(true);
     try {
-      const data = await login(username, password);
+      const data =
+        mode === "signup"
+          ? await signup(fullName, username, password, role)
+          : await login(username, password, role);
       routeByRole(data.role);
-    } catch (loginErr) {
-      // No account with this email/password yet -> offer to create one
-      // with the role currently selected on screen, so the same form
-      // handles both sign-in and first-time sign-up without new UI.
-      const fullName = window.prompt(
-        "No account found for that email/password. Enter your full name to create a new account (Cancel to go back):"
-      );
-      if (!fullName) {
-        setSubmitting(false);
-        alert(loginErr.message || "Login failed.");
-        return;
-      }
-      try {
-        const data = await signup(fullName, username, password, role);
-        routeByRole(data.role);
-      } catch (signupErr) {
-        setSubmitting(false);
-        alert(signupErr.message || "Could not create account.");
-      }
+    } catch (err) {
+      setError(err.message || "Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -123,7 +121,7 @@ function Login() {
 
         <form className="login-form" onSubmit={handleSubmit}>
 
-          <h2>Sign in to continue</h2>
+          <h2>{mode === "signup" ? "Create your account" : "Sign in to continue"}</h2>
 
           <p className="subhead">
             Select your role to get started
@@ -133,7 +131,7 @@ function Login() {
           <div className="roles">
 
             <div
-              onClick={() => setRole("client")}
+              onClick={() => { setRole("client"); setError(null); }}
               className={
                 role === "client"
                   ? "role-box active"
@@ -148,7 +146,7 @@ function Login() {
             </div>
 
             <div
-              onClick={() => setRole("underwriter")}
+              onClick={() => { setRole("underwriter"); setError(null); }}
               className={
                 role === "underwriter"
                   ? "role-box active"
@@ -164,40 +162,85 @@ function Login() {
 
           </div>
 
-          {/* Username */}
+          {/* Login / Sign up mode */}
+          {role && (
+            <div className="client-mode-tabs">
+              <button
+                type="button"
+                className={mode === "login" ? "mode-tab active" : "mode-tab"}
+                onClick={() => { setMode("login"); setError(null); }}
+              >
+                Sign In
+              </button>
+              <button
+                type="button"
+                className={mode === "signup" ? "mode-tab active" : "mode-tab"}
+                onClick={() => { setMode("signup"); setError(null); }}
+              >
+                Create Account
+              </button>
+            </div>
+          )}
+
+          {/* Fields */}
           {role && (
             <>
+              {mode === "signup" && (
+                <>
+                  <label className="field-label">
+                    Full Name
+                  </label>
+
+                  <input
+                    type="text"
+                    placeholder="Enter your full name"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                  />
+                </>
+              )}
+
               <label className="field-label">
-                Username
+                Email
               </label>
 
               <input
-                type="text"
-                placeholder="Enter your username"
+                type="email"
+                placeholder="Enter your email"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
 
-              {/* Password */}
               <label className="field-label">
                 Password
               </label>
 
               <input
                 type="password"
-                placeholder="Enter your password"
+                placeholder={mode === "signup" ? "At least 8 characters" : "Enter your password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+
+              <p className="login-hint">
+                Signing in as <strong>{role === "underwriter" ? "Underwriter" : "Client"}</strong>.
+                Accounts registered under a different role cannot sign in here.
+              </p>
             </>
           )}
 
-          {/* Login Button */}
+          {error && (
+            <div className="inline-error login-error">{error}</div>
+          )}
+
+          {/* Submit Button */}
           <button
             type="submit"
-            disabled={!role}
+            disabled={!role || submitting}
           >
-            Login
+            {submitting
+              ? mode === "signup" ? "Creating account…" : "Signing in…"
+              : mode === "signup" ? "Create Account" : "Login"}
           </button>
 
         </form>

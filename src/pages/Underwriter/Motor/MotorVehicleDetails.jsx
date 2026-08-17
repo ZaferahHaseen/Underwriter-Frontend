@@ -8,14 +8,11 @@ import {
   FaRoad,
 } from "react-icons/fa";
 import "./MotorVehicleDetails.css";
-import { getDummyMotorProposal } from "../../../api/dummyMotorProposals";
 import { getMotorProposal } from "../../../api/motorAdapter";
 import PageHeader from "../../../components/PageHeader";
 
 // WIRED TO BACKEND via api/motorAdapter.js (same call MotorProposalDetails.jsx
 // uses — GET /api/v1/vehicle/proposals/:id or GET /api/v1/vehicle/fleet/:id).
-const USE_DUMMY_DATA = false;
-
 function MotorVehicleDetails() {
   const { id, vehicleId } = useParams();
 
@@ -25,15 +22,6 @@ function MotorVehicleDetails() {
 
   useEffect(() => {
     setLoading(true);
-
-    if (USE_DUMMY_DATA) {
-      const p = getDummyMotorProposal(id);
-      const v = p.vehicles.find((veh) => veh.vehicle_id === vehicleId);
-      setProposal(p);
-      setVehicle(v || null);
-      setLoading(false);
-      return;
-    }
 
     getMotorProposal(id)
       .then((p) => {

@@ -4,14 +4,11 @@ import {
   FaCarSide, FaCheckCircle, FaTimesCircle, FaExclamationTriangle,
 } from "react-icons/fa";
 import "./MotorDocumentVerification.css";
-import { getDummyMotorProposal } from "../../../api/dummyMotorProposals";
 import { getMotorProposal } from "../../../api/motorAdapter";
 import PageHeader from "../../../components/PageHeader";
 
 // WIRED TO BACKEND via api/motorAdapter.js. Document status per vehicle comes
 // from the adapter's mapVehicle() (VERIFIED/FLAGGED based on validation_results).
-const USE_DUMMY_DATA = false;
-
 const STATUS_META = {
   VERIFIED: { icon: FaCheckCircle, cls: "mvp-check-pass", label: "Verified" },
   MISMATCH: { icon: FaTimesCircle, cls: "mvp-check-fail", label: "Mismatch" },
@@ -25,11 +22,6 @@ function MotorDocumentVerification() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (USE_DUMMY_DATA) {
-      setProposal(getDummyMotorProposal(id));
-      setLoading(false);
-      return;
-    }
     getMotorProposal(id)
       .then(setProposal)
       .finally(() => setLoading(false));

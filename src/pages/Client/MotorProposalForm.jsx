@@ -26,7 +26,7 @@ import {
   FIELD_SECTIONS,
   ALL_FIELD_KEYS,
 } from "../../data/motorFormFields";
-import { submitVehicleProposalsBatch } from "../../api/underwritingApi";
+import { submitVehicleProposalsBatch, editVehicleProposal } from "../../api/underwritingApi";
 
 import "./MotorProposalForm.css";
 
@@ -81,6 +81,11 @@ function MotorProposalForm() {
   // number = editing an already saved vehicle
   const [editingIndex, setEditingIndex] = useState(null);
 
+  // Real backend proposal id being edited (from ClientMotorPolicy "View" ->
+  // edit=true flow). null = this is a brand-new batch submission.
+  // Separate from `editingIndex` (which is local-form-only, per-vehicle-in-list).
+  const [editingProposalId, setEditingProposalId] = useState(null);
+
   const [currentErrors, setCurrentErrors] = useState({});
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -113,6 +118,10 @@ function MotorProposalForm() {
       setSavedVehicles([mapped]);
       setCurrentVehicle(mapped);
       setEditingIndex(0);
+      // raw.id = the real vehicle proposal id (set by ClientMotorPolicy.jsx's
+      // handleViewVehicle). Without this, Submit had no way to know it should
+      // call the edit endpoint instead of creating a brand-new proposal.
+      if (raw.id != null) setEditingProposalId(raw.id);
     } catch {
       // Ignore malformed/missing data and just show a blank form.
     } finally {
@@ -292,13 +301,21 @@ function MotorProposalForm() {
       return;
     }
 
-    // WIRED TO BACKEND: POST /api/v1/vehicle/proposals/batch
-    // (app/vehicle/batch_router.py) — one call, N independent vehicle
-    // proposals created, each scored by the real vehicle risk model.
     setSubmitting(true);
     try {
-      const payload = savedVehicles.map(toBackendVehicle);
-      await submitVehicleProposalsBatch(payload);
+      if (editingProposalId != null) {
+        // WIRED TO BACKEND: POST /api/v1/vehicle/proposals/{id}/edit
+        // (app/vehicle/router.py) — creates a new version, marks the old
+        // row SUPERSEDED. Edit mode only ever holds the single vehicle
+        // that was loaded for editing.
+        await editVehicleProposal(editingProposalId, toBackendVehicle(savedVehicles[0]));
+      } else {
+        // WIRED TO BACKEND: POST /api/v1/vehicle/proposals/batch
+        // (app/vehicle/batch_router.py) — one call, N independent vehicle
+        // proposals created, each scored by the real vehicle risk model.
+        const payload = savedVehicles.map(toBackendVehicle);
+        await submitVehicleProposalsBatch(payload);
+      }
       setSubmitted(true);
     } catch (err) {
       alert(err.message || "Could not submit your proposal. Please try again.");

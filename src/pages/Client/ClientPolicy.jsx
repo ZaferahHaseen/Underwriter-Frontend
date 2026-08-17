@@ -15,8 +15,9 @@ import { getMyPolicies, getProposal, isLoggedIn, clearAuth } from "../../api/und
 import PageHeader from "../../components/PageHeader";
 
 // WIRED TO BACKEND: GET /api/v1/client/my-policies (JWT-identified, see
-// app/client_router.py). Dummy fallback below only fires if nobody is
-// logged in (shouldn't happen once Login.jsx is used, kept for safety).
+// app/client_router.py). No dummy fallback — an unauthenticated visit is
+// bounced by ProtectedRoute before this page ever renders, and zero
+// policies just shows the real empty state below.
 
 function statusTone(status) {
   const s = (status || "").toLowerCase();
@@ -57,17 +58,6 @@ function ClientPolicy() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!isLoggedIn()) {
-      /*
-       * No client is logged in yet — show dummy data so the
-       * page (and the View -> proposal form flow) can still be
-       * developed / demoed, same as the Motor policy page does.
-       */
-      applyData({});
-      setLoading(false);
-      return;
-    }
-
     getMyPolicies()
       .then(applyData)
       .catch((err) => {
@@ -79,112 +69,7 @@ function ClientPolicy() {
 
     function applyData(data) {
       setClient(data.client || null);
-
-      /*
-       * Backend policies will eventually come here.
-       *
-       * For now, if backend does not return policies,
-       * dummy policies are displayed so that the UI can be developed.
-       */
-      const backendPolicies = data.policies || [];
-
-      if (backendPolicies.length > 0) {
-        setPolicies(backendPolicies);
-      } else {
-        setPolicies([
-          {
-            id: "POL-001",
-
-            insurance_type: "Life Insurance",
-            policy_number: "LIFE-2026-00124",
-            status: "Active",
-
-            sum_assured: 1000000,
-            premium: 24500,
-
-            issue_date: "12 Aug 2026",
-            expiry_date: "11 Aug 2046",
-
-            submitted_date: "10 Aug 2026",
-
-            /*
-             * Underwriting details as originally submitted — these
-             * field names/formats must match exactly what the
-             * proposal form (ClientDashboard.jsx) reads, the same
-             * way the Motor dummy vehicles do for MotorProposalForm.
-             */
-            proposal_details: {
-              full_name: data.client?.full_name || "Rahul Kumar",
-              email: data.client?.email || email,
-              age: data.client?.age || 32,
-
-              // "office" | "field" | "hazardous"
-              occupation: "office",
-
-              annual_income: 850000,
-              sum_assured: 1000000,
-
-              credit_score: 760,
-              num_previous_claims: 0,
-              years_with_insurer: 4,
-
-              country_code: "IN",
-              doc_type: "national_id",
-
-              // Health & lifestyle
-              height_cm: 175,
-              weight_kg: 72,
-
-              smoker: "no",
-              alcohol_consumption: "occasional",
-              pre_existing_disease: "no",
-              family_medical_history: "yes",
-            },
-          },
-
-          {
-            id: "POL-002",
-
-            insurance_type: "Health Insurance",
-            policy_number: "HEALTH-2026-00451",
-            status: "Pending",
-
-            sum_assured: 500000,
-            premium: 18500,
-
-            issue_date: "—",
-            expiry_date: "—",
-
-            submitted_date: "11 Aug 2026",
-
-            proposal_details: {
-              full_name: data.client?.full_name || "Rahul Kumar",
-              email: data.client?.email || email,
-              age: data.client?.age || 32,
-
-              occupation: "field",
-
-              annual_income: 850000,
-              sum_assured: 500000,
-
-              credit_score: 705,
-              num_previous_claims: 1,
-              years_with_insurer: 1,
-
-              country_code: "IN",
-              doc_type: "national_id",
-
-              height_cm: 168,
-              weight_kg: 65,
-
-              smoker: "no",
-              alcohol_consumption: "none",
-              pre_existing_disease: "yes",
-              family_medical_history: "no",
-            },
-          },
-        ]);
-      }
+      setPolicies(data.policies || []);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -259,7 +144,7 @@ function ClientPolicy() {
     );
   }
 
-  const clientName = client?.full_name || "Rahul Kumar";
+  const clientName = client?.full_name || "Policyholder";
 
   return (
     <div className="cp-page">
@@ -316,7 +201,7 @@ function ClientPolicy() {
                 .slice(0, 2)
                 .map((word) => word[0])
                 .join("")
-                .toUpperCase() || "RK"}
+                .toUpperCase() || "?"}
             </div>
 
             <div>

@@ -15,8 +15,8 @@ import { getMyVehiclePolicies, getVehicleProposal, isLoggedIn } from "../../api/
 import PageHeader from "../../components/PageHeader";
 
 // WIRED TO BACKEND: GET /api/v1/client/my-vehicle-policies (JWT-identified,
-// see app/client_router.py). Dummy fallback below only fires if nobody is
-// logged in, or the backend call fails.
+// see app/client_router.py). No dummy fallback — ProtectedRoute already
+// blocks unauthenticated access, and zero vehicles just shows an empty table.
 
 function statusTone(status) {
   const s = (status || "").toLowerCase();
@@ -36,122 +36,28 @@ function formatMoney(value) {
   return `₹${Number(value).toLocaleString("en-IN")}`;
 }
 
-/*
-  Temporary dummy data.
-  This can be removed once the backend API is connected.
-*/
-const dummyClient = {
-  full_name: "Rahul Kumar",
-  email: "rahul.kumar@gmail.com",
-};
-
-const dummyVehicles = [
-  {
-    id: "MTR-001",
-    policy_number: "MTR/2026/000184",
-    make: "Hyundai",
-    model: "Creta",
-    year: 2024,
-    registration_number: "TN 38 AB 4521",
-    vehicle_type: "suv",
-    fuel_type: "petrol",
-    idv: 1450000,
-    premium: 28750,
-    issue_date: "12 Aug 2026",
-    expiry_date: "11 Aug 2027",
-    status: "Active",
-
-    // Underwriting details as originally submitted — shown when the
-    // client clicks "View" and lands back on the proposal form.
-    engine_cc: 1500,
-    vehicle_value: 1450000,
-    color: "white",
-    safety_features: "yes",
-    anti_theft: "yes",
-    driver_age: 34,
-    driving_experience: 12,
-    license_age: 12,
-    previous_accidents: 0,
-    previous_claims: 0,
-    traffic_violations: 0,
-    usage_type: "private",
-    annual_mileage: 14000,
-    city: "Chennai",
-    region: "Tamil Nadu",
-    previous_insurance: "yes",
-    policy_lapses: 0,
-  },
-  {
-    id: "MTR-002",
-    policy_number: "MTR/2026/000185",
-    make: "Honda",
-    model: "City",
-    year: 2023,
-    registration_number: "TN 37 CD 7812",
-    vehicle_type: "sedan",
-    fuel_type: "petrol",
-    idv: 980000,
-    premium: 22400,
-    issue_date: "10 Aug 2026",
-    expiry_date: "09 Aug 2027",
-    status: "Active",
-
-    engine_cc: 1200,
-    vehicle_value: 980000,
-    color: "grey",
-    safety_features: "yes",
-    anti_theft: "no",
-    driver_age: 29,
-    driving_experience: 7,
-    license_age: 7,
-    previous_accidents: 0,
-    previous_claims: 1,
-    traffic_violations: 1,
-    usage_type: "private",
-    annual_mileage: 11000,
-    city: "Chennai",
-    region: "Tamil Nadu",
-    previous_insurance: "yes",
-    policy_lapses: 0,
-  },
-];
-
 function ClientMotorPolicy() {
   const navigate = useNavigate();
 
   const [client, setClient] = useState(null);
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!isLoggedIn()) {
-      setClient(dummyClient);
-      setVehicles(dummyVehicles);
-      setLoading(false);
-      return;
-    }
-
     getMyVehiclePolicies()
       .then((data) => {
-        if (data?.vehicles?.length > 0) {
-          setClient(data.client);
-          setVehicles(data.vehicles);
-        } else {
-          setClient(data.client || dummyClient);
-          setVehicles([]);
-        }
+        setClient(data.client || null);
+        setVehicles(data.vehicles || []);
       })
-      .catch(() => {
-        setClient(dummyClient);
-        setVehicles(dummyVehicles);
-      })
+      .catch((err) => setError(err.message || "Couldn't load your vehicle policies."))
       .finally(() => setLoading(false));
   }, []);
 
   const handleViewVehicle = async (vehicle) => {
     // Real rows only carry summary fields (make/model/idv/etc) — pull the
     // full raw_input from the vehicle proposal so the edit form is
-    // properly prefilled. Dummy rows already carry every field inline.
+    // properly prefilled.
     let toStore = vehicle;
 
     if (typeof vehicle.id === "number" && isLoggedIn()) {
@@ -191,6 +97,14 @@ function ClientMotorPolicy() {
     return (
       <div className="cm-page cm-center">
         <p className="cm-loading">Loading your vehicle details...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="cm-page cm-center">
+        <p className="cm-loading">Error: {error}</p>
       </div>
     );
   }
@@ -249,12 +163,12 @@ function ClientMotorPolicy() {
                 .slice(0, 2)
                 .map((word) => word[0])
                 .join("")
-                .toUpperCase() || "RK"}
+                .toUpperCase() || "?"}
             </div>
 
             <div>
               <span>Policyholder</span>
-              <strong>{client?.full_name || "Rahul Kumar"}</strong>
+              <strong>{client?.full_name || "Policyholder"}</strong>
             </div>
           </div>
         </section>

@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "./pages/Login/Login";
+import ProtectedRoute from "./components/ProtectedRoute";
 import ClientDashboard from "./pages/Client/ClientDashboard";
 import ClientPolicy from "./pages/Client/ClientPolicy";
 import ClientPolicyDetails from "./pages/Client/ClientPolicyDetails";
@@ -26,88 +27,90 @@ function App() {
 
         <Route path="/" element={<Login />} />
 
-        {/* ---- Client side ---- */}
+        {/* ---- Client side (role="client" only — underwriters are bounced to their own home) ---- */}
         <Route
           path="/client/home"
-          element={<ClientHome />}
+          element={<ProtectedRoute role="client"><ClientHome /></ProtectedRoute>}
         />
 
         <Route
           path="/client/dashboard"
-          element={<ClientDashboard />}
+          element={<ProtectedRoute role="client"><ClientDashboard /></ProtectedRoute>}
         />
-
-
 
         <Route
           path="/client/policy"
-          element={<ClientPolicy />}
+          element={<ProtectedRoute role="client"><ClientPolicy /></ProtectedRoute>}
         />
 
         <Route
           path="/client/policy/:id"
-          element={<ClientPolicyDetails />}
+          element={<ProtectedRoute role="client"><ClientPolicyDetails /></ProtectedRoute>}
         />
 
         <Route
           path="/client/motor"
-          element={<ClientMotorPolicy />}
+          element={<ProtectedRoute role="client"><ClientMotorPolicy /></ProtectedRoute>}
         />
 
         <Route
           path="/client/motor/proposal"
-          element={<MotorProposalForm />}
+          element={<ProtectedRoute role="client"><MotorProposalForm /></ProtectedRoute>}
         />
 
+        {/* ---- Underwriter side (role="underwriter" only — clients are bounced to their own home) ---- */}
         <Route
           path="/underwriter/home"
-          element={<UnderwriterHome />}
+          element={<ProtectedRoute role="underwriter"><UnderwriterHome /></ProtectedRoute>}
         />
 
         <Route
           path="/underwriter/dashboard"
-          element={<UnderwriterDashboard />}
+          element={<ProtectedRoute role="underwriter"><UnderwriterDashboard /></ProtectedRoute>}
         />
 
         {/* ---- Motor Insurance line (fleet-based) ---- */}
         <Route
           path="/underwriter/motor/dashboard"
-          element={<MotorDashboard />}
+          element={<ProtectedRoute role="underwriter"><MotorDashboard /></ProtectedRoute>}
         />
 
         <Route
           path="/motor-proposal/:id"
-          element={<MotorProposalDetails />}
+          element={<ProtectedRoute role="underwriter"><MotorProposalDetails /></ProtectedRoute>}
         />
 
         <Route
           path="/motor-proposal/:id/vehicle/:vehicleId"
-          element={<MotorVehicleDetails />}
+          element={<ProtectedRoute role="underwriter"><MotorVehicleDetails /></ProtectedRoute>}
         />
 
         <Route
           path="/motor-risk-analysis/:id"
-          element={<MotorRiskAnalysis />}
+          element={<ProtectedRoute role="underwriter"><MotorRiskAnalysis /></ProtectedRoute>}
         />
 
         <Route
           path="/motor-document-verification/:id"
-          element={<MotorDocumentVerification />}
+          element={<ProtectedRoute role="underwriter"><MotorDocumentVerification /></ProtectedRoute>}
         />
 
         <Route
           path="/proposal/:id"
-          element={<ProposalDashboard />}
+          element={<ProtectedRoute role="underwriter"><ProposalDashboard /></ProtectedRoute>}
         />
 
+        {/* Risk analysis is shared: underwriters open it both from a proposal
+            (review) and as a standalone Quick Check tool — client role has
+            no use for it, so it stays underwriter-only. */}
         <Route
           path="/risk-analysis/:id"
-          element={<RiskAnalysis />}
+          element={<ProtectedRoute role="underwriter"><RiskAnalysis /></ProtectedRoute>}
         />
 
         <Route
           path="/document-verification/:id"
-          element={<DocumentVerification />}
+          element={<ProtectedRoute role="underwriter"><DocumentVerification /></ProtectedRoute>}
         />
 
       </Routes>

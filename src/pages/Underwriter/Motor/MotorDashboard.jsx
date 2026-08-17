@@ -2,14 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaClipboardList, FaHourglassHalf, FaCheckCircle, FaCarSide, FaSearch, FaChevronRight, FaBolt } from "react-icons/fa";
 import "./MotorDashboard.css";
-import { getDummyMotorProposalList } from "../../../api/dummyMotorProposals";
 import { getMotorProposalList } from "../../../api/motorAdapter";
 import PageHeader from "../../../components/PageHeader";
 
 // WIRED TO BACKEND: GET /api/v1/vehicle/proposals via api/motorAdapter.js
-// (grouped by fleet_group_id). Flip to true to fall back to dummy data.
-const USE_DUMMY_DATA = false;
-
+// (grouped by fleet_group_id).
 function MotorDashboard() {
   const navigate = useNavigate();
   const [proposals, setProposals] = useState([]);
@@ -18,11 +15,6 @@ function MotorDashboard() {
   const [query, setQuery] = useState("");
 
   useEffect(() => {
-    if (USE_DUMMY_DATA) {
-      setProposals(getDummyMotorProposalList());
-      setLoading(false);
-      return;
-    }
     getMotorProposalList()
       .then(setProposals)
       .catch((err) => setError(err.message))

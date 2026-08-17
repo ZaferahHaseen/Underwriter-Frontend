@@ -2,41 +2,25 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FaCarSide, FaExclamationTriangle } from "react-icons/fa";
 import "./MotorRiskAnalysis.css";
-import { getDummyMotorProposal } from "../../../api/dummyMotorProposals";
-import { getDummyFleetRiskResult } from "../../../api/dummyMotorRisk";
 import { getMotorProposal, getMotorFleetRiskResult, decideMotorVehicle } from "../../../api/motorAdapter";
 import BackButton from "../../../components/BackButton";
 import TopBar from "../../../components/TopBar";
 import RiskGauge from "../../../components/RiskGauge";
 import RiskChart from "../RiskChart";
 
-// WIRED TO BACKEND: reuses the risk_score/risk_factors already computed
+// WIRED TO BACKEND: reuses risk_score/risk_factors already computed
 // server-side when each vehicle proposal was submitted (no re-scoring).
-// Approve/Reject now call the real PATCH /proposals/{id}/decision endpoint.
-const USE_DUMMY_DATA = false;
-
+// Approve/Reject call the real PATCH /proposals/{id}/decision endpoint.
 function MotorRiskAnalysis() {
   const { id } = useParams();
   const [proposal, setProposal] = useState(null);
   const [fleetResult, setFleetResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeVehicleId, setActiveVehicleId] = useState(null);
-  // Local decision state per vehicle (dummy — swap for a real decide-vehicle
-  // API call once the backend teammate exposes one).
   const [decisions, setDecisions] = useState({});
 
   useEffect(() => {
     setLoading(true);
-    if (USE_DUMMY_DATA) {
-      const p = getDummyMotorProposal(id);
-      const fr = getDummyFleetRiskResult(p.vehicles);
-      setProposal(p);
-      setFleetResult(fr);
-      setActiveVehicleId(fr.per_vehicle[0]?.vehicle.vehicle_id ?? null);
-      setLoading(false);
-      return;
-    }
-
     getMotorProposal(id)
       .then(async (p) => {
         const fr = await getMotorFleetRiskResult(p.vehicles);
@@ -73,12 +57,10 @@ function MotorRiskAnalysis() {
   const handleDecide = async (decision) => {
     // Optimistic UI update, then persist via the real decision endpoint.
     setDecisions((prev) => ({ ...prev, [active.vehicle.vehicle_id]: decision }));
-    if (!USE_DUMMY_DATA) {
-      try {
-        await decideMotorVehicle(active.vehicle.vehicle_id, decision);
-      } catch (err) {
-        alert(err.message || "Could not save decision.");
-      }
+    try {
+      await decideMotorVehicle(active.vehicle.vehicle_id, decision);
+    } catch (err) {
+      alert(err.message || "Could not save decision.");
     }
   };
 

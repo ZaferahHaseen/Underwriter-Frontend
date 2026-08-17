@@ -3,11 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { FaClipboardList, FaHourglassHalf, FaCheckCircle, FaTimesCircle, FaSearch } from "react-icons/fa";
 import "./UnderwriterDashboard.css";
 import { listProposals } from "../../api/underwritingApi";
-import { getDummyProposalList } from "../../api/dummyProposals";
 import PageHeader from "../../components/PageHeader";
-
-// Flip to false once the backend teammate's GET /proposals list endpoint is live.
-const USE_DUMMY_DATA = false;
 
 function UnderwriterDashboard() {
   const navigate = useNavigate();
@@ -17,12 +13,6 @@ function UnderwriterDashboard() {
   const [query, setQuery] = useState("");
 
   useEffect(() => {
-    if (USE_DUMMY_DATA) {
-      setProposals(getDummyProposalList());
-      setLoading(false);
-      return;
-    }
-
     listProposals()
       .then(setProposals)
       .catch((err) => setError(err.message))

@@ -13,17 +13,9 @@ import {
 } from "react-icons/fa";
 import "./ProposalDashboard.css";
 import { getProposal } from "../../api/underwritingApi";
-import { getDummyProposal } from "../../api/dummyProposals";
 import BackButton from "../../components/BackButton";
 import StatusStamp from "../../components/StatusStamp";
 import TopBar from "../../components/TopBar";
-
-// ---------------------------------------------------------------------------
-// Flip this to false once the backend teammate's /proposals/:id endpoint is
-// live — every other line here already calls the real getProposal() API,
-// this flag just decides whether we trust it or fall back to local dummy data.
-// ---------------------------------------------------------------------------
-const USE_DUMMY_DATA = false;
 
 function ProposalDashboard() {
   const { id } = useParams();
@@ -36,12 +28,6 @@ function ProposalDashboard() {
   useEffect(() => {
     setLoading(true);
     setError(null);
-
-    if (USE_DUMMY_DATA) {
-      setProposal(getDummyProposal(id));
-      setLoading(false);
-      return;
-    }
 
     getProposal(id)
       .then(setProposal)
