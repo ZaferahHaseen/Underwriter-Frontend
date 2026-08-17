@@ -293,6 +293,22 @@ function MotorProposalForm() {
       return;
     }
 
+    // Guard: if a vehicle is currently open for editing and its fields
+    // were changed but "Update Vehicle" was never clicked, those changes
+    // only live in currentVehicle — savedVehicles (what actually gets
+    // sent) still has the old values. Block submit instead of silently
+    // sending stale data.
+    if (
+      editingIndex !== null &&
+      JSON.stringify(currentVehicle) !== JSON.stringify(savedVehicles[editingIndex])
+    ) {
+      alert(
+        "You have unsaved changes to this vehicle. Click \"Update Vehicle\" before submitting the proposal."
+      );
+      document.querySelector(".mpf-current-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+
     const allErrors = savedVehicles.map((vehicle) => validateVehicle(vehicle));
     const hasErrors = allErrors.some((errors) => Object.keys(errors).length > 0);
 
@@ -305,9 +321,10 @@ function MotorProposalForm() {
     try {
       if (editingProposalId != null) {
         // WIRED TO BACKEND: POST /api/v1/vehicle/proposals/{id}/edit
-        // (app/vehicle/router.py) — creates a new version, marks the old
-        // row SUPERSEDED. Edit mode only ever holds the single vehicle
-        // that was loaded for editing.
+        // (app/vehicle/router.py) — updates the existing proposal + vehicle
+        // rows in place (same id, same policy number), pre-edit values are
+        // snapshotted server-side for history. Edit mode only ever holds
+        // the single vehicle that was loaded for editing.
         await editVehicleProposal(editingProposalId, toBackendVehicle(savedVehicles[0]));
       } else {
         // WIRED TO BACKEND: POST /api/v1/vehicle/proposals/batch
