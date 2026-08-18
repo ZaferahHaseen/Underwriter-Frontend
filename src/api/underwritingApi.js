@@ -45,6 +45,90 @@ function authHeaders() {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+// ---------------------------------------------------------------------------
+// FastAPI/pydantic validation errors come back as `detail: [{type, loc, msg,
+// ...}]` — raw JSON, unreadable to a normal user. This turns that into a
+// short, plain-English sentence (or list of sentences) instead.
+// ---------------------------------------------------------------------------
+const FIELD_LABELS = {
+  age: "Age",
+  annual_income: "Annual Income",
+  sum_assured: "Coverage Amount",
+  height_cm: "Height",
+  weight_kg: "Weight",
+  credit_score: "Credit Score",
+  num_previous_claims: "Previous Claims",
+  years_with_insurer: "Years With Insurer",
+  full_name: "Full Name",
+  vehicle_age_years: "Vehicle Age",
+  engine_cc: "Engine (CC)",
+  idv: "Insured Declared Value",
+  driver_age: "Driver Age",
+  driving_experience_years: "Driving Experience",
+  license_age: "License Age",
+  previous_accidents: "Previous Accidents",
+  traffic_violations: "Traffic Violations",
+  annual_mileage: "Annual Mileage",
+  policy_lapses: "Policy Lapses",
+  vehicle_value: "Vehicle Value",
+};
+
+function fieldLabel(loc) {
+  const key = Array.isArray(loc) ? loc[loc.length - 1] : loc;
+  return FIELD_LABELS[key] || String(key).replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+export function formatApiError(detail) {
+  if (!detail) return "Something went wrong. Please try again.";
+
+  // Raw internal/provider error dumps (e.g. an LLM/model error from the
+  // backend) — never show this verbatim, it means nothing to a user.
+  if (typeof detail === "string") {
+    const looksInternal = /invalid_request_error|model_not_found|traceback|Exception|"code":|api\.|llama|gpt-/i.test(detail);
+    if (looksInternal) return "Something went wrong on our end. Please try again in a moment.";
+    return detail;
+  }
+
+  if (Array.isArray(detail)) {
+    const missingLabels = [];
+    const otherMessages = [];
+
+    detail.forEach((d) => {
+      const label = fieldLabel(d.loc);
+      const min = d.ctx?.ge ?? d.ctx?.gt;
+      // Empty required fields come back as 0 (Number("") === 0), so any
+      // ge/gt failure on input 0 really means "left blank", not "too low"
+      // (fields where 0 is a valid value use ge:0, which doesn't error).
+      const isBlank = d.type === "missing" || d.input === 0;
+
+      if (isBlank) {
+        missingLabels.push(label);
+      } else if (d.type === "greater_than_equal" && min != null) {
+        otherMessages.push(`${label} should be at least ${min}.`);
+      } else if (d.type === "greater_than" && min != null) {
+        otherMessages.push(`${label} should be greater than ${min}.`);
+      } else {
+        otherMessages.push(`${label}: ${(d.msg || "please check this value").replace(/^Value error, /i, "")}`);
+      }
+    });
+
+    const messages = [];
+    if (missingLabels.length) {
+      messages.push(
+        missingLabels.length > 2
+          ? "Please fill in all the details in the form before submitting."
+          : `Please fill in: ${[...new Set(missingLabels)].join(", ")}.`
+      );
+    }
+    messages.push(...new Set(otherMessages));
+
+    return messages.slice(0, 4).join(" ");
+  }
+
+  return "Please check the highlighted details and try again.";
+}
+
+
 // ---- Login / Signup (Login.jsx calls these) ----
 // `role` is the box the user selected on the login screen (client /
 // underwriter). The backend rejects the login (403) if the account's
@@ -57,7 +141,7 @@ export async function login(email, password, role) {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || `API error: ${res.status}`);
+    throw new Error(formatApiError(err.detail) || `API error: ${res.status}`);
   }
   const data = await res.json();
   setAuth(data);
@@ -72,7 +156,7 @@ export async function signup(fullName, email, password, role) {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || `API error: ${res.status}`);
+    throw new Error(formatApiError(err.detail) || `API error: ${res.status}`);
   }
   const data = await res.json();
   setAuth(data);
@@ -106,7 +190,7 @@ export async function getUnderwritingFromProposal(rawProposal) {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || `API error: ${res.status}`);
+    throw new Error(formatApiError(err.detail) || `API error: ${res.status}`);
   }
   return res.json();
 }
@@ -125,7 +209,7 @@ export async function submitProposal(payload, file) {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail ? JSON.stringify(err.detail) : `API error: ${res.status}`);
+    throw new Error(formatApiError(err.detail) || `API error: ${res.status}`);
   }
   return res.json();
 }
@@ -142,7 +226,7 @@ export async function editProposal(proposalId, payload) {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail ? JSON.stringify(err.detail) : `API error: ${res.status}`);
+    throw new Error(formatApiError(err.detail) || `API error: ${res.status}`);
   }
   return res.json();
 }
@@ -191,7 +275,7 @@ export async function decideProposal(id, status) {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || `API error: ${res.status}`);
+    throw new Error(formatApiError(err.detail) || `API error: ${res.status}`);
   }
   return res.json();
 }
@@ -214,7 +298,7 @@ export async function getMyPolicies() {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || `API error: ${res.status}`);
+    throw new Error(formatApiError(err.detail) || `API error: ${res.status}`);
   }
   return res.json();
 }
@@ -225,7 +309,7 @@ export async function getMyVehiclePolicies() {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || `API error: ${res.status}`);
+    throw new Error(formatApiError(err.detail) || `API error: ${res.status}`);
   }
   return res.json();
 }
@@ -241,7 +325,7 @@ export async function submitVehicleProposalsBatch(vehicles) {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail ? JSON.stringify(err.detail) : `API error: ${res.status}`);
+    throw new Error(formatApiError(err.detail) || `API error: ${res.status}`);
   }
   return res.json();
 }
@@ -276,7 +360,7 @@ export async function editVehicleProposal(id, payload) {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail ? JSON.stringify(err.detail) : `API error: ${res.status}`);
+    throw new Error(formatApiError(err.detail) || `API error: ${res.status}`);
   }
   return res.json();
 }
@@ -289,7 +373,7 @@ export async function getFleetProposal(fleetGroupId) {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || `API error: ${res.status}`);
+    throw new Error(formatApiError(err.detail) || `API error: ${res.status}`);
   }
   return res.json();
 }
@@ -310,7 +394,7 @@ export async function decideVehicleProposal(id, status) {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || `API error: ${res.status}`);
+    throw new Error(formatApiError(err.detail) || `API error: ${res.status}`);
   }
   return res.json();
 }
@@ -326,7 +410,7 @@ export async function quickMotorUnderwrite(payload) {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail ? JSON.stringify(err.detail) : `API error: ${res.status}`);
+    throw new Error(formatApiError(err.detail) || `API error: ${res.status}`);
   }
   return res.json();
 }

@@ -6,6 +6,7 @@ import BackButton from "../../components/BackButton";
 import TopBar from "../../components/TopBar";
 import RiskGauge from "../../components/RiskGauge";
 import RiskChart from "./RiskChart";
+import { FaExclamationCircle, FaTimes } from "react-icons/fa";
 
 const initialHealthForm = {
   age: 30,
@@ -160,6 +161,12 @@ function RiskAnalysis() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  useEffect(() => {
+    if (!error) return;
+    const t = setTimeout(() => setError(null), 4000);
+    return () => clearTimeout(t);
+  }, [error]);
+
   const [proposal, setProposal] = useState(null);
   const [proposalLoading, setProposalLoading] = useState(!isQuickCheck);
   const [deciding, setDeciding] = useState(false);
@@ -255,6 +262,21 @@ function RiskAnalysis() {
   // ---------------- Quick Check mode: manual entry form ----------------
   return (
     <div className={checkType === "motor" ? "risk-page risk-page-motor" : "risk-page"}>
+      {error && (
+        <div className="risk-toast" role="alert">
+          <FaExclamationCircle className="risk-toast-icon" />
+          <span>{error}</span>
+          <button
+            type="button"
+            className="risk-toast-close"
+            onClick={() => setError(null)}
+            aria-label="Dismiss"
+          >
+            <FaTimes />
+          </button>
+        </div>
+      )}
+
       <div className="risk-hero">
         <div className="risk-page-header">
           <BackButton to={backTarget} />
@@ -300,8 +322,6 @@ function RiskAnalysis() {
           {loading ? "Analyzing…" : "Analyze Risk"}
         </button>
       </form>
-
-      {error && <div className="error-box">{error}</div>}
 
       {result && <ResultView result={result} />}
     </div>

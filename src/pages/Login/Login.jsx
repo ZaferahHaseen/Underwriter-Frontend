@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { FaUser, FaUserTie } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import { FaUser, FaUserTie, FaExclamationCircle, FaTimes } from "react-icons/fa";
 import "./Login.css";
 import { login, signup } from "../../api/underwritingApi";
 
@@ -14,6 +14,13 @@ function Login() {
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
+
+  // Auto-dismiss the toast after 4s.
+  useEffect(() => {
+    if (!error) return;
+    const t = setTimeout(() => setError(null), 4000);
+    return () => clearTimeout(t);
+  }, [error]);
 
   // Real, strict role-based auth against the backend (app/auth/router.py).
   // The role selected on screen is sent with the login request; the
@@ -50,6 +57,21 @@ function Login() {
 
   return (
     <div className="login-container">
+
+      {error && (
+        <div className="login-toast" role="alert">
+          <FaExclamationCircle className="login-toast-icon" />
+          <span>{error}</span>
+          <button
+            type="button"
+            className="login-toast-close"
+            onClick={() => setError(null)}
+            aria-label="Dismiss"
+          >
+            <FaTimes />
+          </button>
+        </div>
+      )}
 
       <div className="left-section">
         <div className="brand-mark">
@@ -227,10 +249,6 @@ function Login() {
                 Accounts registered under a different role cannot sign in here.
               </p>
             </>
-          )}
-
-          {error && (
-            <div className="inline-error login-error">{error}</div>
           )}
 
           {/* Submit Button */}

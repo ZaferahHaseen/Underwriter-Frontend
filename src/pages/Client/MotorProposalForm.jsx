@@ -14,6 +14,7 @@ import {
   FaUserAlt,
   FaMapMarkerAlt,
   FaFileContract,
+  FaExclamationCircle,
 } from "react-icons/fa";
 
 import BackButton from "../../components/BackButton";
@@ -92,6 +93,14 @@ function MotorProposalForm() {
   const [submitting, setSubmitting] = useState(false);
 
   const [activeStep, setActiveStep] = useState(STEPS[0]?.id);
+
+  // Mini popup (toast) replacing native alert() for validation/error messages.
+  const [toast, setToast] = useState(null);
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 4000);
+    return () => clearTimeout(t);
+  }, [toast]);
 
   // --------------------------------------------------
   // Coming here from "View" on the client's vehicle list —
@@ -289,7 +298,7 @@ function MotorProposalForm() {
   const handleSubmit = async () => {
     if (savedVehicles.length === 0) {
       setSubmitAttempted(true);
-      alert("Please save at least one vehicle before submitting.");
+      setToast("Please save at least one vehicle before submitting.");
       return;
     }
 
@@ -302,7 +311,7 @@ function MotorProposalForm() {
       editingIndex !== null &&
       JSON.stringify(currentVehicle) !== JSON.stringify(savedVehicles[editingIndex])
     ) {
-      alert(
+      setToast(
         "You have unsaved changes to this vehicle. Click \"Update Vehicle\" before submitting the proposal."
       );
       document.querySelector(".mpf-current-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -313,7 +322,7 @@ function MotorProposalForm() {
     const hasErrors = allErrors.some((errors) => Object.keys(errors).length > 0);
 
     if (hasErrors) {
-      alert("One or more saved vehicles contain invalid details. Please edit and correct them before submitting.");
+      setToast("One or more saved vehicles contain invalid details. Please edit and correct them before submitting.");
       return;
     }
 
@@ -335,7 +344,7 @@ function MotorProposalForm() {
       }
       setSubmitted(true);
     } catch (err) {
-      alert(err.message || "Could not submit your proposal. Please try again.");
+      setToast(err.message || "Could not submit your proposal. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -374,6 +383,21 @@ function MotorProposalForm() {
 
   return (
     <div className="mpf-shell">
+
+      {toast && (
+        <div className="mpf-toast" role="alert">
+          <FaExclamationCircle className="mpf-toast-icon" />
+          <span>{toast}</span>
+          <button
+            type="button"
+            className="mpf-toast-close"
+            onClick={() => setToast(null)}
+            aria-label="Dismiss"
+          >
+            <FaTimes />
+          </button>
+        </div>
+      )}
 
       {/* =====================================================
           LEFT SIDEBAR (mirrors the Health proposal page)

@@ -6,6 +6,8 @@ import {
   FaUserAlt,
   FaHeartbeat,
   FaWallet,
+  FaExclamationCircle,
+  FaTimes,
 } from "react-icons/fa";
 
 import {
@@ -32,6 +34,21 @@ const COUNTRY_NAMES = {
 };
 
 const SECTION_IDS = ["document", "applicant", "details", "financial"];
+
+// Free-text/number fields that must not be left blank. (The radio-style
+// fields — smoker, alcohol, occupation, etc. — always default to a
+// selected value, so they can never be blank.)
+const REQUIRED_FIELDS = [
+  { key: "fullName", label: "Full Name" },
+  { key: "age", label: "Age" },
+  { key: "annualIncome", label: "Annual Income" },
+  { key: "sumAssured", label: "Coverage Amount" },
+  { key: "height", label: "Height" },
+  { key: "weight", label: "Weight" },
+  { key: "creditScore", label: "Credit Score" },
+  { key: "previousClaims", label: "Previous Claims" },
+  { key: "yearsWithInsurer", label: "Years With Insurer" },
+];
 
 
 function ClientDashboard() {
@@ -211,6 +228,17 @@ function ClientDashboard() {
   const [docFile, setDocFile] = useState(null);
   const [docError, setDocError] = useState(null);
 
+  // Mini popup (toast) for docError / error — auto-dismisses after 4s.
+  const toastMessage = error || docError;
+  useEffect(() => {
+    if (!toastMessage) return;
+    const t = setTimeout(() => {
+      setError(null);
+      setDocError(null);
+    }, 4000);
+    return () => clearTimeout(t);
+  }, [toastMessage]);
+
   // Country / document type
   const [countries, setCountries] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState("");
@@ -356,6 +384,21 @@ function ClientDashboard() {
     setError(null);
     setDocError(null);
     setSubmitted(null);
+
+    // Client-side required-field check — catches blank fields immediately
+    // instead of relying on the backend, since some fields (e.g. Years
+    // With Insurer, Previous Claims) allow 0 as a valid value, so an
+    // empty box never trips the backend's own validation.
+    const missing = REQUIRED_FIELDS.filter((f) => String(formData[f.key]).trim() === "");
+    if (missing.length > 0) {
+      setError(
+        missing.length > 2
+          ? "Please fill in all the details in the form before submitting."
+          : `Please fill in: ${missing.map((f) => f.label).join(", ")}.`
+      );
+      scrollToStep(missing[0].key === "fullName" || missing[0].key === "age" || missing[0].key === "annualIncome" || missing[0].key === "sumAssured" ? "applicant" : missing[0].key === "height" || missing[0].key === "weight" ? "details" : "financial");
+      return;
+    }
 
     // Document validation
     
@@ -518,6 +561,21 @@ function ClientDashboard() {
 
   return (
     <div className="client-shell">
+
+      {toastMessage && (
+        <div className="cd-toast" role="alert">
+          <FaExclamationCircle className="cd-toast-icon" />
+          <span>{toastMessage}</span>
+          <button
+            type="button"
+            className="cd-toast-close"
+            onClick={() => { setError(null); setDocError(null); }}
+            aria-label="Dismiss"
+          >
+            <FaTimes />
+          </button>
+        </div>
+      )}
 
       {/* ==============================================
           LEFT SIDEBAR
@@ -745,12 +803,6 @@ function ClientDashboard() {
                   <FaCheckCircle />
                   Attached: {docFile.name}
                 </p>
-              )}
-
-              {docError && (
-                <div className="inline-error">
-                  {docError}
-                </div>
               )}
 
             </div>
@@ -1189,12 +1241,6 @@ function ClientDashboard() {
               </div>
 
             </div>
-
-            {error && (
-              <div className="inline-error inline-error-block">
-                <b>Error:</b> {error}
-              </div>
-            )}
 
           </section>
 

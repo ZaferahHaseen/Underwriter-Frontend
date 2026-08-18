@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { FaCarSide, FaExclamationTriangle, FaEye, FaEyeSlash, FaCheck, FaTimes } from "react-icons/fa";
+import { FaCarSide, FaExclamationTriangle, FaEye, FaEyeSlash, FaCheck, FaTimes, FaExclamationCircle } from "react-icons/fa";
 import "./MotorRiskAnalysis.css";
 import { getMotorProposal, getMotorFleetRiskResult, decideMotorVehicle } from "../../../api/motorAdapter";
 import BackButton from "../../../components/BackButton";
@@ -21,6 +21,14 @@ function MotorRiskAnalysis() {
   const [showChart, setShowChart] = useState(false);
   const [tabPage, setTabPage] = useState(0);
   const TABS_PER_PAGE = 8;
+
+  // Mini popup (toast) replacing native alert() — auto-dismisses after 4s.
+  const [toast, setToast] = useState(null);
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 4000);
+    return () => clearTimeout(t);
+  }, [toast]);
 
   useEffect(() => {
     setLoading(true);
@@ -64,7 +72,7 @@ function MotorRiskAnalysis() {
     try {
       await decideMotorVehicle(vehicleId, decision);
     } catch (err) {
-      alert(err.message || "Could not save decision.");
+      setToast(err.message || "Could not save decision.");
     }
   };
 
@@ -76,6 +84,21 @@ function MotorRiskAnalysis() {
 
   return (
     <div className="mra-page">
+      {toast && (
+        <div className="mra-toast" role="alert">
+          <FaExclamationCircle className="mra-toast-icon" />
+          <span>{toast}</span>
+          <button
+            type="button"
+            className="mra-toast-close"
+            onClick={() => setToast(null)}
+            aria-label="Dismiss"
+          >
+            <FaTimes />
+          </button>
+        </div>
+      )}
+
       <div className="mra-hero">
         <div className="mra-page-header">
           <BackButton to={`/motor-proposal/${id}`} />
