@@ -20,12 +20,12 @@
 }
 
 .uh-page {
-  min-height: 100vh;
+  height: 100vh;
   width: 100%;
   box-sizing: border-box;
   position: relative;
   background: #FAF9FF;
-  padding: 0 0 70px;
+  padding: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -66,10 +66,11 @@
 ================================ */
 
 .uh-hero {
-  padding: 56px 52px 64px;
-  margin: 0 0 -40px;
+  padding: 28px 52px 34px;
+  margin: 0 0 -30px;
   position: relative;
   z-index: 1;
+  flex-shrink: 0;
   background: linear-gradient(120deg, #16304F 0%, #2347B3 45%, #C99A2E 130%);
   border-radius: 0 0 40px 40px;
   box-shadow: 0 20px 50px -20px rgba(11, 30, 51, 0.5);
@@ -120,11 +121,14 @@
 
 .uh-grid {
   width: min(100%, 780px);
-  margin: 88px auto 0;
+  margin: 56px auto;
+  flex: 1;
+  min-height: 0;
 
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 22px;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 20px;
 
   position: relative;
   z-index: 1;
@@ -134,19 +138,20 @@
   position: relative;
 
   width: 100%;
-  min-height: 250px;
+  height: 100%;
+  min-height: 0;
   box-sizing: border-box;
 
   border: none;
   border-radius: 28px;
 
-  padding: 26px 26px 22px;
+  padding: 20px 24px 16px;
 
   text-align: left;
 
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 
   cursor: pointer;
   overflow: hidden;
@@ -189,6 +194,32 @@
   box-shadow: 0 14px 0 -4px rgba(23, 135, 90, 0.14), 0 26px 44px -16px rgba(23, 135, 90, 0.4);
 }
 
+.uh-card-property {
+  background: #FDECE0;
+  box-shadow: 0 10px 0 -4px rgba(201, 90, 33, 0.10), 0 18px 34px -16px rgba(201, 90, 33, 0.35);
+}
+
+.uh-card-property:hover {
+  box-shadow: 0 14px 0 -4px rgba(201, 90, 33, 0.14), 0 26px 44px -16px rgba(201, 90, 33, 0.4);
+}
+
+.uh-card-travel {
+  background: #EFE7FE;
+  box-shadow: 0 10px 0 -4px rgba(124, 58, 237, 0.10), 0 18px 34px -16px rgba(124, 58, 237, 0.35);
+}
+
+.uh-card-travel:hover {
+  box-shadow: 0 14px 0 -4px rgba(124, 58, 237, 0.14), 0 26px 44px -16px rgba(124, 58, 237, 0.4);
+}
+
+.uh-card-soon {
+  cursor: not-allowed;
+}
+
+.uh-card-soon:hover {
+  transform: none;
+}
+
 /* ================================
    ICON
 ================================ */
@@ -220,6 +251,18 @@
   background: var(--motor);
   color: #ffffff;
   box-shadow: 0 6px 14px rgba(23, 135, 90, 0.35);
+}
+
+.uh-card-icon-property {
+  background: #C95A21;
+  color: #ffffff;
+  box-shadow: 0 6px 14px rgba(201, 90, 33, 0.35);
+}
+
+.uh-card-icon-travel {
+  background: #7C3AED;
+  color: #ffffff;
+  box-shadow: 0 6px 14px rgba(124, 58, 237, 0.35);
 }
 
 /* ================================
@@ -285,6 +328,10 @@
   color: var(--motor-dark);
 }
 
+.uh-card-cta-soon {
+  color: #C99A2E !important;
+}
+
 .uh-card-cta svg {
   font-size: 11px;
   transition: transform 0.2s ease;
@@ -299,8 +346,13 @@
 ================================ */
 
 @media (max-width: 900px) {
+  .uh-page {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
   .uh-hero {
-    padding: 44px 28px 54px;
+    padding: 30px 28px 36px;
     border-radius: 0 0 30px 30px;
   }
   .uh-header-text h1 {
@@ -308,7 +360,7 @@
   }
   .uh-grid {
     width: min(100%, 640px);
-    margin-top: 70px;
+    margin: 40px auto;
   }
 }
 
@@ -321,12 +373,14 @@
   }
   .uh-grid {
     grid-template-columns: 1fr;
+    grid-template-rows: none;
     width: min(100%, 420px);
     gap: 16px;
-    margin-top: 56px;
+    margin: 32px auto;
   }
   .uh-card {
     min-height: 210px;
+    height: auto;
   }
 }
 

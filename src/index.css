@@ -75,6 +75,7 @@ button {
   font-family: var(--font-body);
   border: none;
   outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 button:focus-visible,

@@ -215,6 +215,13 @@
   font-weight: 600;
   text-align: left;
   min-width: 0;
+  -webkit-tap-highlight-color: transparent;
+  background: transparent;
+}
+
+.mra-tab-top:focus,
+.mra-tab-top:active {
+  outline: none;
 }
 
 .mra-vehicle-tab.active .mra-tab-top {
@@ -355,8 +362,19 @@
 }
 
 .mra-vehicle-tab.active .mra-tab-decision {
-  background: rgba(255, 255, 255, 0.25);
-  color: white;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.mra-vehicle-tab.active .mra-tab-decision-pending {
+  color: var(--risk-mod);
+}
+
+.mra-vehicle-tab.active .mra-tab-decision-approved {
+  color: var(--risk-low);
+}
+
+.mra-vehicle-tab.active .mra-tab-decision-rejected {
+  color: var(--risk-high);
 }
 
 /* ---------- Pagination ---------- */
@@ -431,7 +449,7 @@
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 24px;
   padding: 0 36px;
   align-items: start;

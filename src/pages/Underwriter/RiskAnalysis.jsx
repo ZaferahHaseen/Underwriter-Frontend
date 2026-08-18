@@ -87,13 +87,6 @@ function ResultView({ result, status, deciding, onDecide }) {
           <RiskGauge score={result.risk_score} label="Risk Score" size={220} />
         </div>
 
-        {result.confidence != null && (
-          <div className="confidence-box">
-            <h4>Model Confidence</h4>
-            <p className="mono">{result.confidence}%</p>
-          </div>
-        )}
-
         {status === "PENDING" && (
           <div className="decision-buttons">
             <button className="decision-approve" disabled={deciding} onClick={() => onDecide("APPROVED")}>
@@ -261,7 +254,7 @@ function RiskAnalysis() {
 
   // ---------------- Quick Check mode: manual entry form ----------------
   return (
-    <div className="risk-page">
+    <div className={checkType === "motor" ? "risk-page risk-page-motor" : "risk-page"}>
       <div className="risk-hero">
         <div className="risk-page-header">
           <BackButton to={backTarget} />

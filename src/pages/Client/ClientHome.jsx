@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { FaHeartbeat, FaCarSide, FaArrowRight } from "react-icons/fa";
+import { FaHeartbeat, FaCarSide, FaHome, FaPlane, FaArrowRight } from "react-icons/fa";
 import "./ClientHome.css";
 import PageHeader from "../../components/PageHeader";
 
@@ -24,6 +24,26 @@ const LINES = [
     stat: "Your vehicles",
     to: "/client/motor",
   },
+  {
+    key: "property",
+    title: "Property Insurance",
+    description:
+      "Protect your home and belongings with flexible coverage for tenants and homeowners.",
+    icon: <FaHome />,
+    tone: "property",
+    stat: "Your properties",
+    comingSoon: true,
+  },
+  {
+    key: "travel",
+    title: "Travel Insurance",
+    description:
+      "Stay covered on your adventures with medical emergency support and trip cancellation protection.",
+    icon: <FaPlane />,
+    tone: "travel",
+    stat: "Your trips",
+    comingSoon: true,
+  },
 ];
 
 function ClientHome() {
@@ -43,17 +63,24 @@ function ClientHome() {
         {LINES.map((line) => (
           <button
             key={line.key}
-            className={`ch-card ch-card-${line.tone}`}
-            onClick={() => navigate(line.to)}
+            className={`ch-card ch-card-${line.tone}${line.comingSoon ? " ch-card-soon" : ""}`}
+            onClick={() => !line.comingSoon && navigate(line.to)}
+            disabled={line.comingSoon}
           >
             <div className={`ch-card-icon ch-card-icon-${line.tone}`}>{line.icon}</div>
             <h2>{line.title}</h2>
             <p className="ch-card-desc">{line.description}</p>
             <div className="ch-card-footer">
               <span className="ch-card-stat">{line.stat}</span>
-              <span className="ch-card-cta">
-                Open <FaArrowRight />
-              </span>
+              {line.comingSoon ? (
+                <span className="ch-card-cta ch-card-cta-soon">
+                  Coming soon <FaArrowRight />
+                </span>
+              ) : (
+                <span className="ch-card-cta">
+                  Open <FaArrowRight />
+                </span>
+              )}
             </div>
           </button>
         ))}

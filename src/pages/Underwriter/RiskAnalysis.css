@@ -195,6 +195,20 @@
   cursor: not-allowed;
 }
 
+/* ---------- Motor Quick Risk Check: green theme ---------- */
+
+.risk-page-motor .risk-hero {
+  background: linear-gradient(135deg, #0B2A24 0%, var(--motor-dark) 100%);
+}
+
+.risk-page-motor .analyze-btn {
+  background: var(--motor);
+}
+
+.risk-page-motor .analyze-btn:hover {
+  background: var(--motor-dark);
+}
+
 /* ---------- Error ---------- */
 
 .error-box {

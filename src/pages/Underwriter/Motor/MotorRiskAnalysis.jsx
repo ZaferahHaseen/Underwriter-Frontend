@@ -18,7 +18,7 @@ function MotorRiskAnalysis() {
   const [loading, setLoading] = useState(true);
   const [activeVehicleId, setActiveVehicleId] = useState(null);
   const [decisions, setDecisions] = useState({});
-  const [showChart, setShowChart] = useState(true);
+  const [showChart, setShowChart] = useState(false);
   const [tabPage, setTabPage] = useState(0);
   const TABS_PER_PAGE = 8;
 
