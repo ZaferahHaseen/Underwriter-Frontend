@@ -1,29 +1,78 @@
 /* ================================
-   UNDERWRITER HOME
+   UNDERWRITER HOME — bright SaaS
+   big hero + selector tiles below
+   (same class names, drop-in replace)
 ================================ */
+
+@keyframes uh-blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(3%, -4%) scale(1.05); }
+}
+
+@keyframes uh-pop {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes uh-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-5px); }
+}
 
 .uh-page {
   min-height: 100vh;
   width: 100%;
   box-sizing: border-box;
-  background:
-    radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.9), transparent 45%),
-    var(--mist);
-  padding: 0 0 60px;
+  position: relative;
+  background: #FAF9FF;
+  padding: 0 0 70px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
+/* playful decorative blobs behind everything */
+.uh-page::before,
+.uh-page::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.35;
+  z-index: 0;
+  pointer-events: none;
+  animation: uh-blob 12s ease-in-out infinite;
+}
+
+.uh-page::before {
+  width: 420px;
+  height: 420px;
+  top: -140px;
+  left: -120px;
+  background: #C99A2E;
+}
+
+.uh-page::after {
+  width: 380px;
+  height: 380px;
+  top: 60px;
+  right: -140px;
+  background: #4FD196;
+  animation-delay: -6s;
+}
 
 /* ================================
-   HERO / HEADER BAR
+   HERO — big, bold, colorful
 ================================ */
 
 .uh-hero {
-  padding: 34px 48px 40px;
-  margin-bottom: 0;
-  background: linear-gradient(135deg, var(--ink) 0%, var(--ink-soft) 100%);
-  border-bottom: 1px solid var(--line);
+  padding: 56px 52px 64px;
+  margin: 0 0 -40px;
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(120deg, #16304F 0%, #2347B3 45%, #C99A2E 130%);
+  border-radius: 0 0 40px 40px;
+  box-shadow: 0 20px 50px -20px rgba(11, 30, 51, 0.5);
 }
 
 .uh-header {
@@ -34,215 +83,165 @@
 }
 
 .uh-header-text h1 {
-  font-size: 28px;
+  font-family: var(--font-display);
+  font-size: 38px;
   font-weight: 700;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.03em;
   color: #ffffff;
   margin: 0;
 }
 
 .uh-subhead {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 14px;
-  margin: 5px 0 0;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 15px;
+  margin: 8px 0 0;
   line-height: 1.5;
+  font-weight: 500;
 }
 
 .uh-header .back-button,
 .uh-header .topbar-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   color: #ffffff;
+  border-radius: 14px;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .uh-header .back-button:hover,
 .uh-header .topbar-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.32);
+  transform: translateY(-2px);
 }
 
-
 /* ================================
-   CARDS CONTAINER
+   SELECTOR TILES
 ================================ */
 
 .uh-grid {
-  width: min(100%, 820px);
-  margin: 65px auto 0;
+  width: min(100%, 780px);
+  margin: 88px auto 0;
 
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px;
+  gap: 22px;
 
-  /* IMPORTANT:
-     Don't let the grid stretch to fill
-     the entire screen height.
-  */
-  flex: none;
-  align-items: start;
+  position: relative;
+  z-index: 1;
 }
-
-
-/* ================================
-   CARD
-================================ */
 
 .uh-card {
   position: relative;
 
   width: 100%;
-  min-height: 300px;
+  min-height: 250px;
   box-sizing: border-box;
 
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid var(--line);
-  border-radius: 18px;
+  border: none;
+  border-radius: 28px;
 
-  padding: 25px 26px 22px;
+  padding: 26px 26px 22px;
 
   text-align: left;
 
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 
   cursor: pointer;
+  overflow: hidden;
 
-  box-shadow:
-    0 2px 5px rgba(20, 40, 70, 0.03),
-    0 10px 30px rgba(20, 40, 70, 0.05);
+  animation: uh-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 
   transition:
-    transform 0.22s ease,
-    box-shadow 0.22s ease,
-    border-color 0.22s ease,
-    background 0.22s ease;
+    transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.28s ease,
+    rotate 0.28s ease;
 }
 
-
-/* subtle top accent */
-
-.uh-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 24px;
-  right: 24px;
-  height: 3px;
-
-  border-radius: 0 0 5px 5px;
-
-  opacity: 0;
-  transition: opacity 0.22s ease;
+.uh-grid .uh-card:nth-child(2) {
+  animation-delay: 0.09s;
 }
-
-
-/* Hover */
 
 .uh-card:hover {
-  transform: translateY(-5px);
-
-  background: #ffffff;
-
-  box-shadow:
-    0 8px 20px rgba(20, 40, 70, 0.07),
-    0 18px 40px rgba(20, 40, 70, 0.08);
+  transform: translateY(-6px) rotate(-0.6deg);
 }
 
-.uh-card:hover::before {
-  opacity: 1;
+.uh-card:active {
+  transform: translateY(-2px) scale(0.99);
 }
 
+.uh-card-signal {
+  background: #EAF0FE;
+  box-shadow: 0 10px 0 -4px rgba(47, 95, 224, 0.10), 0 18px 34px -16px rgba(47, 95, 224, 0.35);
+}
+
+.uh-card-signal:hover {
+  box-shadow: 0 14px 0 -4px rgba(47, 95, 224, 0.14), 0 26px 44px -16px rgba(47, 95, 224, 0.4);
+}
+
+.uh-card-motor {
+  background: #E4F6EE;
+  box-shadow: 0 10px 0 -4px rgba(23, 135, 90, 0.10), 0 18px 34px -16px rgba(23, 135, 90, 0.35);
+}
+
+.uh-card-motor:hover {
+  box-shadow: 0 14px 0 -4px rgba(23, 135, 90, 0.14), 0 26px 44px -16px rgba(23, 135, 90, 0.4);
+}
 
 /* ================================
    ICON
 ================================ */
 
 .uh-card-icon {
-  width: 44px;
-  height: 44px;
-
-  border-radius: 12px;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  font-size: 18px;
-
-  margin-bottom: 5px;
-
-  transition:
-    transform 0.22s ease,
-    box-shadow 0.22s ease;
+  font-size: 19px;
+  margin-bottom: 2px;
 }
 
 .uh-card:hover .uh-card-icon {
-  transform: scale(1.06);
+  animation: uh-bounce 0.6s ease;
 }
-
-
-/* Health */
 
 .uh-card-icon-signal {
-  background: var(--signal-tint);
-  color: var(--signal);
-
-  box-shadow: 0 5px 14px rgba(60, 100, 220, 0.08);
-}
-
-.uh-card-signal::before {
   background: var(--signal);
+  color: #ffffff;
+  box-shadow: 0 6px 14px rgba(47, 95, 224, 0.35);
 }
-
-.uh-card-signal:hover {
-  border-color: rgba(60, 100, 220, 0.35);
-}
-
-
-/* Motor */
 
 .uh-card-icon-motor {
-  background: var(--motor-tint);
-  color: var(--motor);
-
-  box-shadow: 0 5px 14px rgba(30, 150, 160, 0.08);
-}
-
-.uh-card-motor::before {
   background: var(--motor);
+  color: #ffffff;
+  box-shadow: 0 6px 14px rgba(23, 135, 90, 0.35);
 }
-
-.uh-card-motor:hover {
-  border-color: rgba(30, 150, 160, 0.35);
-}
-
 
 /* ================================
-   CARD TEXT
+   TEXT
 ================================ */
 
 .uh-card h2 {
   margin: 0;
-
-  font-size: 18px;
-  line-height: 1.3;
+  font-size: 18.5px;
+  line-height: 1.25;
   font-weight: 700;
-
   color: var(--ink);
   letter-spacing: -0.015em;
 }
 
 .uh-card-desc {
   color: var(--slate);
-
   font-size: 13px;
   line-height: 1.6;
-
   margin: 0;
-
   flex: 1;
 }
-
 
 /* ================================
    FOOTER
@@ -253,33 +252,29 @@
   align-items: center;
   justify-content: space-between;
 
-  margin-top: 18px;
+  margin-top: 14px;
   padding-top: 14px;
 
-  border-top: 1px solid var(--line);
+  border-top: 2px dotted rgba(11, 30, 51, 0.12);
 }
 
 .uh-card-stat {
-  font-size: 10.5px;
-  font-weight: 700;
-
-  color: var(--slate-light);
-
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--gold);
   text-transform: uppercase;
-  letter-spacing: 0.055em;
+  letter-spacing: 0.06em;
+  background: #ffffff;
+  padding: 4px 9px;
+  border-radius: 999px;
 }
 
 .uh-card-cta {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-
-  font-size: 12.5px;
+  gap: 6px;
+  font-size: 13px;
   font-weight: 700;
-
-  color: var(--ink);
-
-  transition: gap 0.2s ease;
 }
 
 .uh-card-signal .uh-card-cta {
@@ -295,54 +290,52 @@
   transition: transform 0.2s ease;
 }
 
-.uh-card:hover .uh-card-cta {
-  gap: 10px;
-}
-
 .uh-card:hover .uh-card-cta svg {
-  transform: translateX(2px);
+  transform: translateX(4px);
 }
-
 
 /* ================================
    RESPONSIVE
 ================================ */
 
 @media (max-width: 900px) {
-
-  .uh-page {
-    padding-bottom: 50px;
-  }
-
   .uh-hero {
-    padding: 28px 24px 34px;
+    padding: 44px 28px 54px;
+    border-radius: 0 0 30px 30px;
   }
-
+  .uh-header-text h1 {
+    font-size: 30px;
+  }
   .uh-grid {
-    width: min(100%, 700px);
-    margin-top: 50px;
+    width: min(100%, 640px);
+    margin-top: 70px;
   }
 }
 
-
 @media (max-width: 650px) {
-
   .uh-header {
     align-items: flex-start;
   }
-
   .uh-header-text h1 {
-    font-size: 23px;
+    font-size: 25px;
   }
-
   .uh-grid {
     grid-template-columns: 1fr;
     width: min(100%, 420px);
-    gap: 18px;
-    margin-top: 40px;
+    gap: 16px;
+    margin-top: 56px;
   }
-
   .uh-card {
-    min-height: 270px;
+    min-height: 210px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uh-page::before,
+  .uh-page::after,
+  .uh-card,
+  .uh-card-icon {
+    animation: none;
+    transition: none;
   }
 }

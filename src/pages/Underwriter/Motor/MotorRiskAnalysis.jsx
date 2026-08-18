@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { FaCarSide, FaExclamationTriangle } from "react-icons/fa";
+import { FaCarSide, FaExclamationTriangle, FaEye, FaEyeSlash, FaCheck, FaTimes } from "react-icons/fa";
 import "./MotorRiskAnalysis.css";
 import { getMotorProposal, getMotorFleetRiskResult, decideMotorVehicle } from "../../../api/motorAdapter";
 import BackButton from "../../../components/BackButton";
@@ -18,6 +18,9 @@ function MotorRiskAnalysis() {
   const [loading, setLoading] = useState(true);
   const [activeVehicleId, setActiveVehicleId] = useState(null);
   const [decisions, setDecisions] = useState({});
+  const [showChart, setShowChart] = useState(true);
+  const [tabPage, setTabPage] = useState(0);
+  const TABS_PER_PAGE = 8;
 
   useEffect(() => {
     setLoading(true);
@@ -54,15 +57,22 @@ function MotorRiskAnalysis() {
   const active = fleetResult.per_vehicle.find((r) => r.vehicle.vehicle_id === activeVehicleId) || fleetResult.per_vehicle[0];
   const activeDecision = decisions[active.vehicle.vehicle_id];
 
-  const handleDecide = async (decision) => {
-    // Optimistic UI update, then persist via the real decision endpoint.
-    setDecisions((prev) => ({ ...prev, [active.vehicle.vehicle_id]: decision }));
+  // Now takes an explicit vehicleId so it can be called from the tab
+  // buttons (any vehicle) as well as the sidebar (active vehicle only).
+  const handleDecide = async (vehicleId, decision) => {
+    setDecisions((prev) => ({ ...prev, [vehicleId]: decision }));
     try {
-      await decideMotorVehicle(active.vehicle.vehicle_id, decision);
+      await decideMotorVehicle(vehicleId, decision);
     } catch (err) {
       alert(err.message || "Could not save decision.");
     }
   };
+
+  const totalPages = Math.ceil(fleetResult.per_vehicle.length / TABS_PER_PAGE);
+  const pageItems = fleetResult.per_vehicle.slice(
+    tabPage * TABS_PER_PAGE,
+    tabPage * TABS_PER_PAGE + TABS_PER_PAGE
+  );
 
   return (
     <div className="mra-page">
@@ -105,26 +115,94 @@ function MotorRiskAnalysis() {
           </div>
         </div>
 
-        {/* ---- Vehicle selector tabs ---- */}
-        <div className="mra-vehicle-tabs">
-          {fleetResult.per_vehicle.map(({ vehicle, result }) => (
-            <button
-              key={vehicle.vehicle_id}
-              className={vehicle.vehicle_id === active.vehicle.vehicle_id ? "mra-vehicle-tab active" : "mra-vehicle-tab"}
-              onClick={() => setActiveVehicleId(vehicle.vehicle_id)}
-            >
-              <FaCarSide />
-              <span>{vehicle.vehicle_make} {vehicle.vehicle_model}</span>
-              <span className={`mra-tab-score mra-tab-score-${result.risk_score >= 60 ? "high" : result.risk_score >= 35 ? "moderate" : "low"}`}>
-                {result.risk_score}
-              </span>
-              {decisions[vehicle.vehicle_id] && (
-                <span className={`mra-tab-decision mra-tab-decision-${decisions[vehicle.vehicle_id].toLowerCase()}`}>
-                  {decisions[vehicle.vehicle_id]}
-                </span>
-              )}
-            </button>
-          ))}
+        {/* ---- Vehicle selector tabs (paginated) ---- */}
+        <div className="mra-vehicle-tabs-box">
+          <div className="mra-vehicle-tabs-grid">
+            {pageItems.map(({ vehicle, result }) => {
+              const status = decisions[vehicle.vehicle_id]; // undefined = pending
+              const isActive = vehicle.vehicle_id === active.vehicle.vehicle_id;
+              return (
+                <div
+                  key={vehicle.vehicle_id}
+                  className={isActive ? "mra-vehicle-tab active" : "mra-vehicle-tab"}
+                >
+                  <button
+                    type="button"
+                    className="mra-tab-top"
+                    onClick={() => setActiveVehicleId(vehicle.vehicle_id)}
+                  >
+                    <FaCarSide />
+                    <span className="mra-tab-name">{vehicle.vehicle_make} {vehicle.vehicle_model}</span>
+                    <span className={`mra-tab-score mra-tab-score-${result.risk_score >= 60 ? "high" : result.risk_score >= 35 ? "moderate" : "low"}`}>
+                      {result.risk_score}
+                    </span>
+                  </button>
+
+                  <div className="mra-tab-actions">
+                    {status ? (
+                      <span className={`mra-tab-decision mra-tab-decision-${status.toLowerCase()}`}>
+                        {status}
+                      </span>
+                    ) : (
+                      <>
+                        <span className="mra-tab-decision mra-tab-decision-pending">PENDING</span>
+                        <button
+                          type="button"
+                          className="mra-tab-approve"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDecide(vehicle.vehicle_id, "APPROVED");
+                          }}
+                        >
+                          <FaCheck /> Approve
+                        </button>
+                        <button
+                          type="button"
+                          className="mra-tab-reject"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDecide(vehicle.vehicle_id, "REJECTED");
+                          }}
+                        >
+                          <FaTimes /> Reject
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {totalPages > 1 && (
+            <div className="mra-tabs-pagination">
+              <button
+                className="mra-page-arrow"
+                disabled={tabPage === 0}
+                onClick={() => setTabPage((p) => Math.max(0, p - 1))}
+              >
+                ‹
+              </button>
+              <div className="mra-page-dots">
+                {Array.from({ length: totalPages }).map((_, i) => (
+                  <button
+                    key={i}
+                    className={i === tabPage ? "mra-page-dot active" : "mra-page-dot"}
+                    onClick={() => setTabPage(i)}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+              <button
+                className="mra-page-arrow"
+                disabled={tabPage === totalPages - 1}
+                onClick={() => setTabPage((p) => Math.min(totalPages - 1, p + 1))}
+              >
+                ›
+              </button>
+            </div>
+          )}
         </div>
 
         {/* ---- Active vehicle detail ---- */}
@@ -138,10 +216,10 @@ function MotorRiskAnalysis() {
 
             {!activeDecision && (
               <div className="mra-decision-buttons">
-                <button className="mra-decision-approve" onClick={() => handleDecide("APPROVED")}>
+                <button className="mra-decision-approve" onClick={() => handleDecide(active.vehicle.vehicle_id, "APPROVED")}>
                   Approve
                 </button>
-                <button className="mra-decision-reject" onClick={() => handleDecide("REJECTED")}>
+                <button className="mra-decision-reject" onClick={() => handleDecide(active.vehicle.vehicle_id, "REJECTED")}>
                   Reject
                 </button>
               </div>
@@ -183,7 +261,16 @@ function MotorRiskAnalysis() {
             </div>
 
             <div className="mra-chart-card">
-              <RiskChart riskFactors={active.result.risk_factors} positiveFactors={active.result.positive_factors} />
+              <div className="mra-chart-header">
+                <h3>Factor Breakdown</h3>
+                <button className="mra-chart-toggle" onClick={() => setShowChart((v) => !v)}>
+                  {showChart ? <FaEyeSlash /> : <FaEye />}
+                  {showChart ? "Hide Chart" : "Show Chart"}
+                </button>
+              </div>
+              {showChart && (
+                <RiskChart riskFactors={active.result.risk_factors} positiveFactors={active.result.positive_factors} />
+              )}
             </div>
           </div>
         </div>
