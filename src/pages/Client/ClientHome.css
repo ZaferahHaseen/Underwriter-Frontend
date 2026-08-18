@@ -15,13 +15,57 @@
 }
 
 /* ================================
+   HERO / HEADER BAR
+================================ */
+
+.ch-hero {
+  padding: 34px 48px 40px;
+  margin-bottom: 0;
+  background: linear-gradient(135deg, var(--ink) 0%, var(--ink-soft) 100%);
+  border-bottom: 1px solid var(--line);
+}
+
+.ch-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 0;
+}
+
+.ch-header-text h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: #ffffff;
+  margin: 0;
+}
+
+.ch-subhead {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  margin: 5px 0 0;
+  line-height: 1.5;
+}
+
+.ch-header .back-button,
+.ch-header .topbar-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.ch-header .back-button:hover,
+.ch-header .topbar-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ================================
    CARDS CONTAINER
 ================================ */
 
 .ch-grid {
-  width: min(100%, 900px);
+  width: min(100%, 820px);
   margin: 65px auto 0;
-  padding: 0 24px;
 
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -32,7 +76,7 @@
 }
 
 /* ================================
-   CARD (photo bg style)
+   CARD
 ================================ */
 
 .ch-card {
@@ -42,102 +86,134 @@
   min-height: 300px;
   box-sizing: border-box;
 
-  background-size: cover;
-  background-position: center;
-  border: none;
-  border-radius: 20px;
-  overflow: hidden;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--line);
+  border-radius: 18px;
 
-  padding: 0;
+  padding: 25px 26px 22px;
+
   text-align: left;
 
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  gap: 10px;
 
   cursor: pointer;
 
   box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.05),
-    0 10px 20px rgba(0, 0, 0, 0.05);
+    0 2px 5px rgba(20, 40, 70, 0.03),
+    0 10px 30px rgba(20, 40, 70, 0.05);
 
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease,
+    background 0.22s ease;
+}
+
+.ch-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 24px;
+  right: 24px;
+  height: 3px;
+
+  border-radius: 0 0 5px 5px;
+
+  opacity: 0;
+  transition: opacity 0.22s ease;
 }
 
 .ch-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px);
+  background: #ffffff;
+
   box-shadow:
-    0 4px 6px rgba(0, 0, 0, 0.08),
-    0 15px 30px rgba(0, 0, 0, 0.1);
+    0 8px 20px rgba(20, 40, 70, 0.07),
+    0 18px 40px rgba(20, 40, 70, 0.08);
 }
 
-.ch-card-disabled {
-  cursor: not-allowed;
-}
-
-.ch-card-disabled:hover {
-  transform: none;
-}
-
-/* dark gradient overlay for text readability */
-.ch-card-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4) 60%, transparent);
+.ch-card:hover::before {
+  opacity: 1;
 }
 
 /* ================================
-   BODY (icon + title + desc)
+   ICON
 ================================ */
 
-.ch-card-body {
-  position: relative;
-  z-index: 1;
-  padding: 24px 24px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  flex: 1;
-  justify-content: flex-end;
-}
-
 .ch-card-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(4px);
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  color: #fff;
   font-size: 18px;
-  margin-bottom: 4px;
+  margin-bottom: 5px;
+
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease;
 }
+
+.ch-card:hover .ch-card-icon {
+  transform: scale(1.06);
+}
+
+/* Health */
+
+.ch-card-icon-signal {
+  background: var(--signal-tint);
+  color: var(--signal);
+  box-shadow: 0 5px 14px rgba(60, 100, 220, 0.08);
+}
+
+.ch-card-signal::before {
+  background: var(--signal);
+}
+
+.ch-card-signal:hover {
+  border-color: rgba(60, 100, 220, 0.35);
+}
+
+/* Motor */
+
+.ch-card-icon-motor {
+  background: var(--motor-tint);
+  color: var(--motor);
+  box-shadow: 0 5px 14px rgba(30, 150, 160, 0.08);
+}
+
+.ch-card-motor::before {
+  background: var(--motor);
+}
+
+.ch-card-motor:hover {
+  border-color: rgba(30, 150, 160, 0.35);
+}
+
+/* ================================
+   CARD TEXT
+================================ */
 
 .ch-card h2 {
   margin: 0;
   font-size: 18px;
   line-height: 1.3;
   font-weight: 700;
-  color: #fff;
+  color: var(--ink);
   letter-spacing: -0.015em;
 }
 
 .ch-card-desc {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--slate);
   font-size: 13px;
   line-height: 1.6;
   margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  flex: 1;
 }
 
 /* ================================
@@ -145,22 +221,22 @@
 ================================ */
 
 .ch-card-footer {
-  position: relative;
-  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  padding: 16px 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 18px;
+  padding-top: 14px;
+
+  border-top: 1px solid var(--line);
 }
 
 .ch-card-stat {
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--slate-light);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.055em;
 }
 
 .ch-card-cta {
@@ -169,8 +245,16 @@
   gap: 7px;
   font-size: 12.5px;
   font-weight: 700;
-  color: #fff;
+  color: var(--ink);
   transition: gap 0.2s ease;
+}
+
+.ch-card-signal .ch-card-cta {
+  color: var(--signal-dark);
+}
+
+.ch-card-motor .ch-card-cta {
+  color: var(--motor-dark);
 }
 
 .ch-card-cta svg {
@@ -178,11 +262,11 @@
   transition: transform 0.2s ease;
 }
 
-.ch-card:hover:not(.ch-card-disabled) .ch-card-cta {
+.ch-card:hover .ch-card-cta {
   gap: 10px;
 }
 
-.ch-card:hover:not(.ch-card-disabled) .ch-card-cta svg {
+.ch-card:hover .ch-card-cta svg {
   transform: translateX(2px);
 }
 
@@ -194,6 +278,9 @@
   .ch-page {
     padding-bottom: 50px;
   }
+  .ch-hero {
+    padding: 28px 24px 34px;
+  }
   .ch-grid {
     width: min(100%, 700px);
     margin-top: 50px;
@@ -201,6 +288,12 @@
 }
 
 @media (max-width: 650px) {
+  .ch-header {
+    align-items: flex-start;
+  }
+  .ch-header-text h1 {
+    font-size: 23px;
+  }
   .ch-grid {
     grid-template-columns: 1fr;
     width: min(100%, 420px);
@@ -210,29 +303,4 @@
   .ch-card {
     min-height: 270px;
   }
-}
-/* ================================
-   FIXED SCREEN (this page only)
-================================ */
-
-.ch-page {
-  height: 100vh;
-  overflow: hidden;
-  padding-bottom: 0;
-}
-
-/* freeze the shared PageHeader only within this page */
-.ch-page .ph-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  flex-shrink: 0;
-}
-
-/* scrollable body area under frozen header */
-.ch-grid {
-  overflow-y: auto;
-  max-height: calc(100vh - 100px); /* adjust 100px if header height differs */
-  margin-top: 40px;
-  padding-bottom: 40px;
 }
