@@ -72,6 +72,11 @@ function MotorProposalForm() {
 
   const [mode, setMode] = useState("manual");
 
+  // Name of the person the policy is FOR (may differ from the logged-in
+  // account — broker/family submissions). Separate from any one vehicle.
+  const [applicantFullName, setApplicantFullName] = useState("");
+  const [applicantNameTouched, setApplicantNameTouched] = useState(false);
+
   // All vehicles that have already been saved
   const [savedVehicles, setSavedVehicles] = useState([]);
 
@@ -302,6 +307,16 @@ function MotorProposalForm() {
       return;
     }
 
+    // Applicant name only required for a NEW (batch) submission. An edit
+    // updates an existing proposal in place and keeps its original name —
+    // there's nothing to collect here.
+    if (editingProposalId == null && !applicantFullName.trim()) {
+      setApplicantNameTouched(true);
+      setToast("Please enter the applicant's full name.");
+      document.querySelector(".mpf-applicant-name")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+
     // Guard: if a vehicle is currently open for editing and its fields
     // were changed but "Update Vehicle" was never clicked, those changes
     // only live in currentVehicle — savedVehicles (what actually gets
@@ -340,7 +355,7 @@ function MotorProposalForm() {
         // (app/vehicle/batch_router.py) — one call, N independent vehicle
         // proposals created, each scored by the real vehicle risk model.
         const payload = savedVehicles.map(toBackendVehicle);
-        await submitVehicleProposalsBatch(payload);
+        await submitVehicleProposalsBatch(applicantFullName.trim(), payload);
       }
       setSubmitted(true);
     } catch (err) {
@@ -479,6 +494,31 @@ function MotorProposalForm() {
         </div>
 
         <div className="mpf-content">
+
+          {editingProposalId == null && (
+            <div className="mpf-card mpf-applicant-name">
+              <label htmlFor="mpf-applicant-full-name">
+                Applicant Full Name
+                <span className="mpf-required">*</span>
+              </label>
+              <p className="mpf-applicant-name-hint">
+                Name of the person this policy is for. Submitting on behalf of
+                someone else (family member, client)? Enter their name here —
+                it doesn't have to match your account.
+              </p>
+              <input
+                id="mpf-applicant-full-name"
+                type="text"
+                value={applicantFullName}
+                onChange={(e) => setApplicantFullName(e.target.value)}
+                onBlur={() => setApplicantNameTouched(true)}
+                placeholder="Enter applicant's full name"
+              />
+              {applicantNameTouched && !applicantFullName.trim() && (
+                <span className="mpf-field-error">Full name is required.</span>
+              )}
+            </div>
+          )}
 
           {mode === "excel" && (
             <div className="mpf-card mpf-excel-card">

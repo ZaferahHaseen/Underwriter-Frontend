@@ -336,6 +336,43 @@
   box-sizing: border-box;
 }
 
+.mpf-applicant-name {
+  margin-bottom: 20px;
+}
+
+.mpf-applicant-name label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.mpf-applicant-name .mpf-required {
+  color: var(--danger, #d33);
+  margin-left: 2px;
+}
+
+.mpf-applicant-name-hint {
+  color: var(--text-muted, #667085);
+  font-size: 0.85rem;
+  margin: 0 0 10px;
+}
+
+.mpf-applicant-name input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm, 6px);
+  font-size: 1rem;
+}
+
+.mpf-applicant-name .mpf-field-error {
+  display: block;
+  color: var(--danger, #d33);
+  font-size: 0.85rem;
+  margin-top: 6px;
+}
+
 /* =========================================================
    VEHICLE COUNT
    ========================================================= */

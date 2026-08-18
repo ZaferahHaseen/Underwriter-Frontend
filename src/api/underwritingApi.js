@@ -317,11 +317,11 @@ export async function getMyVehiclePolicies() {
 // ---------------------------------------------------------------------------
 // VEHICLE (Motor) endpoints
 // ---------------------------------------------------------------------------
-export async function submitVehicleProposalsBatch(vehicles) {
+export async function submitVehicleProposalsBatch(fullName, vehicles) {
   const res = await fetch(`${API_BASE}/api/v1/vehicle/proposals/batch`, {
     method: "POST",
     headers: { "Content-Type": "application/json", ...authHeaders() },
-    body: JSON.stringify(vehicles),
+    body: JSON.stringify({ full_name: fullName, vehicles }),
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
