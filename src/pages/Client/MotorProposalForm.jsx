@@ -474,20 +474,27 @@ function MotorProposalForm() {
 
         {mode === "manual" && (
           <nav className="mpf-steps">
-            {STEPS.map((step, index) => (
-              <button
-                key={step.id}
-                type="button"
-                className={`mpf-step ${activeStep === step.id ? "mpf-step-active" : ""}`}
-                onClick={() => scrollToStep(step.id)}
-              >
-                <span className="mpf-step-num">{step.icon}</span>
-                <span className="mpf-step-label">
-                  <em>Step {index + 1}</em>
-                  {step.label}
-                </span>
-              </button>
-            ))}
+            {STEPS.map((step, index) => {
+              const activeIndex = STEPS.findIndex((s) => s.id === activeStep);
+              const isActive = activeStep === step.id;
+              const isDone = index < activeIndex;
+              return (
+                <button
+                  key={step.id}
+                  type="button"
+                  className={`mpf-step ${isActive ? "mpf-step-active" : ""} ${isDone ? "mpf-step-done" : ""}`}
+                  onClick={() => scrollToStep(step.id)}
+                >
+                  <span className="mpf-step-num">
+                    {isDone ? <FaCheckCircle /> : step.icon}
+                  </span>
+                  <span className="mpf-step-label">
+                    <em>Step {index + 1}</em>
+                    {step.label}
+                  </span>
+                </button>
+              );
+            })}
           </nav>
         )}
 
@@ -508,24 +515,35 @@ function MotorProposalForm() {
 
       <div className="mpf-main">
 
-        <div className="mpf-tabs">
-          <button
-            type="button"
-            className={`mpf-tab ${mode === "manual" ? "mpf-tab-active" : ""}`}
-            onClick={() => setMode("manual")}
-          >
-            <FaEdit />
-            Fill Manually
-          </button>
+        <div className="mpf-main-header">
+          <div className="mpf-main-header-text">
+            <span className="mpf-main-eyebrow">Motor Proposal</span>
+            <h2>
+              {mode === "excel"
+                ? "Bulk upload via Excel"
+                : STEPS.find((s) => s.id === activeStep)?.label || "Vehicle Details"}
+            </h2>
+          </div>
 
-          <button
-            type="button"
-            className={`mpf-tab ${mode === "excel" ? "mpf-tab-active" : ""}`}
-            onClick={() => setMode("excel")}
-          >
-            <FaFileExcel />
-            Upload Excel
-          </button>
+          <div className="mpf-tabs">
+            <button
+              type="button"
+              className={`mpf-tab ${mode === "manual" ? "mpf-tab-active" : ""}`}
+              onClick={() => setMode("manual")}
+            >
+              <FaEdit />
+              Fill Manually
+            </button>
+
+            <button
+              type="button"
+              className={`mpf-tab ${mode === "excel" ? "mpf-tab-active" : ""}`}
+              onClick={() => setMode("excel")}
+            >
+              <FaFileExcel />
+              Upload Excel
+            </button>
+          </div>
         </div>
 
         <div className="mpf-content">

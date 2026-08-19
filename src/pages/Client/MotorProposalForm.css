@@ -189,6 +189,16 @@
   color: white;
 }
 
+.mpf-step-done .mpf-step-num {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--motor);
+  border: 1px solid rgba(23, 135, 90, 0.5);
+}
+
+.mpf-step-done .mpf-step-label {
+  color: rgba(255, 255, 255, 0.72);
+}
+
 .mpf-step-label {
   display: flex;
   flex-direction: column;
@@ -241,26 +251,54 @@
 }
 
 /* =========================================================
-   TABS
+   IN-CONTENT HEADER (gives the scrollable pane a fixed
+   point of context — which step/mode you're in)
    ========================================================= */
 
-.mpf-tabs {
+.mpf-main-header {
   max-width: 1200px;
   width: 100%;
   margin: 0 auto 20px;
   flex-shrink: 0;
 
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.mpf-main-eyebrow {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--slate-light);
+  margin-bottom: 4px;
+}
+
+.mpf-main-header-text h2 {
+  font-size: 19px;
+  margin: 0;
+}
+
+/* =========================================================
+   TABS
+   ========================================================= */
+
+.mpf-tabs {
+  flex-shrink: 0;
+
+  display: flex;
   gap: 8px;
 
-  background: var(--paper);
+  background: var(--mist);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
 
-  padding: 6px;
+  padding: 4px;
   width: fit-content;
-
-  box-shadow: var(--shadow-sm);
 }
 
 .mpf-tab {
@@ -332,7 +370,9 @@
 }
 
 .mpf-excel-card {
+  max-width: 760px;
   width: 100%;
+  margin: 24px auto 0;
   box-sizing: border-box;
 }
 

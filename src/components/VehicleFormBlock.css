@@ -147,21 +147,29 @@
 .vfb-input {
   padding: 10px 12px;
   border-radius: var(--radius-sm);
-  border: 1.5px solid var(--line);
-  background: var(--mist);
+  border: 1.5px solid #C9D2DE;
+  background: var(--paper);
   font-size: 13.5px;
   color: var(--ink);
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.vfb-input:hover {
+  border-color: #ADB8C7;
 }
 
 .vfb-input:focus {
   outline: none;
   border-color: var(--motor);
-  background: var(--paper);
+  box-shadow: 0 0 0 3px rgba(23, 135, 90, 0.12);
 }
 
 .vfb-input-error {
   border-color: var(--risk-high);
+}
+
+.vfb-input-error:focus {
+  box-shadow: 0 0 0 3px rgba(214, 69, 69, 0.12);
 }
 
 .vfb-field-error {
@@ -173,6 +181,12 @@
 select.vfb-input {
   cursor: pointer;
   text-transform: capitalize;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%234A5A70' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
 }
 
 @media (max-width: 900px) {
