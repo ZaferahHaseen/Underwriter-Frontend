@@ -13,6 +13,7 @@ import {
 import "./ClientPolicy.css";
 import { getMyPolicies, getProposal, isLoggedIn, clearAuth } from "../../api/underwritingApi";
 import PageHeader from "../../components/PageHeader";
+import { formatName, formatCurrency } from "../../utils/format";
 
 // WIRED TO BACKEND: GET /api/v1/client/my-policies (JWT-identified, see
 // app/client_router.py). No dummy fallback — an unauthenticated visit is
@@ -39,14 +40,6 @@ function statusTone(status) {
   }
 
   return "tone-pending";
-}
-
-function formatMoney(value) {
-  if (value === null || value === undefined || value === "") {
-    return "—";
-  }
-
-  return `₹${Number(value).toLocaleString("en-IN")}`;
 }
 
 function ClientPolicy() {
@@ -144,7 +137,8 @@ function ClientPolicy() {
     );
   }
 
-  const clientName = client?.full_name || "Policyholder";
+  const rawName = formatName(client?.full_name);
+  const clientName = rawName !== "—" ? rawName : "Policyholder";
 
   return (
     <div className="cp-page">
@@ -188,8 +182,7 @@ function ClientPolicy() {
             </h2>
 
             <p>
-              View your submitted applications, track their status and
-              coverage details in one place.
+              Track application status and coverage details in one place.
             </p>
           </div>
 
@@ -265,7 +258,7 @@ function ClientPolicy() {
 
 
               <div className="cp-summary-card">
-                <div className="cp-summary-icon cp-icon-green">
+                <div className={`cp-summary-icon cp-icon-green${activePolicies === 0 ? " cp-icon-muted" : ""}`}>
                   <FaHeartbeat />
                 </div>
 
@@ -284,7 +277,9 @@ function ClientPolicy() {
 
                 <div>
                   <span>Total Premium</span>
-                  <strong>{formatMoney(totalPremium)}</strong>
+                  <strong>
+                    {formatCurrency(totalPremium, { treatZeroAsMissing: true, fallback: "Pending" })}
+                  </strong>
                   <small>Across all policies</small>
                 </div>
               </div>
@@ -297,7 +292,7 @@ function ClientPolicy() {
 
                 <div>
                   <span>Total Sum Assured</span>
-                  <strong>{formatMoney(totalSumAssured)}</strong>
+                  <strong>{formatCurrency(totalSumAssured)}</strong>
                   <small>Total insured value</small>
                 </div>
               </div>
@@ -312,10 +307,6 @@ function ClientPolicy() {
 
               <div className="cp-card-heading">
                 <div>
-                  <span className="cp-section-label">
-                    Insurance Portfolio
-                  </span>
-
                   <h3>Your Policies</h3>
 
                   <p>
@@ -380,14 +371,14 @@ function ClientPolicy() {
 
                         <td>
                           <strong className="cp-table-value">
-                            {formatMoney(policy.sum_assured)}
+                            {formatCurrency(policy.sum_assured)}
                           </strong>
                         </td>
 
 
                         <td>
                           <strong className="cp-premium">
-                            {formatMoney(policy.premium)}
+                            {formatCurrency(policy.premium, { treatZeroAsMissing: true, fallback: "Pending" })}
                           </strong>
                         </td>
 

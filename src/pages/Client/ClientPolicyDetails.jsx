@@ -11,12 +11,36 @@ import {
   FaBriefcase,
   FaMapMarkerAlt,
   FaPhone,
-  FaHeart,
   FaMoneyBillWave,
+  FaBirthdayCake,
+  FaRulerVertical,
+  FaWeight,
+  FaSmoking,
+  FaWineGlassAlt,
+  FaNotesMedical,
+  FaUsers,
 } from "react-icons/fa";
 
 import "./ClientPolicyDetails.css";
 import PageHeader from "../../components/PageHeader";
+import { formatName, formatCurrency } from "../../utils/format";
+
+function statusTone(status) {
+  const s = (status || "").toLowerCase();
+
+  if (s.includes("active") || s.includes("approved")) return "cpd-tone-active";
+  if (s.includes("pending") || s.includes("review")) return "cpd-tone-pending";
+  if (s.includes("expired") || s.includes("lapsed") || s.includes("rejected")) return "cpd-tone-expired";
+
+  return "cpd-tone-pending";
+}
+
+/** Capitalize a plain word/answer value: "no" -> "No", "office" -> "Office" */
+function formatWord(value, fallback = "Not provided") {
+  if (value === null || value === undefined || value === "") return fallback;
+  const str = String(value);
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
 
 function ClientPolicyDetails() {
   const navigate = useNavigate();
@@ -91,47 +115,41 @@ function ClientPolicyDetails() {
       }
     }
 
-    return "—";
+    return null;
   };
 
-  const fullName = getValue(
+  const fullNameRaw = getValue(
     details.full_name,
     details.fullName,
     policy.full_name
   );
+  const fullName = fullNameRaw ? formatName(fullNameRaw) : "Not provided";
 
-  const email = getValue(
-    details.email,
-    policy.email
-  );
+  const email = getValue(details.email, policy.email) ?? "Not provided";
 
   const phone = getValue(
     details.phone,
     details.phone_number,
     policy.phone
-  );
+  ) ?? "Not provided";
 
-  const age = getValue(
-    details.age,
-    policy.age
-  );
+  const age = getValue(details.age, policy.age) ?? "Not provided";
 
-  const occupation = getValue(
-    details.occupation,
-    policy.occupation
+  const occupation = formatWord(
+    getValue(details.occupation, policy.occupation)
   );
 
   const address = getValue(
     details.address,
     details.residential_address,
     policy.address
-  );
+  ) ?? "Not provided";
 
   const policyNumber = getValue(
     policy.policy_number,
     policy.reference_id,
     policy.id
-  );
+  ) ?? "—";
 
   const insuranceType = getValue(
     policy.insurance_type,
@@ -139,10 +157,7 @@ function ClientPolicyDetails() {
     "Health Insurance"
   );
 
-  const status = getValue(
-    policy.status,
-    "Pending"
-  );
+  const status = getValue(policy.status, "Pending");
 
   const coverage = getValue(
     policy.sum_assured,
@@ -150,25 +165,19 @@ function ClientPolicyDetails() {
     details.coverage_amount
   );
 
-  const premium = getValue(
-    policy.premium,
-    details.premium
-  );
+  const premium = getValue(policy.premium, details.premium);
 
-  const issueDate = getValue(
-    policy.issue_date,
-    details.issue_date
-  );
+  const issueDate = getValue(policy.issue_date, details.issue_date) ?? "Not set";
 
-  const expiryDate = getValue(
-    policy.expiry_date,
-    details.expiry_date
-  );
+  const expiryDate = getValue(policy.expiry_date, details.expiry_date) ?? "Not set";
+
+  const heightVal = getValue(details.height, details.height_cm);
+  const weightVal = getValue(details.weight, details.weight_kg);
 
   return (
     <div className="cpd-page">
 
-      {/* TOP HEADER */}
+      {/* TOP HEADER — sole Edit action lives here */}
       <PageHeader
         theme="health"
         title="Proposal Details"
@@ -190,13 +199,7 @@ function ClientPolicyDetails() {
         <div className="cpd-page-heading">
 
           <div>
-            <span className="cpd-eyebrow">
-              {insuranceType}
-            </span>
-
-            <h1>Proposal Details</h1>
-
-            <p>
+            <p className="cpd-subline">
               Review the information submitted in your insurance proposal.
             </p>
           </div>
@@ -206,7 +209,7 @@ function ClientPolicyDetails() {
               Policy Status
             </span>
 
-            <span className="cpd-status">
+            <span className={`cpd-status ${statusTone(status)}`}>
               {status}
             </span>
           </div>
@@ -247,21 +250,15 @@ function ClientPolicyDetails() {
             <InfoItem
               icon={<FaMoneyBillWave />}
               label="Coverage Amount"
-              value={
-                coverage !== "—"
-                  ? `₹${Number(coverage).toLocaleString("en-IN")}`
-                  : "—"
-              }
+              value={formatCurrency(coverage)}
+              empty={coverage === null || coverage === undefined}
             />
 
             <InfoItem
               icon={<FaMoneyBillWave />}
               label="Premium"
-              value={
-                premium !== "—"
-                  ? `₹${Number(premium).toLocaleString("en-IN")}`
-                  : "—"
-              }
+              value={formatCurrency(premium, { treatZeroAsMissing: true, fallback: "Pending calculation" })}
+              empty={premium === null || premium === undefined || Number(premium) === 0}
             />
 
             <InfoItem
@@ -303,36 +300,42 @@ function ClientPolicyDetails() {
               icon={<FaUser />}
               label="Full Name"
               value={fullName}
+              empty={!fullNameRaw}
             />
 
             <InfoItem
               icon={<FaEnvelope />}
               label="Email Address"
               value={email}
+              empty={email === "Not provided"}
             />
 
             <InfoItem
               icon={<FaPhone />}
               label="Phone Number"
               value={phone}
+              empty={phone === "Not provided"}
             />
 
             <InfoItem
-              icon={<FaCalendarAlt />}
+              icon={<FaBirthdayCake />}
               label="Age"
               value={age}
+              empty={age === "Not provided"}
             />
 
             <InfoItem
               icon={<FaBriefcase />}
               label="Occupation"
               value={occupation}
+              empty={occupation === "Not provided"}
             />
 
             <InfoItem
               icon={<FaMapMarkerAlt />}
               label="Residential Address"
               value={address}
+              empty={address === "Not provided"}
             />
 
           </div>
@@ -359,71 +362,41 @@ function ClientPolicyDetails() {
           <div className="cpd-grid">
 
             <InfoItem
-              icon={<FaHeart />}
+              icon={<FaRulerVertical />}
               label="Height"
-              value={
-                getValue(
-                  details.height,
-                  details.height_cm
-                ) !== "—"
-                  ? `${getValue(
-                      details.height,
-                      details.height_cm
-                    )} cm`
-                  : "—"
-              }
+              value={heightVal !== null ? `${heightVal} cm` : "Not provided"}
+              empty={heightVal === null}
             />
 
             <InfoItem
-              icon={<FaHeart />}
+              icon={<FaWeight />}
               label="Weight"
-              value={
-                getValue(
-                  details.weight,
-                  details.weight_kg
-                ) !== "—"
-                  ? `${getValue(
-                      details.weight,
-                      details.weight_kg
-                    )} kg`
-                  : "—"
-              }
+              value={weightVal !== null ? `${weightVal} kg` : "Not provided"}
+              empty={weightVal === null}
             />
 
             <InfoItem
-              icon={<FaHeart />}
+              icon={<FaSmoking />}
               label="Smoker"
-              value={getValue(
-                details.smoker,
-                details.smoking
-              )}
+              value={formatWord(getValue(details.smoker, details.smoking))}
             />
 
             <InfoItem
-              icon={<FaHeart />}
+              icon={<FaWineGlassAlt />}
               label="Alcohol Consumption"
-              value={getValue(
-                details.alcohol,
-                details.alcohol_consumption
-              )}
+              value={formatWord(getValue(details.alcohol, details.alcohol_consumption))}
             />
 
             <InfoItem
-              icon={<FaHeart />}
+              icon={<FaNotesMedical />}
               label="Pre-existing Disease"
-              value={getValue(
-                details.preExistingDisease,
-                details.pre_existing_disease
-              )}
+              value={formatWord(getValue(details.preExistingDisease, details.pre_existing_disease))}
             />
 
             <InfoItem
-              icon={<FaHeart />}
+              icon={<FaUsers />}
               label="Family Medical History"
-              value={getValue(
-                details.familyHistory,
-                details.family_medical_history
-              )}
+              value={formatWord(getValue(details.familyHistory, details.family_medical_history))}
             />
 
           </div>
@@ -431,7 +404,8 @@ function ClientPolicyDetails() {
         </section>
 
 
-        {/* EDIT AREA */}
+        {/* BOTTOM ACTION — single "back" action only; Edit lives in the header,
+            avoiding two differently-styled buttons for the same action. */}
         <div className="cpd-bottom-actions">
 
           <button
@@ -440,14 +414,6 @@ function ClientPolicyDetails() {
           >
             <FaArrowLeft />
             Back to Policies
-          </button>
-
-          <button
-            className="cpd-primary-btn"
-            onClick={handleEdit}
-          >
-            <FaEdit />
-            Edit Proposal
           </button>
 
         </div>
@@ -460,7 +426,7 @@ function ClientPolicyDetails() {
 
 /* Reusable information item */
 
-function InfoItem({ icon, label, value }) {
+function InfoItem({ icon, label, value, empty = false }) {
   return (
     <div className="cpd-info-item">
 
@@ -474,7 +440,7 @@ function InfoItem({ icon, label, value }) {
           {label}
         </span>
 
-        <strong className="cpd-info-value">
+        <strong className={`cpd-info-value${empty ? " cpd-info-value-empty" : ""}`}>
           {value}
         </strong>
 

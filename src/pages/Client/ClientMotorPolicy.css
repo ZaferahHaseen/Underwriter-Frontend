@@ -318,6 +318,11 @@
   color: #416c94;
 }
 
+.cm-icon-muted {
+  background: #F1F2F4 !important;
+  color: #9CA3AF !important;
+}
+
 
 .cm-summary-card span {
   display: block;
@@ -544,6 +549,12 @@
 .cm-registration {
   font-weight: 650;
   color: #3f4c57;
+}
+
+.cm-value-empty {
+  font-weight: 500 !important;
+  font-style: italic;
+  color: var(--slate-light) !important;
 }
 
 

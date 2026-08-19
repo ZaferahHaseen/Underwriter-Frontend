@@ -332,31 +332,35 @@ function ClientDashboard() {
   // --------------------------------------------------
   // Detect active section while scrolling
   // --------------------------------------------------
+  // Position-based instead of IntersectionObserver: on every scroll we
+  // find the section whose top has most recently passed a fixed
+  // "trigger line" near the top of the viewport. This is deterministic
+  // (always reflects exactly what's under the trigger line) and avoids
+  // IntersectionObserver rootMargin edge cases where a section's
+  // heading is visible but the observer hasn't fired an update yet.
 
   useEffect(() => {
-    const sections = SECTION_IDS.map((id) =>
-      document.getElementById(id)
-    ).filter(Boolean);
+    const TRIGGER_OFFSET = 160; // px from top of viewport
 
-    if (sections.length === 0) return;
+    const handleScroll = () => {
+      let current = SECTION_IDS[0];
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveStep(entry.target.id);
-          }
-        });
-      },
-      {
-        rootMargin: "-15% 0px -70% 0px",
-        threshold: 0,
+      for (const id of SECTION_IDS) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+
+        const top = el.getBoundingClientRect().top;
+        if (top - TRIGGER_OFFSET <= 0) {
+          current = id;
+        }
       }
-    );
 
-    sections.forEach((section) => observer.observe(section));
+      setActiveStep(current);
+    };
 
-    return () => observer.disconnect();
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // --------------------------------------------------
@@ -642,36 +646,38 @@ function ClientDashboard() {
 
         <nav className="client-steps">
 
-          {STEPS.map((step, index) => (
+          {STEPS.map((step, index) => {
+            const activeIndex = STEPS.findIndex((s) => s.id === activeStep);
+            const isActive = activeStep === step.id;
+            const isCompleted = activeIndex > index;
 
-            <button
-              key={step.id}
-              type="button"
-              className={`client-step ${
-                activeStep === step.id
-                  ? "client-step-active"
-                  : ""
-              }`}
-              onClick={() => scrollToStep(step.id)}
-            >
+            return (
+              <button
+                key={step.id}
+                type="button"
+                className={`client-step ${isActive ? "client-step-active" : ""} ${
+                  isCompleted ? "client-step-done" : ""
+                }`}
+                onClick={() => scrollToStep(step.id)}
+              >
 
-              <span className="client-step-num">
-                {step.icon}
-              </span>
+                <span className="client-step-num">
+                  {isCompleted ? <FaCheckCircle /> : step.icon}
+                </span>
 
-              <span className="client-step-label">
+                <span className="client-step-label">
 
-                <em>
-                  Step {index + 1}
-                </em>
+                  <em>
+                    Step {index + 1}
+                  </em>
 
-                {step.label}
+                  {step.label}
 
-              </span>
+                </span>
 
-            </button>
-
-          ))}
+              </button>
+            );
+          })}
 
         </nav>
 
@@ -1032,7 +1038,7 @@ function ClientDashboard() {
                   type="text"
                   value={formData.bmi}
                   readOnly
-                  placeholder="—"
+                  placeholder="Add height & weight"
                 />
 
               </div>

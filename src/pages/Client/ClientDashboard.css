@@ -187,6 +187,18 @@
   color: var(--ink);
 }
 
+/* Completed steps recede (dim) but keep a visible checkmark, so the
+   rail reads as a progress trail rather than only ever highlighting
+   one step with no memory of what's already done. */
+.client-step-done .client-step-num {
+  background: rgba(79, 209, 150, 0.18);
+  color: #6fe0ab;
+}
+
+.client-step-done .client-step-label {
+  color: rgba(255, 255, 255, 0.4);
+}
+
 .client-step-label {
   display: flex;
   flex-direction: column;
@@ -226,11 +238,12 @@
 
 .client-content {
   min-width: 0;
-  padding: 0 72px;
+  padding: 0 72px 32px;
 }
 
 .client-section {
-  max-width: 760px;
+  max-width: 1180px;
+  margin: 0 auto;
   padding: 64px 0 48px;
   border-bottom: 1px solid var(--line);
 }
@@ -351,33 +364,46 @@ input[readonly] {
 .question-box {
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  padding: 20px;
-  background: var(--paper);
+  padding: 16px 18px;
+  background: var(--mist);
 }
 
 .question-box h3 {
-  font-size: 14px;
-  margin-bottom: 14px;
+  font-size: 13.5px;
   font-weight: 600;
+  margin: 0 0 12px;
 }
 
 .radio-group {
-  display: flex;
-  gap: 28px;
+  display: inline-flex;
+  gap: 4px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 3px;
 }
 
 .radio-group label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   cursor: pointer;
-  font-size: 14px;
-  color: var(--ink);
+  font-size: 13px;
+  color: var(--slate);
+  padding: 5px 12px;
+  border-radius: calc(var(--radius-sm) - 3px);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.radio-group label:has(input:checked) {
+  background: var(--signal-tint);
+  color: var(--signal-dark);
+  font-weight: 600;
 }
 
 .radio-group input {
-  width: 16px;
-  height: 16px;
+  width: 13px;
+  height: 13px;
   accent-color: var(--signal);
 }
 
@@ -473,7 +499,9 @@ input[readonly] {
 .client-submit-bar {
   position: sticky;
   bottom: 0;
-  max-width: 760px;
+  z-index: 20;
+  max-width: 1180px;
+  margin: 8px auto 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -481,7 +509,10 @@ input[readonly] {
   background: var(--paper);
   border-top: 1px solid var(--line);
   padding: 20px 0;
-  margin-top: 8px;
+  /* Lift it visually off the content behind it so it reads as an
+     overlay bar, not just more page content, and never lets scrolling
+     text bleed through under it. */
+  box-shadow: 0 -8px 24px -12px rgba(15, 35, 55, 0.12);
 }
 
 .client-submit-bar p {

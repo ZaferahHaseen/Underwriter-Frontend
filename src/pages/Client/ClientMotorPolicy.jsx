@@ -13,6 +13,7 @@ import {
 import "./ClientMotorPolicy.css";
 import { getMyVehiclePolicies, getVehicleProposal, isLoggedIn } from "../../api/underwritingApi";
 import PageHeader from "../../components/PageHeader";
+import { formatName, formatCurrency, formatField } from "../../utils/format";
 
 // WIRED TO BACKEND: GET /api/v1/client/my-vehicle-policies (JWT-identified,
 // see app/client_router.py). No dummy fallback — ProtectedRoute already
@@ -26,14 +27,6 @@ function statusTone(status) {
   if (s.includes("expired") || s.includes("lapsed")) return "tone-expired";
 
   return "tone-pending";
-}
-
-function formatMoney(value) {
-  if (value === null || value === undefined || value === "") {
-    return "—";
-  }
-
-  return `₹${Number(value).toLocaleString("en-IN")}`;
 }
 
 function ClientMotorPolicy() {
@@ -109,6 +102,9 @@ function ClientMotorPolicy() {
     );
   }
 
+  const rawName = formatName(client?.full_name);
+  const clientName = rawName !== "—" ? rawName : "Policyholder";
+
   return (
     <div className="cm-page">
 
@@ -150,15 +146,14 @@ function ClientMotorPolicy() {
             </h2>
 
             <p>
-              View your active vehicle insurance policies, coverage
-              details and policy information in one place.
+              Coverage details and policy information in one place.
             </p>
           </div>
 
           <div className="cm-client-info">
             <div className="cm-client-avatar">
-              {client?.full_name
-                ?.split(" ")
+              {clientName
+                .split(" ")
                 .filter(Boolean)
                 .slice(0, 2)
                 .map((word) => word[0])
@@ -168,7 +163,7 @@ function ClientMotorPolicy() {
 
             <div>
               <span>Policyholder</span>
-              <strong>{client?.full_name || "Policyholder"}</strong>
+              <strong>{clientName}</strong>
             </div>
           </div>
         </section>
@@ -193,7 +188,7 @@ function ClientMotorPolicy() {
 
 
           <div className="cm-summary-card">
-            <div className="cm-summary-icon cm-icon-green">
+            <div className={`cm-summary-icon cm-icon-green${activePolicies === 0 ? " cm-icon-muted" : ""}`}>
               <FaCarSide />
             </div>
 
@@ -212,7 +207,9 @@ function ClientMotorPolicy() {
 
             <div>
               <span>Total Premium</span>
-              <strong>{formatMoney(totalPremium)}</strong>
+              <strong>
+                {formatCurrency(totalPremium, { treatZeroAsMissing: true, fallback: "Pending" })}
+              </strong>
               <small>Across all policies</small>
             </div>
           </div>
@@ -225,7 +222,7 @@ function ClientMotorPolicy() {
 
             <div>
               <span>Total IDV</span>
-              <strong>{formatMoney(totalIDV)}</strong>
+              <strong>{formatCurrency(totalIDV)}</strong>
               <small>Total insured value</small>
             </div>
           </div>
@@ -240,10 +237,6 @@ function ClientMotorPolicy() {
 
           <div className="cm-card-heading">
             <div>
-              <span className="cm-section-label">
-                Insurance Portfolio
-              </span>
-
               <h3>Vehicle Policies</h3>
 
               <p>
@@ -299,7 +292,15 @@ function ClientMotorPolicy() {
                           </strong>
 
                           <span>
-                            {vehicle.year} • <span style={{ textTransform: "capitalize" }}>{vehicle.vehicle_type}</span>
+                            {formatField(vehicle.year, "Year N/A")}
+                            {vehicle.vehicle_type ? (
+                              <>
+                                {" "}•{" "}
+                                <span style={{ textTransform: "capitalize" }}>
+                                  {vehicle.vehicle_type}
+                                </span>
+                              </>
+                            ) : null}
                           </span>
                         </div>
 
@@ -308,17 +309,19 @@ function ClientMotorPolicy() {
 
 
                     <td>
-                      <span className="cm-registration">
-                        {vehicle.registration_number || "—"}
+                      <span className={`cm-registration${!vehicle.registration_number ? " cm-value-empty" : ""}`}>
+                        {formatField(vehicle.registration_number, "Not registered")}
                       </span>
                     </td>
 
 
                     <td>
                       <div className="cm-date-cell">
-                        <span>{vehicle.issue_date || "—"}</span>
+                        <span className={!vehicle.issue_date ? "cm-value-empty" : ""}>
+                          {formatField(vehicle.issue_date, "Not set")}
+                        </span>
                         <small>
-                          to {vehicle.expiry_date || "—"}
+                          to {formatField(vehicle.expiry_date, "not set")}
                         </small>
                       </div>
                     </td>
@@ -326,7 +329,7 @@ function ClientMotorPolicy() {
 
                     <td>
                       <strong className="cm-premium">
-                        {formatMoney(vehicle.premium)}
+                        {formatCurrency(vehicle.premium, { treatZeroAsMissing: true, fallback: "Pending" })}
                       </strong>
                     </td>
 

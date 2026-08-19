@@ -190,11 +190,23 @@
 
   border-radius: 999px;
 
-  background: var(--risk-low-tint);
-  color: var(--risk-low);
-
   font-size: 12px;
   font-weight: 800;
+}
+
+.cpd-tone-active {
+  background: var(--risk-low-tint);
+  color: var(--risk-low);
+}
+
+.cpd-tone-pending {
+  background: #fbf3dc;
+  color: #a57d1f;
+}
+
+.cpd-tone-expired {
+  background: var(--risk-high-tint);
+  color: var(--risk-high);
 }
 
 
@@ -327,6 +339,18 @@
   font-weight: 700;
 
   word-break: break-word;
+}
+
+.cpd-info-value-empty {
+  color: var(--slate-light);
+  font-weight: 500;
+  font-style: italic;
+}
+
+.cpd-subline {
+  margin: 0;
+  color: var(--slate);
+  font-size: 14px;
 }
 
 
@@ -500,4 +524,10 @@
   .cpd-primary-btn {
     justify-content: center;
   }
+}
+/* freeze navbar on scroll — this page only */
+.cpd-page .ph-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }

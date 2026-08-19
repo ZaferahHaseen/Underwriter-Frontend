@@ -782,3 +782,7 @@
   top: 0;
   z-index: 100;
 }
+.cp-icon-muted {
+  background: #F1F2F4 !important;
+  color: #9CA3AF !important;
+}
