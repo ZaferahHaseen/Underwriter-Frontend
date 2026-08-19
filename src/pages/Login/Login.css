@@ -132,7 +132,7 @@
   color: var(--slate);
 }
 
-/* Client sub-mode tabs (new proposal vs existing client) */
+/* Client sub-mode tabs (login vs signup) */
 
 .client-mode-tabs {
   display: flex;
@@ -180,7 +180,7 @@
   font-weight: 600;
 }
 
-/* ---------- Toast (replaces the old inline banner) ---------- */
+/* ---------- Toast ---------- */
 
 @keyframes login-toast-in {
   from { opacity: 0; transform: translateY(-14px) scale(0.97); }
@@ -274,7 +274,7 @@
   border-color: var(--signal);
 }
 
-.login-form button {
+.login-submit {
   width: 100%;
   padding: 14px;
   margin-top: 28px;
@@ -286,11 +286,11 @@
   transition: background 0.15s ease;
 }
 
-.login-form button:hover {
+.login-submit:hover {
   background: var(--signal-dark);
 }
 
-.login-form button:disabled {
+.login-submit:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }

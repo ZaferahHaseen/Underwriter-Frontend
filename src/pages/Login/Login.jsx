@@ -254,6 +254,7 @@ function Login() {
           {/* Submit Button */}
           <button
             type="submit"
+            className="login-submit"
             disabled={!role || submitting}
           >
             {submitting

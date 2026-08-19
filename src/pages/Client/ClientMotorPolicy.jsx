@@ -123,7 +123,7 @@ function ClientMotorPolicy() {
             onClick={() => navigate("/client/motor/proposal")}
           >
             <FaPlus />
-            <span>Proposal Application</span>
+            <span>New Proposal</span>
           </button>
         }
       />
@@ -208,7 +208,7 @@ function ClientMotorPolicy() {
             <div>
               <span>Total Premium</span>
               <strong>
-                {formatCurrency(totalPremium, { treatZeroAsMissing: true, fallback: "Pending" })}
+                {formatCurrency(totalPremium, { treatZeroAsMissing: true, fallback: "—" })}
               </strong>
               <small>Across all policies</small>
             </div>
@@ -329,7 +329,7 @@ function ClientMotorPolicy() {
 
                     <td>
                       <strong className="cm-premium">
-                        {formatCurrency(vehicle.premium, { treatZeroAsMissing: true, fallback: "Pending" })}
+                        {formatCurrency(vehicle.premium, { treatZeroAsMissing: true, fallback: "—" })}
                       </strong>
                     </td>
 
