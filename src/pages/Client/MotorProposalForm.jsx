@@ -92,6 +92,10 @@ function MotorProposalForm() {
   // Separate from `editingIndex` (which is local-form-only, per-vehicle-in-list).
   const [editingProposalId, setEditingProposalId] = useState(null);
 
+  // Snapshot of the vehicle as it was loaded for editing — used to block
+  // re-submitting an edit when the client changed nothing at all.
+  const [originalVehicle, setOriginalVehicle] = useState(null);
+
   const [currentErrors, setCurrentErrors] = useState({});
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -131,6 +135,7 @@ function MotorProposalForm() {
 
       setSavedVehicles([mapped]);
       setCurrentVehicle(mapped);
+      setOriginalVehicle(mapped);
       setEditingIndex(0);
       // raw.id = the real vehicle proposal id (set by ClientMotorPolicy.jsx's
       // handleViewVehicle). Without this, Submit had no way to know it should
@@ -341,6 +346,18 @@ function MotorProposalForm() {
       return;
     }
 
+    // No-op edit guard — client opened the edit form but changed nothing.
+    // Resubmitting an identical vehicle just creates a duplicate/no-op
+    // version server-side, so block it here instead.
+    if (
+      editingProposalId != null &&
+      originalVehicle &&
+      JSON.stringify(savedVehicles[0]) === JSON.stringify(originalVehicle)
+    ) {
+      setToast("You haven't made any changes. Edit at least one field before submitting.");
+      return;
+    }
+
     setSubmitting(true);
     try {
       if (editingProposalId != null) {
@@ -354,8 +371,26 @@ function MotorProposalForm() {
         // WIRED TO BACKEND: POST /api/v1/vehicle/proposals/batch
         // (app/vehicle/batch_router.py) — one call, N independent vehicle
         // proposals created, each scored by the real vehicle risk model.
+        // NOTE: this endpoint always returns HTTP 200 even when every
+        // vehicle failed (e.g. duplicate) — per-item outcome is in
+        // data.results, so it has to be checked here instead of relying
+        // on a thrown error.
         const payload = savedVehicles.map(toBackendVehicle);
-        await submitVehicleProposalsBatch(applicantFullName.trim(), payload);
+        const data = await submitVehicleProposalsBatch(applicantFullName.trim(), payload);
+
+        if (data.created === 0) {
+          const firstReason = data.results?.find((r) => r.status === "error")?.reason;
+          setToast(firstReason || "None of the vehicles could be submitted. Please review and try again.");
+          setSubmitting(false);
+          return;
+        }
+
+        if (data.skipped_or_failed > 0) {
+          const firstReason = data.results?.find((r) => r.status === "error")?.reason;
+          setToast(
+            `${data.created} of ${data.total} vehicle(s) submitted. ${data.skipped_or_failed} skipped: ${firstReason || "see details"}`
+          );
+        }
       }
       setSubmitted(true);
     } catch (err) {

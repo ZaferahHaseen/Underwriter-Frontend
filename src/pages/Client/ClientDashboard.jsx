@@ -83,6 +83,10 @@ function ClientDashboard() {
   const [error, setError] = useState(null);
   const [editingProposalId, setEditingProposalId] = useState(null);
 
+  // Snapshot of the form as it was loaded for editing — used to block
+  // re-submitting an edit when the client changed nothing at all.
+  const [originalFormData, setOriginalFormData] = useState(null);
+
     // --------------------------------------------------
   // Load existing policy when editing
   // --------------------------------------------------
@@ -115,7 +119,8 @@ function ClientDashboard() {
         setEditingProposalId(policy.id);
       }
 
-      setFormData((previous) => ({
+      setFormData((previous) => {
+        const next = {
         ...previous,
 
         fullName:
@@ -205,7 +210,11 @@ function ClientDashboard() {
           details.years_with_insurer ??
           details.yearsWithInsurer ??
           previous.yearsWithInsurer,
-      }));
+        };
+
+        setOriginalFormData(next);
+        return next;
+      });
 
       // Restore document information if available
       if (details.country_code) {
@@ -420,6 +429,24 @@ function ClientDashboard() {
         "Select the document's country and type before submitting."
       );
       scrollToStep("document");
+      return;
+    }
+
+    // No-op edit guard — client opened the edit form but changed nothing.
+    // Resubmitting an identical payload just creates a duplicate/no-op
+    // version server-side, so block it here instead.
+    // (bmi excluded — it's auto-derived from height/weight by a separate
+    // effect and re-fires on load, so comparing it causes false positives.)
+    if (
+      isEditMode &&
+      editingProposalId &&
+      originalFormData &&
+      JSON.stringify({ ...formData, bmi: undefined }) ===
+        JSON.stringify({ ...originalFormData, bmi: undefined })
+    ) {
+      setError(
+        "You haven't made any changes. Edit at least one field before submitting, or go back."
+      );
       return;
     }
 
