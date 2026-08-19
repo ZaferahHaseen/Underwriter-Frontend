@@ -88,7 +88,8 @@
 
 .mvd-stat-icon-motor { background: var(--motor-tint); color: var(--motor); }
 .mvd-stat-icon-gold { background: var(--gold-tint); color: var(--gold); }
-.mvd-stat-icon-low { background: var(--risk-low-tint); color: var(--risk-low); }
+/* neutral = value is 0 / a good outcome, don't alarm-color it */
+.mvd-stat-icon-neutral { background: var(--mist); color: var(--slate); }
 .mvd-stat-icon-high { background: var(--risk-high-tint); color: var(--risk-high); }
 
 .mvd-stat-card h2 {
@@ -138,32 +139,43 @@
 .mvd-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 16px 24px;
+  gap: 18px 24px;
 }
 
+/* Flat field style: no box chrome, just a bottom rule. Cuts visual noise
+   from 20+ identical gray boxes stacked across 4 sections. */
 .mvd-field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 12px 14px;
-  border-radius: var(--radius-sm);
-  background: var(--mist);
+  gap: 5px;
+  padding: 0 0 10px;
+  border-bottom: 1px solid var(--line);
 }
 
 .mvd-field-label {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 500;
   color: var(--slate-light);
-  text-transform: capitalize;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .mvd-field-value {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--ink);
   text-transform: capitalize;
+}
+
+/* Missing data reads as visibly different from real data, never a bare "—" */
+.mvd-field-value-empty {
+  font-weight: 400;
+  font-style: italic;
+  color: var(--slate-light);
+  text-transform: none;
 }
 
 /* ---------- Document status list ---------- */

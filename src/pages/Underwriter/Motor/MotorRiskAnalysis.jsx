@@ -8,6 +8,8 @@ import TopBar from "../../../components/TopBar";
 import RiskGauge from "../../../components/RiskGauge";
 import RiskChart from "../RiskChart";
 
+const isEmptyVal = (v) => v === null || v === undefined || v === "" || v === "-" || v === "—";
+
 // WIRED TO BACKEND: reuses risk_score/risk_factors already computed
 // server-side when each vehicle proposal was submitted (no re-scoring).
 // Approve/Reject call the real PATCH /proposals/{id}/decision endpoint.
@@ -132,7 +134,9 @@ function MotorRiskAnalysis() {
               <span className="mra-fleet-stat-highlight">
                 <FaExclamationTriangle />
                 {fleetResult.highest_risk_vehicle.vehicle_make} {fleetResult.highest_risk_vehicle.vehicle_model}
-                <span className="mono"> · {fleetResult.highest_risk_vehicle.registration_number}</span>
+                {!isEmptyVal(fleetResult.highest_risk_vehicle.registration_number) && (
+                  <span className="mono"> · {fleetResult.highest_risk_vehicle.registration_number}</span>
+                )}
               </span>
             </div>
           </div>
@@ -233,7 +237,9 @@ function MotorRiskAnalysis() {
           <aside className="mra-result-aside">
             <RiskGauge score={active.result.risk_score} label="Vehicle Risk Score" size={170} />
             <div className="mra-vehicle-info">
-              <p className="mono">{active.vehicle.registration_number}</p>
+              {!isEmptyVal(active.vehicle.registration_number) && (
+                <p className="mono">{active.vehicle.registration_number}</p>
+              )}
               <p>{active.vehicle.vehicle_year} · {active.vehicle.fuel_type} · {active.vehicle.vehicle_usage}</p>
             </div>
 

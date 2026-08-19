@@ -6,6 +6,15 @@ import {
 import "./DocumentVerification.css";
 import { getProposal, getProposalDocumentUrl } from "../../api/underwritingApi";
 import PageHeader from "../../components/PageHeader";
+import { formatName } from "../../utils/format";
+
+// "id_number" -> "Id Number", "dob" -> "Dob" — humanizes raw backend field
+// keys instead of leaking snake_case into the checklist title.
+function humanizeField(field) {
+  return field
+    .replace(/_/g, " ")
+    .replace(/\w\S*/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+}
 
 function DocumentVerification() {
   const { id } = useParams();
@@ -72,7 +81,7 @@ function DocumentVerification() {
       <PageHeader
         theme="health"
         title="Document Verification"
-        subtitle={`${proposal.full_name} · Case #${proposal.id}`}
+        subtitle={`${formatName(proposal.full_name)} · Case #${proposal.id}`}
         backTo={`/proposal/${id}`}
         homeTo="/underwriter/home"
       />
@@ -134,7 +143,7 @@ function DocumentVerification() {
                     </span>
                     <div>
                       <p className="vp-check-title">
-                        {c.field.charAt(0).toUpperCase() + c.field.slice(1)} {c.valid ? "Matching" : "Mismatch"}
+                        {humanizeField(c.field)} {c.valid ? "Matching" : "Mismatch"}
                       </p>
                       <p className="vp-check-sub">
                         {c.valid ? "Matches primary application record" : c.reason}

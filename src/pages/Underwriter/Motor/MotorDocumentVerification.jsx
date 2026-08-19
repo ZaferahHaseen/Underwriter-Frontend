@@ -6,6 +6,15 @@ import {
 import "./MotorDocumentVerification.css";
 import { getMotorProposal } from "../../../api/motorAdapter";
 import PageHeader from "../../../components/PageHeader";
+import { formatName } from "../../../utils/format";
+
+// treat null/undefined/""/"-" all as "no data" — backend sometimes sends a
+// bare hyphen instead of omitting the field.
+const isEmptyVal = (v) => v === null || v === undefined || v === "" || v === "-" || v === "—";
+function DetailValue({ value }) {
+  const empty = isEmptyVal(value);
+  return <b className={empty ? "mvp-detail-empty" : ""}>{empty ? "Not provided" : value}</b>;
+}
 
 // WIRED TO BACKEND via api/motorAdapter.js. Document status per vehicle comes
 // from the adapter's mapVehicle() (VERIFIED/FLAGGED based on validation_results).
@@ -56,7 +65,7 @@ function MotorDocumentVerification() {
       <PageHeader
         theme="motor"
         title="Document Verification"
-        subtitle={`${proposal.full_name} · ${proposal.fleet_type} · Case #${proposal.id}`}
+        subtitle={`${formatName(proposal.full_name)} · ${proposal.fleet_type} · Case #${proposal.id}`}
         backTo={`/motor-proposal/${id}`}
         homeTo="/underwriter/home"
       />
@@ -80,7 +89,9 @@ function MotorDocumentVerification() {
                     <span className="mvp-vehicle-icon"><FaCarSide /></span>
                     <div>
                       <h2>{v.vehicle_make} {v.vehicle_model}</h2>
-                      <p className="mono mvp-reg">{v.registration_number}</p>
+                      <p className={`mono mvp-reg${isEmptyVal(v.registration_number) ? " mvp-reg-empty" : ""}`}>
+                        {isEmptyVal(v.registration_number) ? "No registration on file" : v.registration_number}
+                      </p>
                     </div>
                   </div>
                   <span className={`mvp-pill ${vFailed === 0 ? "mvp-pill-success" : "mvp-pill-warning"}`}>
@@ -88,21 +99,25 @@ function MotorDocumentVerification() {
                   </span>
                 </div>
 
-                <div className="mvp-check-grid">
-                  {v.documents.map((d, i) => {
-                    const meta = STATUS_META[d.status] || STATUS_META.MISSING;
-                    const Icon = meta.icon;
-                    return (
-                      <div key={i} className={`mvp-check-card ${meta.cls}`}>
-                        <span className="mvp-check-icon"><Icon /></span>
-                        <div>
-                          <p className="mvp-check-title">{d.name}</p>
-                          <p className="mvp-check-sub">{meta.label}</p>
+                {v.documents.length > 0 ? (
+                  <div className="mvp-check-grid">
+                    {v.documents.map((d, i) => {
+                      const meta = STATUS_META[d.status] || STATUS_META.MISSING;
+                      const Icon = meta.icon;
+                      return (
+                        <div key={i} className={`mvp-check-card ${meta.cls}`}>
+                          <span className="mvp-check-icon"><Icon /></span>
+                          <div>
+                            <p className="mvp-check-title">{d.name}</p>
+                            <p className="mvp-check-sub">{meta.label}</p>
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="mvp-no-docs">No documents submitted for this vehicle.</p>
+                )}
               </section>
             );
           })}
@@ -117,11 +132,11 @@ function MotorDocumentVerification() {
             </div>
             <div className="mvp-detail-row">
               <span>Occupation</span>
-              <b>{proposal.occupation}</b>
+              <DetailValue value={proposal.occupation} />
             </div>
             <div className="mvp-detail-row">
               <span>Years With Insurer</span>
-              <b>{proposal.years_with_insurer}</b>
+              <DetailValue value={proposal.years_with_insurer} />
             </div>
           </div>
 

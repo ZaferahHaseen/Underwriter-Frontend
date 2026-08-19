@@ -1,7 +1,6 @@
 .dashboard {
   padding: 0 48px 60px;
   background: var(--mist);
-  min-height: 100vh;
 }
 
 .dashboard-hero {
@@ -201,6 +200,10 @@ tbody tr:hover {
 .status-rejected { background: var(--risk-high-tint); color: var(--risk-high); }
 
 .action-cell {
+  text-align: right;
+}
+
+th:last-child {
   text-align: right;
 }
 

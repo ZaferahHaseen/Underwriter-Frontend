@@ -7,6 +7,7 @@ import TopBar from "../../components/TopBar";
 import RiskGauge from "../../components/RiskGauge";
 import RiskChart from "./RiskChart";
 import { FaExclamationCircle, FaTimes } from "react-icons/fa";
+import { formatName } from "../../utils/format";
 
 const initialHealthForm = {
   age: 30,
@@ -28,10 +29,10 @@ const healthFields = [
   { name: "annual_income", label: "Annual Income" },
   { name: "sum_assured", label: "Sum Assured" },
   { name: "bmi", label: "BMI", step: "any" },
-  { name: "smoker", label: "Smoker (0/1)" },
-  { name: "alcohol_consumption", label: "Alcohol Consumption (0/1)" },
-  { name: "pre_existing_disease", label: "Pre-Existing Disease (0/1)" },
-  { name: "family_medical_history", label: "Family Medical History (0/1)" },
+  { name: "smoker", label: "Smoker", type: "select", options: ["no", "yes"] },
+  { name: "alcohol_consumption", label: "Alcohol Consumption", type: "select", options: ["no", "yes"] },
+  { name: "pre_existing_disease", label: "Pre-Existing Disease", type: "select", options: ["no", "yes"] },
+  { name: "family_medical_history", label: "Family Medical History", type: "select", options: ["no", "yes"] },
   { name: "occupation_risk", label: "Occupation Risk" },
   { name: "credit_score", label: "Credit Score" },
   { name: "num_previous_claims", label: "Previous Claims" },
@@ -186,15 +187,23 @@ function RiskAnalysis() {
   const activeFields = checkType === "motor" ? motorFields : healthFields;
 
   const handleChange = (e) => {
-    const { name, value, type: inputType } = e.target;
-    // health fields stay numeric; motor "select" fields (yes/no, fuel_type,
-    // usage_type) stay as raw strings — matches backend QuickMotorCheckRequest.
+    const { name, value } = e.target;
     const field = activeFields.find((f) => f.name === name);
-    const isStringField = field?.type === "select";
-    setForm((prev) => ({
-      ...prev,
-      [name]: isStringField ? value : Number(value),
-    }));
+
+    if (field?.type === "select") {
+      // Motor's yes/no/fuel_type/usage_type selects stay raw strings
+      // (matches backend QuickMotorCheckRequest). Health's smoker/alcohol/
+      // disease/history selects are UI-only sugar over a 0/1 numeric field —
+      // backend still expects the integer, so convert back here.
+      const isHealthBoolean = checkType === "health";
+      setForm((prev) => ({
+        ...prev,
+        [name]: isHealthBoolean ? (value === "yes" ? 1 : 0) : value,
+      }));
+      return;
+    }
+
+    setForm((prev) => ({ ...prev, [name]: Number(value) }));
   };
 
   const handleSubmit = async (e) => {
@@ -239,7 +248,7 @@ function RiskAnalysis() {
             <div className="risk-page-header-text">
               <h1 className="page-title">AI Risk Analysis</h1>
               <p className="page-subhead">
-                {proposal ? `${proposal.full_name} · Reference #${proposal.id}` : "Loading…"}
+                {proposal ? `${formatName(proposal.full_name)} · Reference #${proposal.id}` : "Loading…"}
               </p>
             </div>
             <TopBar homeTo="/underwriter/home" />
@@ -300,7 +309,11 @@ function RiskAnalysis() {
             <div className="form-group" key={f.name}>
               <label>{f.label}</label>
               {f.type === "select" ? (
-                <select name={f.name} value={form[f.name]} onChange={handleChange}>
+                <select
+                  name={f.name}
+                  value={checkType === "health" ? (form[f.name] ? "yes" : "no") : form[f.name]}
+                  onChange={handleChange}
+                >
                   {f.options.map((opt) => (
                     <option key={opt} value={opt}>{opt}</option>
                   ))}
@@ -323,7 +336,14 @@ function RiskAnalysis() {
         </button>
       </form>
 
-      {result && <ResultView result={result} />}
+      {result && (
+        <>
+          <div className="risk-result-divider">
+            <span>Result</span>
+          </div>
+          <ResultView result={result} />
+        </>
+      )}
     </div>
   );
 }

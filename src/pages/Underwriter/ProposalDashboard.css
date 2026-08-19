@@ -167,31 +167,37 @@
 .pd-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 16px 24px;
+  gap: 18px 24px;
 }
 
 .pd-field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
+  padding: 0 0 10px;
+  border-bottom: 1px solid var(--line);
 }
 
 .pd-field-label {
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 500;
   color: var(--slate-light);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .pd-field-value {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--ink);
   text-transform: capitalize;
 }
 
-.pd-field {
-  padding: 12px 14px;
-  border-radius: var(--radius-sm);
-  background: var(--mist);
+.pd-field-value-empty {
+  font-weight: 400;
+  font-style: italic;
+  color: var(--slate-light);
+  text-transform: none;
 }
 
 /* ---------- Actions (matches quick-check-btn / action-cell button) ---------- */

@@ -131,6 +131,18 @@
   margin-top: 2px;
 }
 
+.mvp-reg-empty {
+  font-style: italic;
+  color: var(--slate-light);
+}
+
+.mvp-no-docs {
+  padding: 18px 22px;
+  font-size: 13.5px;
+  font-style: italic;
+  color: var(--slate-light);
+}
+
 .mvp-pill {
   font-size: 10.5px;
   font-weight: 700;
@@ -289,6 +301,13 @@
   color: var(--ink);
   font-weight: 600;
   text-align: right;
+}
+
+.mvp-detail-empty {
+  color: var(--slate-light) !important;
+  font-weight: 400 !important;
+  font-style: italic;
+  text-transform: none;
 }
 
 /* ---------------- Responsive ---------------- */

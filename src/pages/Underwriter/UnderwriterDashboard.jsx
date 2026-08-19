@@ -4,6 +4,7 @@ import { FaClipboardList, FaHourglassHalf, FaCheckCircle, FaTimesCircle, FaSearc
 import "./UnderwriterDashboard.css";
 import { listProposals } from "../../api/underwritingApi";
 import PageHeader from "../../components/PageHeader";
+import { formatName } from "../../utils/format";
 
 function UnderwriterDashboard() {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ function UnderwriterDashboard() {
         homeTo="/underwriter/home"
         actions={
           <button
-            className="ph-header-btn"
+            className="ph-header-btn ph-header-btn-primary"
             onClick={() => navigate("/risk-analysis/new?type=health")}
           >
             Quick Risk Check
@@ -89,7 +90,7 @@ function UnderwriterDashboard() {
                 <th>Client</th>
                 <th>Policy</th>
                 <th>Status</th>
-                <th></th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -100,7 +101,7 @@ function UnderwriterDashboard() {
               ) : (
                 filtered.map((p) => (
                   <tr key={p.id}>
-                    <td>{p.full_name}</td>
+                    <td>{formatName(p.full_name)}</td>
                     <td>{p.insurance_type}</td>
                     <td>
                       <span className={`status-pill status-${p.status?.toLowerCase()}`}>

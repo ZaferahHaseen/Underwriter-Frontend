@@ -64,6 +64,11 @@ function RiskGauge({ score = 0, label = "Risk Score", size = 200 }) {
         <circle cx={cx} cy={cy} r="6" fill="var(--ink)" />
       </svg>
 
+      <div className="risk-gauge-scale">
+        <span>0</span>
+        <span>100</span>
+      </div>
+
       <div className="risk-gauge-readout">
         <span className="risk-gauge-score mono">{Math.round(clamped)}</span>
         <span className={`risk-gauge-level risk-level-${level}`}>{levelLabel}</span>
