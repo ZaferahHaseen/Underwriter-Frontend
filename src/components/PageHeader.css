@@ -6,6 +6,14 @@
   padding: 28px 48px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   flex-shrink: 0;
+
+  /* Full-bleed: breaks out of whatever side padding the parent page
+     wrapper has (mvd-page, etc.) so the header truly spans the full
+     browser width instead of stopping at the page's content box. */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  box-sizing: border-box;
 }
 
 .ph-compact {
