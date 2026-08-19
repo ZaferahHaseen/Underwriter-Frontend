@@ -13,6 +13,7 @@ import {
 import "./MotorProposalDetails.css";
 import { getMotorProposal } from "../../../api/motorAdapter";
 import PageHeader from "../../../components/PageHeader";
+import { formatName, formatField, formatCurrency, formatNumber } from "../../../utils/format";
 
 // WIRED TO BACKEND via api/motorAdapter.js (GET /api/v1/vehicle/proposals/:id
 // or GET /api/v1/vehicle/fleet/:id depending on whether :id is a fleet_group_id).
@@ -66,12 +67,14 @@ function MotorProposalDetails() {
     { label: "Flagged Vehicles", value: flaggedVehicles, icon: <FaRoad />, tone: "high" },
   ];
 
-  const initials = (proposal.full_name || "?")
+  const displayName = formatName(proposal.full_name);
+
+  const initials = displayName
     .split(" ")
     .filter(Boolean)
     .slice(0, 2)
     .map((w) => w[0].toUpperCase())
-    .join("");
+    .join("") || "?";
 
   const filteredVehicles = proposal.vehicles.filter((v) =>
     `${v.vehicle_make} ${v.vehicle_model}`.toLowerCase().includes(query.toLowerCase()) ||
@@ -83,7 +86,7 @@ function MotorProposalDetails() {
       <PageHeader
         theme="motor"
         avatar={initials}
-        title={proposal.full_name}
+        title={displayName}
         subtitle={`${proposal.insurance_type} · ${proposal.fleet_type} · Reference #${proposal.id} · Submitted ${proposal.created_at}`}
         backTo="/underwriter/motor/dashboard"
         homeTo="/underwriter/home"
@@ -111,7 +114,9 @@ function MotorProposalDetails() {
       <div className="mpd-cards">
         {highlights.map((h) => (
           <div className="mpd-stat-card" key={h.label}>
-            <div className={`mpd-stat-icon mpd-stat-icon-${h.tone}`}>{h.icon}</div>
+            <div className={`mpd-stat-icon mpd-stat-icon-${h.tone}${h.value === 0 ? " mpd-stat-icon-muted" : ""}`}>
+              {h.icon}
+            </div>
             <div>
               <h2 className="mono">{h.value}</h2>
               <p>{h.label}</p>
@@ -131,19 +136,27 @@ function MotorProposalDetails() {
             <div className="mpd-grid">
               <div className="mpd-field">
                 <span className="mpd-field-label">Occupation</span>
-                <span className="mpd-field-value">{proposal.occupation}</span>
+                <span className={`mpd-field-value${!proposal.occupation ? " mpd-field-empty" : ""}`}>
+                  {formatField(proposal.occupation, "Not provided")}
+                </span>
               </div>
               <div className="mpd-field">
                 <span className="mpd-field-label">Annual Income</span>
-                <span className="mpd-field-value">₹{Number(proposal.annual_income).toLocaleString("en-IN")}</span>
+                <span className={`mpd-field-value${!proposal.annual_income ? " mpd-field-empty" : ""}`}>
+                  {formatCurrency(proposal.annual_income, { treatZeroAsMissing: true, fallback: "Not disclosed" })}
+                </span>
               </div>
               <div className="mpd-field">
                 <span className="mpd-field-label">Credit Score</span>
-                <span className="mpd-field-value">{proposal.credit_score}</span>
+                <span className={`mpd-field-value${!proposal.credit_score ? " mpd-field-empty" : ""}`}>
+                  {formatNumber(proposal.credit_score, "Not available")}
+                </span>
               </div>
               <div className="mpd-field">
                 <span className="mpd-field-label">Years With Insurer</span>
-                <span className="mpd-field-value">{proposal.years_with_insurer}</span>
+                <span className={`mpd-field-value${!proposal.years_with_insurer ? " mpd-field-empty" : ""}`}>
+                  {formatNumber(proposal.years_with_insurer, "New customer")}
+                </span>
               </div>
             </div>
           </div>
@@ -186,7 +199,9 @@ function MotorProposalDetails() {
                     <span className="mpd-vt-vehicle">
                       <FaCarSide /> {v.vehicle_make} {v.vehicle_model}
                     </span>
-                    <span className="mpd-vt-reg mono">{v.registration_number}</span>
+                    <span className={`mpd-vt-reg mono${!v.registration_number ? " mpd-field-empty" : ""}`}>
+                      {formatField(v.registration_number, "Registration pending")}
+                    </span>
                   </span>
                   <span className="mpd-col mpd-col-idv mono">₹{v.idv.toLocaleString("en-IN")}</span>
                   <span className="mpd-col mpd-col-driver mono">{v.driver_age}</span>

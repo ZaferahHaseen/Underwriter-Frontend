@@ -60,7 +60,10 @@ function MotorDashboard() {
 
       <div className="mdash-cards">
         {stats.map((s) => (
-          <div className="mdash-stat-card" key={s.label}>
+          <div
+            className={`mdash-stat-card${s.value === 0 ? " is-empty" : ""}`}
+            key={s.label}
+          >
             <div className={`mdash-stat-icon mdash-stat-icon-${s.tone}`}>{s.icon}</div>
             <div>
               <h2 className="mono">{s.value}</h2>

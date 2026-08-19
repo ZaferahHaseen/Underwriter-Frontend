@@ -130,6 +130,12 @@
 .mpd-stat-icon-low { background: var(--risk-low-tint); color: var(--risk-low); }
 .mpd-stat-icon-high { background: var(--risk-high-tint); color: var(--risk-high); }
 
+/* Zero flagged vehicles is good news — don't paint it red/alarming */
+.mpd-stat-icon-muted {
+  background: var(--mist) !important;
+  color: var(--slate-light) !important;
+}
+
 .mpd-stat-card h2 {
   font-size: 22px;
   line-height: 1;
@@ -217,6 +223,15 @@
   text-transform: capitalize;
 }
 
+/* Explicit "no data" state — muted + not-capitalized so it reads as a
+   sentence ("Not provided"), not a stray dash or a false ₹0. */
+.mpd-field-empty {
+  font-weight: 500;
+  font-style: italic;
+  color: var(--slate-light);
+  text-transform: none;
+}
+
 /* ---------- Vehicle list panel — matches the Motor Insurance Dashboard ---------- */
 
 .mdash-status-pending { background: var(--gold-tint); color: var(--gold); }
@@ -229,7 +244,10 @@
   border: 1px solid var(--line);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
-  flex: 1;
+  /* Same fix as the dashboard: don't stretch a 1-row table across the
+     whole remaining viewport height. */
+  flex: 0 1 auto;
+  max-height: calc(100vh - 420px);
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -272,6 +290,7 @@
 
 .mpd-list-scroll {
   padding: 0 8px 8px;
+  overflow-y: auto;
 }
 
 .mpd-row {

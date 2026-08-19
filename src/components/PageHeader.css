@@ -172,14 +172,19 @@
   border-color: rgba(255, 255, 255, 0.44);
 }
 
+/* Primary header action — solid brand fill so it clearly outranks the
+   ghost/secondary button next to it, instead of both reading as
+   similar-weight white-ish pills on the dark banner. */
 .ph-header-btn-primary {
-  background: #ffffff;
+  background: var(--gold);
   color: var(--ink);
-  border-color: #ffffff;
+  border-color: var(--gold);
+  font-weight: 700;
 }
 
 .ph-header-btn-primary:hover {
-  background: rgba(255, 255, 255, 0.88);
+  background: #b98a24;
+  border-color: #b98a24;
 }
 
 /* ---- Controls (home + logout) ---- */

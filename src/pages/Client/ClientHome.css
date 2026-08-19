@@ -1,79 +1,26 @@
 /* ================================
-   CLIENT HOME — bright SaaS
-   big hero + selector tiles below
-   (same class names, drop-in replace)
+   CLIENT HOME — flat, neutral,
+   enterprise fintech grid
 ================================ */
 
-@keyframes ch-blob {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50%      { transform: translate(3%, -4%) scale(1.05); }
-}
-
-@keyframes ch-pop {
-  from { opacity: 0; transform: translateY(16px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-@keyframes ch-bounce {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-5px); }
-}
-
 .ch-page {
-  height: 100vh;
+  min-height: 100vh;
   width: 100%;
   box-sizing: border-box;
-  position: relative;
-  background: #FAF9FF;
+  background: var(--mist);
   padding: 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-}
-
-/* playful decorative blobs behind everything */
-.ch-page::before,
-.ch-page::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(60px);
-  opacity: 0.35;
-  z-index: 0;
-  pointer-events: none;
-  animation: ch-blob 12s ease-in-out infinite;
-}
-
-.ch-page::before {
-  width: 420px;
-  height: 420px;
-  top: -140px;
-  left: -120px;
-  background: #7AA0FF;
-}
-
-.ch-page::after {
-  width: 380px;
-  height: 380px;
-  top: 60px;
-  right: -140px;
-  background: #4FD196;
-  animation-delay: -6s;
 }
 
 /* ================================
-   HERO — big, bold, colorful
+   HERO
 ================================ */
 
 .ch-hero {
   padding: 28px 52px 34px;
-  margin: 0 0 -30px;
-  position: relative;
-  z-index: 1;
   flex-shrink: 0;
-  background: linear-gradient(120deg, #3D5AFE 0%, #5F72FF 45%, #2FD3B8 100%);
-  border-radius: 0 0 40px 40px;
-  box-shadow: 0 20px 50px -20px rgba(61, 90, 254, 0.45);
+  background: linear-gradient(135deg, var(--ink) 0%, var(--ink-soft) 100%);
 }
 
 .ch-header {
@@ -85,34 +32,33 @@
 
 .ch-header-text h1 {
   font-family: var(--font-display);
-  font-size: 38px;
+  font-size: 28px;
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   color: #ffffff;
   margin: 0;
 }
 
 .ch-subhead {
-  color: rgba(255, 255, 255, 0.88);
-  font-size: 15px;
-  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13.5px;
+  margin: 6px 0 0;
   line-height: 1.5;
   font-weight: 500;
 }
 
 .ch-header .back-button,
 .ch-header .topbar-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: #ffffff;
-  border-radius: 14px;
-  transition: background 0.2s ease, transform 0.2s ease;
+  border-radius: 50%;
+  transition: background 0.15s ease;
 }
 
 .ch-header .back-button:hover,
 .ch-header .topbar-btn:hover {
-  background: rgba(255, 255, 255, 0.32);
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 /* ================================
@@ -121,7 +67,7 @@
 
 .ch-grid {
   width: min(100%, 780px);
-  margin: 56px auto;
+  margin: 48px auto;
   flex: 1;
   min-height: 0;
 
@@ -129,24 +75,20 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-template-rows: repeat(2, minmax(0, 1fr));
   gap: 20px;
-
-  position: relative;
-  z-index: 1;
 }
 
 .ch-card {
-  position: relative;
-
   width: 100%;
   height: 100%;
-  min-height: 0;
+  min-height: 220px;
   box-sizing: border-box;
 
-  border: none;
-  border-radius: 28px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 
-  padding: 20px 24px 16px;
-
+  padding: 22px 24px 18px;
   text-align: left;
 
   display: flex;
@@ -154,115 +96,53 @@
   gap: 6px;
 
   cursor: pointer;
-  overflow: hidden;
-
-  animation: ch-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-
-  transition:
-    transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 0.28s ease,
-    rotate 0.28s ease;
-}
-
-.ch-grid .ch-card:nth-child(2) {
-  animation-delay: 0.09s;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .ch-card:hover {
-  transform: translateY(-6px) rotate(-0.6deg);
+  border-color: var(--signal);
+  box-shadow: var(--shadow-md);
 }
 
 .ch-card:active {
-  transform: translateY(-2px) scale(0.99);
-}
-
-.ch-card-signal {
-  background: #EAF0FE;
-  box-shadow: 0 10px 0 -4px rgba(47, 95, 224, 0.10), 0 18px 34px -16px rgba(47, 95, 224, 0.35);
-}
-
-.ch-card-signal:hover {
-  box-shadow: 0 14px 0 -4px rgba(47, 95, 224, 0.14), 0 26px 44px -16px rgba(47, 95, 224, 0.4);
-}
-
-.ch-card-motor {
-  background: #E4F6EE;
-  box-shadow: 0 10px 0 -4px rgba(23, 135, 90, 0.10), 0 18px 34px -16px rgba(23, 135, 90, 0.35);
-}
-
-.ch-card-motor:hover {
-  box-shadow: 0 14px 0 -4px rgba(23, 135, 90, 0.14), 0 26px 44px -16px rgba(23, 135, 90, 0.4);
-}
-
-.ch-card-property {
-  background: #FDECE0;
-  box-shadow: 0 10px 0 -4px rgba(201, 90, 33, 0.10), 0 18px 34px -16px rgba(201, 90, 33, 0.35);
-}
-
-.ch-card-property:hover {
-  box-shadow: 0 14px 0 -4px rgba(201, 90, 33, 0.14), 0 26px 44px -16px rgba(201, 90, 33, 0.4);
-}
-
-.ch-card-travel {
-  background: #EFE7FE;
-  box-shadow: 0 10px 0 -4px rgba(124, 58, 237, 0.10), 0 18px 34px -16px rgba(124, 58, 237, 0.35);
-}
-
-.ch-card-travel:hover {
-  box-shadow: 0 14px 0 -4px rgba(124, 58, 237, 0.14), 0 26px 44px -16px rgba(124, 58, 237, 0.4);
+  box-shadow: var(--shadow-sm);
 }
 
 .ch-card-soon {
   cursor: not-allowed;
+  background: var(--mist);
 }
 
 .ch-card-soon:hover {
-  transform: none;
+  border-color: var(--line);
+  box-shadow: var(--shadow-sm);
 }
 
 /* ================================
-   ICON
+   ICON — only source of per-line color
 ================================ */
 
 .ch-card-icon {
-  width: 46px;
-  height: 46px;
-  border-radius: 14px;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  font-size: 19px;
-  margin-bottom: 2px;
-}
-
-.ch-card:hover .ch-card-icon {
-  animation: ch-bounce 0.6s ease;
-}
-
-.ch-card-icon-signal {
-  background: var(--signal);
+  font-size: 18px;
   color: #ffffff;
-  box-shadow: 0 6px 14px rgba(47, 95, 224, 0.35);
+  margin-bottom: 4px;
 }
 
-.ch-card-icon-motor {
-  background: var(--motor);
-  color: #ffffff;
-  box-shadow: 0 6px 14px rgba(23, 135, 90, 0.35);
-}
+.ch-card-icon-signal { background: var(--signal); }
+.ch-card-icon-motor  { background: var(--motor); }
+.ch-card-icon-property { background: #C95A21; }
+.ch-card-icon-travel   { background: #7C3AED; }
 
-.ch-card-icon-property {
-  background: #C95A21;
-  color: #ffffff;
-  box-shadow: 0 6px 14px rgba(201, 90, 33, 0.35);
-}
-
-.ch-card-icon-travel {
-  background: #7C3AED;
-  color: #ffffff;
-  box-shadow: 0 6px 14px rgba(124, 58, 237, 0.35);
+.ch-card-soon .ch-card-icon {
+  background: var(--slate-light);
 }
 
 /* ================================
@@ -271,19 +151,26 @@
 
 .ch-card h2 {
   margin: 0;
-  font-size: 18.5px;
+  font-size: 17px;
   line-height: 1.25;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--ink);
-  letter-spacing: -0.015em;
+}
+
+.ch-card-soon h2 {
+  color: var(--slate);
 }
 
 .ch-card-desc {
   color: var(--slate);
   font-size: 13px;
-  line-height: 1.6;
+  line-height: 1.55;
   margin: 0;
   flex: 1;
+}
+
+.ch-card-soon .ch-card-desc {
+  color: var(--slate-light);
 }
 
 /* ================================
@@ -297,48 +184,62 @@
 
   margin-top: 14px;
   padding-top: 14px;
-
-  border-top: 2px dotted rgba(11, 30, 51, 0.12);
+  border-top: 1px solid var(--line);
 }
 
 .ch-card-stat {
-  font-size: 10px;
-  font-weight: 800;
-  color: var(--slate-light);
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--slate);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  background: #ffffff;
-  padding: 4px 9px;
-  border-radius: 999px;
+  letter-spacing: 0.05em;
 }
 
+.ch-card-soon .ch-card-stat {
+  color: var(--slate-light);
+}
+
+/* Primary action reads as a real button, not a bare link */
 .ch-card-cta {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #ffffff;
+  background: var(--signal);
+  padding: 7px 14px;
+  border-radius: 999px;
+  transition: background 0.15s ease, transform 0.15s ease;
 }
 
-.ch-card-signal .ch-card-cta {
-  color: var(--signal-dark);
+.ch-card:hover .ch-card-cta {
+  background: var(--signal-dark);
 }
 
 .ch-card-motor .ch-card-cta {
-  color: var(--motor-dark);
+  background: var(--motor);
 }
 
+.ch-card-motor:hover .ch-card-cta {
+  background: var(--motor-dark);
+}
+
+/* Disabled state clearly recedes: no fill, muted text, no arrow motion */
 .ch-card-cta-soon {
-  color: #C99A2E !important;
+  background: transparent;
+  color: var(--slate-light);
+  padding: 7px 0;
+  font-weight: 600;
 }
 
 .ch-card-cta svg {
   font-size: 11px;
-  transition: transform 0.2s ease;
+  transition: transform 0.15s ease;
 }
 
-.ch-card:hover .ch-card-cta svg {
-  transform: translateX(4px);
+.ch-card:not(.ch-card-soon):hover .ch-card-cta svg {
+  transform: translateX(3px);
 }
 
 /* ================================
@@ -346,21 +247,15 @@
 ================================ */
 
 @media (max-width: 900px) {
-  .ch-page {
-    height: auto;
-    min-height: 100vh;
-    overflow: visible;
-  }
   .ch-hero {
-    padding: 30px 28px 36px;
-    border-radius: 0 0 30px 30px;
+    padding: 22px 24px 26px;
   }
   .ch-header-text h1 {
-    font-size: 30px;
+    font-size: 24px;
   }
   .ch-grid {
     width: min(100%, 640px);
-    margin: 40px auto;
+    margin: 36px auto;
   }
 }
 
@@ -369,27 +264,25 @@
     align-items: flex-start;
   }
   .ch-header-text h1 {
-    font-size: 25px;
+    font-size: 20px;
   }
   .ch-grid {
     grid-template-columns: 1fr;
     grid-template-rows: none;
     width: min(100%, 420px);
     gap: 16px;
-    margin: 32px auto;
+    margin: 28px auto;
   }
   .ch-card {
-    min-height: 210px;
+    min-height: 200px;
     height: auto;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ch-page::before,
-  .ch-page::after,
   .ch-card,
-  .ch-card-icon {
-    animation: none;
+  .ch-card-cta,
+  .ch-card-cta svg {
     transition: none;
   }
 }
