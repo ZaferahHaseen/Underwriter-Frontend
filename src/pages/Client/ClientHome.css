@@ -1,286 +1,792 @@
-/* ================================
-   CLIENT HOME — flat, neutral,
-   enterprise fintech grid
-================================ */
+/* =========================================================
+   CLIENT HOME
+   ========================================================= */
 
 .ch-page {
-  min-height: 100vh;
   width: 100%;
+  height: 100vh;
+  min-height: 0;
   box-sizing: border-box;
-  background: var(--mist);
-  padding: 0;
+
+  background: #f5f7fa;
+
   display: flex;
   flex-direction: column;
+
+  overflow: hidden;
 }
 
-/* ================================
-   HERO
-================================ */
+
+/* =========================================================
+   HEADER / NAVBAR
+   ========================================================= */
 
 .ch-hero {
-  padding: 28px 52px 34px;
+  padding: 12px 42px 13px;
+
   flex-shrink: 0;
-  background: linear-gradient(135deg, var(--ink) 0%, var(--ink-soft) 100%);
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--ink) 0%,
+      var(--ink-soft) 100%
+    );
 }
 
 .ch-header {
   display: flex;
   align-items: center;
-  gap: 18px;
-  margin-bottom: 0;
+  gap: 15px;
+}
+
+.ch-header-text {
+  flex: 1;
 }
 
 .ch-header-text h1 {
   font-family: var(--font-display);
-  font-size: 28px;
+
+  font-size: 23px;
+  line-height: 1.2;
   font-weight: 700;
+
   letter-spacing: -0.02em;
+
   color: #ffffff;
+
   margin: 0;
 }
 
 .ch-subhead {
-  color: rgba(255, 255, 255, 0.72);
-  font-size: 13.5px;
-  margin: 6px 0 0;
-  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.68);
+
+  font-size: 11.5px;
+
+  margin: 3px 0 0;
+
+  line-height: 1.35;
+
   font-weight: 500;
 }
 
+
+/* =========================================================
+   HEADER BUTTONS
+   ========================================================= */
+
 .ch-header .back-button,
 .ch-header .topbar-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.09);
+
+  border: 1px solid rgba(255, 255, 255, 0.17);
+
   color: #ffffff;
+
   border-radius: 50%;
-  transition: background 0.15s ease;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
 .ch-header .back-button:hover,
 .ch-header .topbar-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.18);
+
+  transform: translateY(-1px);
 }
 
-/* ================================
-   SELECTOR TILES
-================================ */
+
+/* =========================================================
+   CARD GRID
+   ========================================================= */
 
 .ch-grid {
-  width: min(100%, 780px);
-  margin: 48px auto;
+  width: min(100% - 48px, 820px);
+
   flex: 1;
+
   min-height: 0;
 
+  margin: 0 auto;
+
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: repeat(2, minmax(0, 1fr));
-  gap: 20px;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  grid-template-rows:
+    repeat(2, 218px);
+
+  gap: 18px;
+
+  align-content: center;
+
+  justify-content: center;
 }
 
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
 .ch-card {
+  position: relative;
+
   width: 100%;
-  height: 100%;
-  min-height: 220px;
+  height: 218px;
+
   box-sizing: border-box;
 
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff 0%,
+      #fbfcfe 100%
+    );
 
-  padding: 22px 24px 18px;
+  border: 1px solid #e1e6ed;
+
+  border-radius: 17px;
+
+  padding: 0;
+
   text-align: left;
+
+  overflow: hidden;
 
   display: flex;
   flex-direction: column;
-  gap: 6px;
 
   cursor: pointer;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  box-shadow:
+    0 3px 8px rgba(15, 35, 55, 0.04),
+    0 8px 20px rgba(15, 35, 55, 0.035);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .ch-card:hover {
-  border-color: var(--signal);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 7px 16px rgba(15, 35, 55, 0.065),
+    0 13px 26px rgba(15, 35, 55, 0.06);
+
+  border-color: #d4dce5;
 }
 
 .ch-card:active {
-  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
-.ch-card-soon {
-  cursor: not-allowed;
-  background: var(--mist);
-}
 
-.ch-card-soon:hover {
-  border-color: var(--line);
-  box-shadow: var(--shadow-sm);
-}
+/* =========================================================
+   VISUAL AREA
+   ========================================================= */
 
-/* ================================
-   ICON — only source of per-line color
-================================ */
+.ch-card-visual {
+  position: relative;
 
-.ch-card-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-md);
+  height: 91px;
+
+  flex-shrink: 0;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
 
-  font-size: 18px;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(43, 99, 235, 0.07),
+      transparent 68%
+    );
+}
+
+.ch-card-motor .ch-card-visual {
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(24, 145, 101, 0.075),
+      transparent 68%
+    );
+}
+
+.ch-card-property .ch-card-visual {
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(201, 90, 33, 0.06),
+      transparent 68%
+    );
+}
+
+.ch-card-travel .ch-card-visual {
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(124, 58, 237, 0.06),
+      transparent 68%
+    );
+}
+
+
+/* =========================================================
+   DECORATIVE CIRCLES
+   ========================================================= */
+
+.ch-card-visual::before {
+  content: "";
+
+  position: absolute;
+
+  width: 105px;
+  height: 105px;
+
+  border-radius: 50%;
+
+  border: 1px solid rgba(43, 99, 235, 0.07);
+
+  transform: translateX(60px);
+
+  pointer-events: none;
+}
+
+.ch-card-visual::after {
+  content: "";
+
+  position: absolute;
+
+  width: 72px;
+  height: 72px;
+
+  border-radius: 50%;
+
+  border: 1px solid rgba(43, 99, 235, 0.045);
+
+  transform: translateX(-70px);
+
+  pointer-events: none;
+}
+
+
+/* Motor */
+
+.ch-card-motor .ch-card-visual::before {
+  border-color: rgba(24, 145, 101, 0.08);
+}
+
+.ch-card-motor .ch-card-visual::after {
+  border-color: rgba(24, 145, 101, 0.045);
+}
+
+
+/* Property */
+
+.ch-card-property .ch-card-visual::before {
+  border-color: rgba(201, 90, 33, 0.07);
+}
+
+.ch-card-property .ch-card-visual::after {
+  border-color: rgba(201, 90, 33, 0.045);
+}
+
+
+/* Travel */
+
+.ch-card-travel .ch-card-visual::before {
+  border-color: rgba(124, 58, 237, 0.07);
+}
+
+.ch-card-travel .ch-card-visual::after {
+  border-color: rgba(124, 58, 237, 0.045);
+}
+
+
+/* =========================================================
+   ICON
+   ========================================================= */
+
+.ch-card-icon {
+  position: relative;
+
+  z-index: 2;
+
+  width: 58px;
+  height: 58px;
+
+  border-radius: 17px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  font-size: 27px;
+
   color: #ffffff;
-  margin-bottom: 4px;
+
+  box-shadow:
+    0 6px 14px rgba(15, 35, 55, 0.12);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.ch-card-icon-signal { background: var(--signal); }
-.ch-card-icon-motor  { background: var(--motor); }
-.ch-card-icon-property { background: #C95A21; }
-.ch-card-icon-travel   { background: #7C3AED; }
+.ch-card:hover .ch-card-icon {
+  transform:
+    translateY(-2px)
+    scale(1.03);
 
-.ch-card-soon .ch-card-icon {
-  background: var(--slate-light);
+  box-shadow:
+    0 9px 18px rgba(15, 35, 55, 0.14);
 }
 
-/* ================================
-   TEXT
-================================ */
+
+/* =========================================================
+   ICON COLORS
+   ========================================================= */
+
+.ch-card-icon-signal {
+  background: var(--signal);
+}
+
+.ch-card-icon-motor {
+  background: var(--motor);
+}
+
+.ch-card-icon-property {
+  background: #c95a21;
+}
+
+.ch-card-icon-travel {
+  background: #7c3aed;
+}
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.ch-card-content {
+  flex: 1;
+
+  min-height: 0;
+
+  padding:
+    2px 18px 12px;
+
+  display: flex;
+
+  flex-direction: column;
+}
+
+
+/* =========================================================
+   TITLE
+   ========================================================= */
 
 .ch-card h2 {
   margin: 0;
-  font-size: 17px;
-  line-height: 1.25;
-  font-weight: 600;
+
+  font-size: 16px;
+
+  line-height: 1.3;
+
+  font-weight: 700;
+
   color: var(--ink);
+
+  letter-spacing: -0.015em;
 }
 
-.ch-card-soon h2 {
-  color: var(--slate);
-}
+
+/* =========================================================
+   DESCRIPTION
+   ========================================================= */
 
 .ch-card-desc {
+  margin: 5px 0 0;
+
   color: var(--slate);
-  font-size: 13px;
-  line-height: 1.55;
-  margin: 0;
+
+  font-size: 11.4px;
+
+  line-height: 1.45;
+
   flex: 1;
+
+  max-width: 97%;
 }
 
-.ch-card-soon .ch-card-desc {
-  color: var(--slate-light);
-}
 
-/* ================================
+/* =========================================================
    FOOTER
-================================ */
+   ========================================================= */
 
 .ch-card-footer {
   display: flex;
+
   align-items: center;
+
   justify-content: space-between;
 
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid var(--line);
+  margin-top: 7px;
+
+  padding-top: 7px;
+
+  border-top: 1px solid #e8edf2;
+
+  flex-shrink: 0;
 }
 
 .ch-card-stat {
-  font-size: 10.5px;
-  font-weight: 700;
-  color: var(--slate);
+  font-size: 9px;
+
+  font-weight: 800;
+
+  color: #718096;
+
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+
+  letter-spacing: 0.055em;
 }
 
-.ch-card-soon .ch-card-stat {
-  color: var(--slate-light);
-}
 
-/* Primary action reads as a real button, not a bare link */
+/* =========================================================
+   CTA
+   ========================================================= */
+
 .ch-card-cta {
   display: inline-flex;
+
   align-items: center;
-  gap: 6px;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: #ffffff;
-  background: var(--signal);
-  padding: 7px 14px;
+
+  gap: 5px;
+
+  padding: 6px 11px;
+
   border-radius: 999px;
-  transition: background 0.15s ease, transform 0.15s ease;
+
+  color: #ffffff;
+
+  background: var(--signal);
+
+  font-size: 10.5px;
+
+  font-weight: 700;
+
+  box-shadow:
+    0 3px 6px rgba(43, 99, 235, 0.12);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
 }
 
 .ch-card:hover .ch-card-cta {
   background: var(--signal-dark);
+
+  transform: translateX(2px);
 }
+
+
+/* =========================================================
+   MOTOR CTA
+   ========================================================= */
 
 .ch-card-motor .ch-card-cta {
   background: var(--motor);
+
+  box-shadow:
+    0 3px 6px rgba(24, 145, 101, 0.12);
 }
 
 .ch-card-motor:hover .ch-card-cta {
   background: var(--motor-dark);
 }
 
-/* Disabled state clearly recedes: no fill, muted text, no arrow motion */
-.ch-card-cta-soon {
-  background: transparent;
-  color: var(--slate-light);
-  padding: 7px 0;
-  font-weight: 600;
+
+/* =========================================================
+   PROPERTY / TRAVEL CTA
+   ========================================================= */
+
+.ch-card-property .ch-card-cta {
+  background: #c95a21;
 }
+
+.ch-card-travel .ch-card-cta {
+  background: #7c3aed;
+}
+
+
+/* =========================================================
+   ARROW
+   ========================================================= */
 
 .ch-card-cta svg {
-  font-size: 11px;
-  transition: transform 0.15s ease;
+  font-size: 8px;
+
+  transition:
+    transform 0.2s ease;
 }
 
-.ch-card:not(.ch-card-soon):hover .ch-card-cta svg {
-  transform: translateX(3px);
+.ch-card:hover .ch-card-cta svg {
+  transform: translateX(2px);
 }
 
-/* ================================
-   RESPONSIVE
-================================ */
 
-@media (max-width: 900px) {
+/* =========================================================
+   COMING SOON
+   ========================================================= */
+
+.ch-card-soon {
+  cursor: not-allowed;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f8fafc 0%,
+      #f4f6f9 100%
+    );
+
+  box-shadow:
+    0 2px 6px rgba(15, 35, 55, 0.025);
+}
+
+.ch-card-soon:hover {
+  transform: none;
+
+  border-color: #e1e6ed;
+
+  box-shadow:
+    0 2px 6px rgba(15, 35, 55, 0.025);
+}
+
+.ch-card-soon .ch-card-icon {
+  background: #8b9aae;
+
+  box-shadow: none;
+}
+
+.ch-card-soon .ch-card-visual {
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(139, 154, 174, 0.065),
+      transparent 68%
+    );
+}
+
+.ch-card-soon h2 {
+  color: #617086;
+}
+
+.ch-card-soon .ch-card-desc {
+  color: #9aa7b7;
+}
+
+.ch-card-cta-soon {
+  background: transparent !important;
+
+  color: #8d9aaa !important;
+
+  padding: 6px 0 !important;
+
+  box-shadow: none !important;
+}
+
+
+/* =========================================================
+   SHORT LAPTOP SCREEN
+   ========================================================= */
+
+@media (min-width: 651px) and (max-height: 720px) {
+
   .ch-hero {
-    padding: 22px 24px 26px;
+    padding-top: 10px;
+    padding-bottom: 11px;
   }
+
   .ch-header-text h1 {
+    font-size: 21px;
+  }
+
+  .ch-subhead {
+    font-size: 11px;
+  }
+
+  .ch-grid {
+    grid-template-rows:
+      repeat(2, 195px);
+
+    gap: 14px;
+  }
+
+  .ch-card {
+    height: 195px;
+  }
+
+  .ch-card-visual {
+    height: 80px;
+  }
+
+  .ch-card-icon {
+    width: 53px;
+    height: 53px;
+
     font-size: 24px;
   }
-  .ch-grid {
-    width: min(100%, 640px);
-    margin: 36px auto;
+
+  .ch-card-content {
+    padding:
+      1px 17px 9px;
+  }
+
+  .ch-card h2 {
+    font-size: 15px;
+  }
+
+  .ch-card-desc {
+    font-size: 10.5px;
+    line-height: 1.38;
+  }
+
+  .ch-card-footer {
+    margin-top: 4px;
+    padding-top: 5px;
+  }
+
+  .ch-card-cta {
+    padding: 5px 10px;
+    font-size: 10px;
   }
 }
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  .ch-hero {
+    padding: 13px 26px 15px;
+  }
+
+  .ch-header-text h1 {
+    font-size: 22px;
+  }
+
+  .ch-grid {
+    width: min(100% - 36px, 700px);
+
+    grid-template-rows:
+      repeat(2, 205px);
+
+    gap: 15px;
+  }
+
+  .ch-card {
+    height: 205px;
+  }
+
+  .ch-card-visual {
+    height: 85px;
+  }
+
+  .ch-card-icon {
+    width: 56px;
+    height: 56px;
+
+    font-size: 26px;
+  }
+
+  .ch-card-content {
+    padding:
+      2px 17px 10px;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
 
 @media (max-width: 650px) {
+
+  .ch-page {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .ch-hero {
+    padding: 15px 18px 17px;
+  }
+
   .ch-header {
     align-items: flex-start;
+    gap: 11px;
   }
+
   .ch-header-text h1 {
-    font-size: 20px;
+    font-size: 19px;
   }
+
+  .ch-subhead {
+    font-size: 11.5px;
+  }
+
   .ch-grid {
+    flex: none;
+
+    width: min(100% - 28px, 420px);
+
+    margin: 20px auto 28px;
+
     grid-template-columns: 1fr;
+
     grid-template-rows: none;
-    width: min(100%, 420px);
-    gap: 16px;
-    margin: 28px auto;
+
+    gap: 14px;
   }
+
   .ch-card {
-    min-height: 200px;
-    height: auto;
+    height: 215px;
+  }
+
+  .ch-card-visual {
+    height: 88px;
+  }
+
+  .ch-card-icon {
+    width: 58px;
+    height: 58px;
+
+    font-size: 27px;
   }
 }
 
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
 @media (prefers-reduced-motion: reduce) {
+
   .ch-card,
+  .ch-card-icon,
   .ch-card-cta,
   .ch-card-cta svg {
     transition: none;

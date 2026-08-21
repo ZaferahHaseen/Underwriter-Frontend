@@ -1,202 +1,160 @@
 .risk-page {
   min-height: 100vh;
   background: var(--mist);
-  padding-bottom: 60px;
 }
 
-/* ---------- Mini popup (replaces the old error-box) ---------- */
+/* =====================================================================
+   Navbar — one consistent, sticky header for both Quick Check and
+   Proposal (result) modes. Flat, no card chrome.
+   ===================================================================== */
 
-@keyframes risk-toast-in {
-  from { opacity: 0; transform: translateY(-14px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.risk-toast {
-  position: fixed;
-  top: 24px;
-  right: 24px;
-  z-index: 1000;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  max-width: 360px;
-  background: #FFF5F5;
-  color: #7a2323;
-  border: 1px solid var(--risk-high-tint);
-  border-left: 4px solid var(--risk-high);
-  border-radius: var(--radius-md);
-  padding: 14px 16px;
-  font-size: 13.5px;
-  font-weight: 600;
-  line-height: 1.45;
-  box-shadow: var(--shadow-lg);
-  animation: risk-toast-in 0.25s ease both;
-}
-
-.risk-toast-icon {
-  flex-shrink: 0;
-  margin-top: 1px;
-  font-size: 15px;
-  color: var(--risk-high);
-}
-
-.risk-toast span {
-  flex: 1;
-}
-
-.risk-toast-close {
-  flex-shrink: 0;
-  background: transparent;
-  border: none;
-  color: #7a2323;
-  opacity: 0.6;
-  cursor: pointer;
-  font-size: 12px;
-  padding: 2px;
-  line-height: 1;
-}
-
-.risk-toast-close:hover {
-  opacity: 1;
-}
-
-@media (max-width: 650px) {
-  .risk-toast {
-    left: 16px;
-    right: 16px;
-    top: 16px;
-    max-width: none;
-  }
-}
-
-
-.risk-hero {
-  margin-bottom: 32px;
-  padding: 36px 48px 40px;
-  background: linear-gradient(135deg, var(--ink) 0%, var(--signal-dark) 100%);
-  border-bottom: 1px solid var(--line);
-}
-
-.risk-page-header {
+.risk-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
   display: flex;
   align-items: center;
-  gap: 18px;
+  justify-content: space-between;
+  gap: 20px;
+  height: 68px;
+  padding: 0 40px;
+  background: var(--ink);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.risk-page-header-text {
-  flex: 1;
+.risk-navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
 }
 
-.risk-hero .topbar-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.18);
+.risk-navbar .back-button,
+.risk-navbar .topbar-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
   color: white;
 }
 
-.risk-hero .topbar-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
+.risk-navbar .back-button:hover,
+.risk-navbar .topbar-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
 }
 
-.risk-hero .back-button {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.18);
+.risk-navbar-divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.14);
+  flex: none;
+}
+
+.risk-navbar-text {
+  min-width: 0;
+}
+
+.risk-navbar-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.risk-navbar-subtitle {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.risk-navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: none;
+}
+
+.status-pill {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.status-pill-pending {
+  background: rgba(255, 255, 255, 0.12);
   color: white;
 }
 
-.risk-hero .back-button:hover {
-  background: rgba(255, 255, 255, 0.2);
+.status-pill-approved {
+  background: var(--risk-low-tint);
+  color: var(--risk-low, #1a7f37);
 }
 
-.risk-hero .page-title {
-  color: white;
+.status-pill-rejected {
+  background: var(--risk-high-tint);
+  color: var(--risk-high, #b91c1c);
 }
 
-.risk-hero .page-subhead {
-  color: rgba(255, 255, 255, 0.65);
-}
+/* =====================================================================
+   Page body — flat document, no shadows, no rounded card wrapper.
+   ===================================================================== */
 
-/* Quick Check mode keeps the plain light header */
-.risk-page > .risk-page-header {
-  max-width: 1000px;
-  margin: 0 auto 28px;
-  padding: 36px 24px 0;
+.risk-body {
+  padding: 40px 40px 80px;
 }
 
 .state-text {
-  max-width: 1000px;
+  max-width: 900px;
   margin: 0 auto;
   color: var(--slate);
   padding: 20px 0;
 }
 
-.page-title {
-  font-size: 24px;
-  text-align: left;
-  margin: 0;
-}
-
-.page-subhead {
-  color: var(--slate);
-  font-size: 14px;
-  margin-top: 4px;
-}
-
-/* ---------- Form card ---------- */
-
-.check-type-tabs {
-  display: flex;
-  gap: 8px;
-  max-width: 1000px;
-  margin: 0 auto 20px;
-  padding: 0 24px;
-}
-
-.check-type-tab {
-  padding: 10px 22px;
-  border-radius: var(--radius-sm);
-  border: 1.5px solid var(--line);
-  background: var(--paper);
-  color: var(--slate);
-  font-size: 13.5px;
-  font-weight: 600;
-  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
-}
-
-.check-type-tab:hover {
-  border-color: var(--signal);
-}
-
-.check-type-tab.active {
-  background: var(--signal);
-  border-color: var(--signal);
-  color: white;
+.risk-document {
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .dummy-data-note {
-  max-width: 1000px;
-  margin: 0 auto 20px;
-  padding: 12px 24px;
+  margin: 0 0 24px;
+  padding: 12px 16px;
   color: var(--slate);
   font-size: 13px;
   background: #fdf3d8;
-  border-left: 4px solid var(--gold);
-  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--gold);
+}
+
+/* =====================================================================
+   Quick Check form — laid directly on the page, underline-style inputs,
+   no boxed card.
+   ===================================================================== */
+
+.doc-eyebrow {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--slate-light);
+  margin-bottom: 18px;
 }
 
 .risk-form {
-  max-width: 1000px;
-  margin: auto;
-  background: var(--paper);
-  padding: 32px;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-sm);
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--line);
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
+  gap: 22px 28px;
 }
 
 .form-group {
@@ -205,48 +163,35 @@
 }
 
 .form-group label {
-  margin-bottom: 7px;
+  margin-bottom: 8px;
   font-weight: 600;
   color: var(--slate);
-  font-size: 13px;
+  font-size: 12.5px;
 }
 
 .form-group input {
-  padding: 11px 13px;
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius-sm);
-  font-size: 14px;
+  padding: 8px 2px 10px;
+  border: none;
+  border-bottom: 1.5px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  font-size: 14.5px;
   font-family: var(--font-mono);
+  color: var(--ink);
   transition: border-color 0.15s ease;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--signal);
-}
-
-.form-group select {
-  padding: 11px 13px;
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  font-family: var(--font-mono);
-  background: #fff;
-  transition: border-color 0.15s ease;
-}
-
-.form-group select:focus {
-  outline: none;
-  border-color: var(--signal);
+  border-bottom-color: var(--signal);
 }
 
 .analyze-btn {
-  width: 100%;
-  margin-top: 26px;
+  margin-top: 30px;
   background: var(--signal);
   color: white;
-  padding: 14px;
-  font-size: 15px;
+  padding: 13px 28px;
+  font-size: 14.5px;
   font-weight: 600;
   border-radius: var(--radius-sm);
   transition: background 0.15s ease;
@@ -261,152 +206,132 @@
   cursor: not-allowed;
 }
 
-/* ---------- Motor Quick Risk Check: green theme ---------- */
-
-.risk-page-motor .risk-hero {
-  background: linear-gradient(135deg, #0B2A24 0%, var(--motor-dark) 100%);
-}
-
-.risk-page-motor .analyze-btn {
-  background: var(--motor);
-}
-
-.risk-page-motor .analyze-btn:hover {
-  background: var(--motor-dark);
-}
-
 /* ---------- Error ---------- */
 
 .error-box {
-  max-width: 1000px;
-  margin: 20px auto;
+  margin: 24px 0;
   background: var(--risk-high-tint);
   color: #7a2323;
-  padding: 15px 18px;
-  border-left: 4px solid var(--risk-high);
-  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  border-left: 3px solid var(--risk-high);
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13.5px;
 }
 
-/* ---------- Result shell (full-screen split) ---------- */
+/* =====================================================================
+   Result document — a single continuous, card-free report.
+   ===================================================================== */
 
-.result-shell {
-  display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 28px;
-  padding: 0 48px;
-  align-items: start;
+.doc {
+  margin-top: 8px;
 }
 
-.result-aside {
-  position: sticky;
-  top: 24px;
-  background: var(--paper);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-sm);
-  padding: 32px 24px;
+.doc-header {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 40px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--line);
 }
 
-.result-gauge-block {
-  display: flex;
-  justify-content: center;
-}
-
-.risk-result-divider {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 28px 48px 4px;
-  color: var(--slate-light);
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.risk-result-divider::before,
-.risk-result-divider::after {
-  content: "";
+.doc-header-text {
   flex: 1;
-  height: 1px;
-  background: var(--line);
-}
-
-.result-main {
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding-bottom: 24px;
 }
 
-.summary-box {
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-left: 4px solid var(--signal);
-  padding: 22px 24px;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
+.doc-header-text .doc-eyebrow {
+  margin-bottom: 12px;
 }
 
-.summary-box h3 {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--slate);
-  margin-bottom: 10px;
-}
-
-.summary-box h3::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--signal);
-  flex-shrink: 0;
-}
-
-.summary-box p {
+.doc-summary-text {
   color: var(--ink);
   line-height: 1.7;
-  font-size: 15px;
+  font-size: 15.5px;
 }
 
-/* ---------- Factor lists ---------- */
-
-.list-section {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  align-items: stretch;
+.doc-score-block {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
-.list-box {
-  background: var(--paper);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-sm);
-  padding: 20px;
-  border-radius: var(--radius-md);
-  height: 100%;
-}
-
-.list-box h3 {
-  font-size: 13px;
+.risk-tier-badge {
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.risk-tier-low {
+  color: var(--risk-low, #1a7f37);
+  background: var(--risk-low-tint);
+}
+
+.risk-tier-moderate {
+  color: #92620a;
+  background: #fdf3d8;
+}
+
+.risk-tier-high {
+  color: var(--risk-high, #b91c1c);
+  background: var(--risk-high-tint);
+}
+
+.doc-section {
+  padding: 28px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.doc-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.doc-section-header .doc-section-title {
+  margin-bottom: 0;
+}
+
+.doc-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--slate);
-  margin-bottom: 14px;
+  margin-bottom: 16px;
+  padding-left: 12px;
+  border-left: 3px solid var(--signal);
+}
+
+.doc-title-risk {
+  border-left-color: var(--risk-high);
+}
+
+.doc-title-positive {
+  border-left-color: var(--risk-low);
+}
+
+/* ---- Risk / positive factors: two quiet columns ---- */
+
+.doc-factors {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  gap: 32px;
+}
+
+.factor-column {
+  min-width: 0;
+}
+
+.factor-column-divider {
+  background: var(--line);
 }
 
 .list-empty {
@@ -415,167 +340,168 @@
   font-style: italic;
 }
 
-.list-box ul {
+.factor-list {
   list-style: none;
   display: flex;
   flex-direction: column;
+}
+
+.factor-item {
+  display: flex;
+  align-items: flex-start;
   gap: 10px;
-}
-
-.list-box li {
-  background: var(--mist);
-  padding: 12px 14px;
-  border-radius: var(--radius-sm);
+  padding: 10px 0;
   font-size: 13.5px;
-  line-height: 1.5;
-  border-left: 4px solid var(--signal);
-}
-
-.risk-item {
-  border-left-color: var(--risk-high) !important;
-}
-
-.positive-item {
-  border-left-color: var(--risk-low) !important;
-}
-
-.graph-toggle-btn {
-  align-self: flex-start;
-  background: var(--paper);
+  line-height: 1.55;
   color: var(--ink);
-  border: 1.5px solid var(--line);
-  padding: 10px 18px;
-  border-radius: var(--radius-sm);
+}
+
+.factor-item + .factor-item {
+  border-top: 1px solid var(--line);
+}
+
+.factor-marker {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-top: 6px;
+}
+
+.factor-item-risk .factor-marker {
+  background: var(--risk-high);
+}
+
+.factor-item-positive .factor-marker {
+  background: var(--risk-low);
+}
+
+/* ---- Factor breakdown chart ---- */
+
+.chart-toggle {
+  background: transparent;
+  color: var(--signal-dark);
+  border: none;
+  padding: 4px 2px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.chart-toggle:hover {
+  color: var(--signal);
+  text-decoration: underline;
+}
+
+.chart-wrap {
+  padding-top: 4px;
+}
+
+/* ---- Decision action bar (sticky, only while PENDING) ---- */
+
+.doc-action-bar {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 0;
+  margin-top: -1px;
+  background: var(--mist);
+  border-top: 1px solid var(--line);
+}
+
+.doc-action-label {
   font-size: 13px;
   font-weight: 600;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  color: var(--slate);
 }
 
-.graph-toggle-btn:hover {
-  border-color: var(--signal);
-  background: var(--signal-tint);
-  color: var(--signal-dark);
-}
-
-.chart-card {
-  background: var(--paper);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-sm);
-  border-radius: var(--radius-md);
-  padding: 20px;
-}
-
-/* ---------- Decision controls ---------- */
-
-.decision-buttons {
+.doc-action-buttons {
   display: flex;
-  flex-direction: column;
   gap: 12px;
-  width: 100%;
 }
 
-.decision-buttons button {
-  padding: 15px;
+.doc-action-buttons button {
+  padding: 12px 26px;
   border-radius: var(--radius-sm);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   border: none;
   cursor: pointer;
-  color: white;
   transition: opacity 0.15s ease, transform 0.1s ease;
 }
 
-.decision-buttons button:active {
+.doc-action-buttons button:active {
   transform: scale(0.98);
 }
 
-.decision-buttons button:disabled {
+.doc-action-buttons button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.decision-approve {
+.btn-approve {
   background: var(--risk-low, #1a7f37);
+  color: white;
 }
 
-.decision-approve:hover:not(:disabled) {
+.btn-approve:hover:not(:disabled) {
   opacity: 0.9;
 }
 
-.decision-reject {
-  background: var(--risk-high, #b91c1c);
-}
-
-.decision-reject:hover:not(:disabled) {
-  opacity: 0.9;
-}
-
-.final-decision-banner {
-  text-align: center;
-  font-size: 15px;
-  font-weight: 800;
-  padding: 14px;
-  border-radius: var(--radius-sm);
-  width: 100%;
-}
-
-.final-approved {
-  color: var(--risk-low, #1a7f37);
-  background: var(--risk-low-tint);
-}
-
-.final-rejected {
+.btn-reject {
+  background: var(--paper);
   color: var(--risk-high, #b91c1c);
+  border: 1.5px solid var(--risk-high, #b91c1c) !important;
+}
+
+.btn-reject:hover:not(:disabled) {
   background: var(--risk-high-tint);
 }
 
-/* ---------- Responsive ---------- */
+/* =====================================================================
+   Responsive
+   ===================================================================== */
 
 @media (max-width: 900px) {
+  .risk-navbar {
+    padding: 0 20px;
+  }
+  .risk-navbar-subtitle {
+    max-width: 220px;
+  }
+  .risk-body {
+    padding: 28px 20px 64px;
+  }
   .form-grid {
     grid-template-columns: 1fr;
   }
-  .list-section {
+  .doc-header {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .doc-score-block {
+    align-self: flex-start;
+    flex-direction: row;
+  }
+  .doc-factors {
     grid-template-columns: 1fr;
+    gap: 8px;
   }
-  .risk-form {
-    padding: 20px;
+  .factor-column-divider {
+    display: none;
   }
-  .page-title {
-    font-size: 20px;
+  .doc-action-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
   }
-  .result-shell {
-    grid-template-columns: 1fr;
-    padding: 0 20px;
+  .doc-action-buttons {
+    justify-content: stretch;
   }
-  .result-aside {
-    position: relative;
-    top: 0;
+  .doc-action-buttons button {
+    flex: 1;
   }
-  .risk-hero {
-    padding: 24px 20px 28px;
-  }
-}   
-.form-group select {
-  padding: 11px 13px;
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  font-family: var(--font-mono);
-  background: #fff;
-  transition: border-color 0.15s ease;
-}
-
-.form-group select:focus {
-  outline: none;
-  border-color: var(--signal);
-}
-/* ================================
-   FROZEN NAVBAR
-================================ */
-
-.risk-hero {
-  position: sticky;
-  top: 0;
-  z-index: 100;
 }
